@@ -37,7 +37,7 @@ export function validateCourseDir(dir: string): ValidationResult {
     raw = parseYaml(readFileSync(courseFile, "utf-8"));
   } catch (e) {
     return {
-      errors: [{ file: "course.yaml", severity: "error", message: `YAML parse failed: ${e}` }],
+      errors: [{ file: "course.yaml", severity: "error", message: `could not read or parse course.yaml: ${e}` }],
       warnings: [],
       course: null,
     };
@@ -46,11 +46,10 @@ export function validateCourseDir(dir: string): ValidationResult {
   const parsed = courseSchema.safeParse(raw);
   if (!parsed.success) {
     return {
-      errors: parsed.error.issues.map((i) => ({
-        file: "course.yaml",
-        severity: "error" as const,
-        message: `${i.path.join(".")}: ${i.message}`,
-      })),
+      errors: parsed.error.issues.map((i) => {
+        const prefix = i.path.length ? i.path.join(".") + ": " : "";
+        return { file: "course.yaml", severity: "error" as const, message: `${prefix}${i.message}` };
+      }),
       warnings: [],
       course: null,
     };
@@ -68,22 +67,27 @@ export function validateCourseDir(dir: string): ValidationResult {
       });
       continue;
     }
-    issues.push(
-      ...validateUnitMarkdown(
-        readFileSync(unitPath, "utf-8"),
-        { id: unit.id, title: unit.title },
-        `units/${unit.id}.md`
-      )
-    );
+    const unitRelPath = `units/${unit.id}.md`;
+    let unitContent: string;
+    try {
+      unitContent = readFileSync(unitPath, "utf-8");
+    } catch (e) {
+      issues.push({ file: unitRelPath, severity: "error", message: `could not read ${unitRelPath}: ${e}` });
+      continue;
+    }
+    issues.push(...validateUnitMarkdown(unitContent, { id: unit.id, title: unit.title }, unitRelPath));
 
     const quizPath = join(dir, "quizzes", `${unit.id}.json`);
+    const quizRelPath = `quizzes/${unit.id}.json`;
     if (existsSync(quizPath)) {
-      issues.push(
-        ...validateQuizJson(readFileSync(quizPath, "utf-8"), unit.id, `quizzes/${unit.id}.json`)
-      );
+      try {
+        issues.push(...validateQuizJson(readFileSync(quizPath, "utf-8"), unit.id, quizRelPath));
+      } catch (e) {
+        issues.push({ file: quizRelPath, severity: "error", message: `could not read ${quizRelPath}: ${e}` });
+      }
     } else {
       issues.push({
-        file: `quizzes/${unit.id}.json`, severity: "warning",
+        file: quizRelPath, severity: "warning",
         message: `no quiz for ${unit.id} (recommended for every unit)`,
       });
     }
