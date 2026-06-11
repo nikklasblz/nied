@@ -30,10 +30,20 @@ generator plugin are under active development. The reader app lands in Phase 2.
 
 ## Install (development)
 
+From a local clone of this repo, inside Claude Code:
+
+```text
+/plugin marketplace add <local-path-to-this-clone>   # registers the "nied" marketplace (name comes from .claude-plugin/marketplace.json)
+/plugin install nied@nied                            # installs the "nied" plugin from the "nied" marketplace
 ```
-/plugin marketplace add <this-repo>
-/plugin install nied@nied
+
+Or load the plugin directly for a single session:
+
+```text
+claude --plugin-dir ./plugin
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
 
 ## License
 

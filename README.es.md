@@ -33,10 +33,20 @@ plugin generador están en desarrollo activo. La app lectora llega en la Fase 2.
 
 ## Instalación (desarrollo)
 
+Desde un clon local de este repositorio, dentro de Claude Code:
+
+```text
+/plugin marketplace add <ruta-local-al-clon>   # registra el marketplace "nied" (el nombre viene de .claude-plugin/marketplace.json)
+/plugin install nied@nied                      # instala el plugin "nied" desde el marketplace "nied"
 ```
-/plugin marketplace add <this-repo>
-/plugin install nied@nied
+
+O carga el plugin directamente para una sola sesión:
+
+```text
+claude --plugin-dir ./plugin
 ```
+
+Lee [CONTRIBUTING.md](CONTRIBUTING.md) para empezar.
 
 ## Licencia
 

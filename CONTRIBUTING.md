@@ -11,6 +11,13 @@
 
 ## Dev setup
 
-- Bun >= 1.3, git, Claude Code >= 2.x.
+- Bun >= 1.3, git, Claude Code >= 2.0.
 - `cd schema && bun install && bun test`
 - Try the plugin locally: `claude --plugin-dir ./plugin`
+
+## Submitting changes
+
+1. Fork the repo (or create a branch for collaborators).
+2. Keep each PR focused on **one problem or improvement**.
+3. Open your PR against `main`.
+4. CI must pass (schema tests + plugin validation) before review.
