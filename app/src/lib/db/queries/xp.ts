@@ -7,7 +7,7 @@ import type Database from "better-sqlite3";
 export type XpEventRow = {
   id: number;
   activity: string;
-  track_id: string | null;
+  course_id: string | null;
   unit_id: string | null;
   xp: number;
   multiplier: number;
@@ -19,19 +19,19 @@ export function insertXpEvent(
   db: Database.Database,
   args: {
     activity: string;
-    trackId: string | null;
+    courseId: string | null;
     unitId: string | null;
     xp: number;
     multiplier: number;
   }
 ): number {
   const stmt = db.prepare(
-    `INSERT INTO xp_events (activity, track_id, unit_id, xp, multiplier)
+    `INSERT INTO xp_events (activity, course_id, unit_id, xp, multiplier)
      VALUES (?, ?, ?, ?, ?)`
   );
   const info = stmt.run(
     args.activity,
-    args.trackId,
+    args.courseId,
     args.unitId,
     args.xp,
     args.multiplier
@@ -47,16 +47,16 @@ export function getTotalXp(db: Database.Database): number {
   return row.total;
 }
 
-/** XP total por track (filtrado por track_id no nulo). */
-export function getTotalXpByTrack(
+/** XP total por course (filtrado por course_id no nulo). */
+export function getTotalXpByCourse(
   db: Database.Database,
-  trackId: string
+  courseId: string
 ): number {
   const row = db
     .prepare(
-      `SELECT COALESCE(SUM(xp), 0) AS total FROM xp_events WHERE track_id = ?`
+      `SELECT COALESCE(SUM(xp), 0) AS total FROM xp_events WHERE course_id = ?`
     )
-    .get(trackId) as { total: number };
+    .get(courseId) as { total: number };
   return row.total;
 }
 
@@ -82,14 +82,14 @@ export function countEventsByHourBucket(
   return row.c;
 }
 
-/** Distintos track_ids con al menos un evento. */
-export function getDistinctTrackIdsWithProgress(
+/** Distintos course_ids con al menos una unidad completada. */
+export function getDistinctCourseIdsWithProgress(
   db: Database.Database
 ): string[] {
   const rows = db
     .prepare(
-      `SELECT DISTINCT track_id FROM unit_progress WHERE status = 'completa' AND track_id IS NOT NULL`
+      `SELECT DISTINCT course_id FROM unit_progress WHERE status = 'completa' AND course_id IS NOT NULL`
     )
-    .all() as { track_id: string }[];
-  return rows.map((r) => r.track_id);
+    .all() as { course_id: string }[];
+  return rows.map((r) => r.course_id);
 }

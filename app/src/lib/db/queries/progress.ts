@@ -5,7 +5,7 @@
 import type Database from "better-sqlite3";
 
 export type UnitProgressRow = {
-  track_id: string;
+  course_id: string;
   unit_id: string;
   status: "pendiente" | "en-progreso" | "completa";
   started_at: string | null;
@@ -14,45 +14,45 @@ export type UnitProgressRow = {
 
 export function getUnitProgress(
   db: Database.Database,
-  trackId: string,
+  courseId: string,
   unitId: string
 ): UnitProgressRow | null {
   const row = db
     .prepare(
-      `SELECT track_id, unit_id, status, started_at, completed_at
-       FROM unit_progress WHERE track_id = ? AND unit_id = ?`
+      `SELECT course_id, unit_id, status, started_at, completed_at
+       FROM unit_progress WHERE course_id = ? AND unit_id = ?`
     )
-    .get(trackId, unitId) as UnitProgressRow | undefined;
+    .get(courseId, unitId) as UnitProgressRow | undefined;
   return row ?? null;
 }
 
 export function setUnitComplete(
   db: Database.Database,
-  trackId: string,
+  courseId: string,
   unitId: string
 ): void {
   db.prepare(
-    `INSERT INTO unit_progress (track_id, unit_id, status, started_at, completed_at)
+    `INSERT INTO unit_progress (course_id, unit_id, status, started_at, completed_at)
      VALUES (?, ?, 'completa', datetime('now'), datetime('now'))
-     ON CONFLICT(track_id, unit_id) DO UPDATE SET
+     ON CONFLICT(course_id, unit_id) DO UPDATE SET
        status = 'completa',
        started_at = COALESCE(unit_progress.started_at, datetime('now')),
        completed_at = datetime('now')`
-  ).run(trackId, unitId);
+  ).run(courseId, unitId);
 }
 
 export function setUnitPending(
   db: Database.Database,
-  trackId: string,
+  courseId: string,
   unitId: string
 ): void {
   db.prepare(
-    `INSERT INTO unit_progress (track_id, unit_id, status)
+    `INSERT INTO unit_progress (course_id, unit_id, status)
      VALUES (?, ?, 'pendiente')
-     ON CONFLICT(track_id, unit_id) DO UPDATE SET
+     ON CONFLICT(course_id, unit_id) DO UPDATE SET
        status = 'pendiente',
        completed_at = NULL`
-  ).run(trackId, unitId);
+  ).run(courseId, unitId);
 }
 
 export function countCompletedUnits(db: Database.Database): number {
@@ -64,24 +64,24 @@ export function countCompletedUnits(db: Database.Database): number {
   return row.c;
 }
 
-export function countCompletedUnitsByTrack(
+export function countCompletedUnitsByCourse(
   db: Database.Database,
-  trackId: string
+  courseId: string
 ): number {
   const row = db
     .prepare(
       `SELECT COUNT(*) AS c FROM unit_progress
-       WHERE status = 'completa' AND track_id = ?`
+       WHERE status = 'completa' AND course_id = ?`
     )
-    .get(trackId) as { c: number };
+    .get(courseId) as { c: number };
   return row.c;
 }
 
 export function getAllProgress(db: Database.Database): UnitProgressRow[] {
   return db
     .prepare(
-      `SELECT track_id, unit_id, status, started_at, completed_at
-       FROM unit_progress ORDER BY track_id, unit_id`
+      `SELECT course_id, unit_id, status, started_at, completed_at
+       FROM unit_progress ORDER BY course_id, unit_id`
     )
     .all() as UnitProgressRow[];
 }

@@ -12,11 +12,11 @@ import {
 } from "../db/queries/achievements";
 import {
   countCompletedUnits,
-  countCompletedUnitsByTrack,
+  countCompletedUnitsByCourse,
 } from "../db/queries/progress";
 import {
   countEventsByHourBucket,
-  getDistinctTrackIdsWithProgress,
+  getDistinctCourseIdsWithProgress,
   getTotalXp,
 } from "../db/queries/xp";
 import { getStreak } from "../db/queries/streaks";
@@ -41,20 +41,20 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: "cinco-unidades",
     titulo: "Cinco unidades",
-    descripcion: "Completa 5 unidades en un mismo track.",
+    descripcion: "Completa 5 unidades en un mismo course.",
     icon: "Layers",
     evaluate: (db) => {
-      // Pregunta por cualquier track con >=5 unidades completas.
-      const tracks = getDistinctTrackIdsWithProgress(db);
-      return tracks.some((t) => countCompletedUnitsByTrack(db, t) >= 5);
+      // Pregunta por cualquier course con >=5 unidades completas.
+      const courses = getDistinctCourseIdsWithProgress(db);
+      return courses.some((c) => countCompletedUnitsByCourse(db, c) >= 5);
     },
   },
   {
     id: "track-iniciado",
     titulo: "Polímata",
-    descripcion: "Completa al menos una unidad en 3 tracks distintos.",
+    descripcion: "Completa al menos una unidad en 3 courses distintos.",
     icon: "Sparkles",
-    evaluate: (db) => getDistinctTrackIdsWithProgress(db).length >= 3,
+    evaluate: (db) => getDistinctCourseIdsWithProgress(db).length >= 3,
   },
   {
     id: "racha-7",
