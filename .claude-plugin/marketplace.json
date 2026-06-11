@@ -6,7 +6,7 @@
     {
       "name": "nied",
       "source": "./plugin",
-      "description": "Educational agent: generate university-grade courses with verified free sources",
+      "description": "Educational agent: generate university-grade courses on any topic with verified free sources, quizzes, and a pedagogical audit",
       "category": "education"
     }
   ]
