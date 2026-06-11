@@ -1,0 +1,188 @@
+{
+  "unit_id": "u1",
+  "title": "Quiz: Datos, tipos y recolección",
+  "instructions": "Lee cada pregunta con cuidado y elige la única opción correcta. Cada pregunta vale 10 XP. No hay penalización por respuesta incorrecta: intenta todas. Al terminar, revisa las explicaciones para reforzar los conceptos.",
+  "xp_per_question": 10,
+  "questions": [
+    {
+      "question": "Una investigadora estudia el efecto de un nuevo fertilizante en el rendimiento de cultivos de maíz. Asigna aleatoriamente 30 parcelas al fertilizante nuevo y otras 30 a un fertilizante estándar. Al final de la temporada mide el rendimiento en kg/hectárea. ¿Qué tipo de estudio es este?",
+      "options": [
+        "Estudio observacional de cohorte, porque sigue a las parcelas en el tiempo",
+        "Experimento, porque la investigadora asigna aleatoriamente el tratamiento",
+        "Estudio observacional transversal, porque mide una sola vez al final",
+        "Muestreo estratificado, porque las parcelas se dividen en dos grupos"
+      ],
+      "correct_index": 1,
+      "explanation": "Lo que define un experimento es la asignación aleatoria del tratamiento por parte del investigador. Aquí la investigadora decide activamente qué fertilizante recibe cada parcela mediante aleatorización. Un estudio observacional solo registra lo que ocurre naturalmente, sin intervención.",
+      "section": "## 3. Estudios observacionales versus experimentos"
+    },
+    {
+      "question": "Una encuesta nacional de salud reporta que las personas con mayor nivel educativo tienen menor incidencia de enfermedades cardiovasculares. Un diario titula: 'Estudiar protege el corazón'. ¿Cuál es el principal problema con esta conclusión?",
+      "options": [
+        "El estudio tiene sesgo de no respuesta porque no todos respondieron",
+        "La muestra es demasiado pequeña para detectar diferencias reales",
+        "El estudio es observacional y no puede establecer causalidad; el nivel socioeconómico podría ser un confusor",
+        "Las variables son nominales y no permiten comparaciones estadísticas"
+      ],
+      "correct_index": 2,
+      "explanation": "Los estudios observacionales establecen asociaciones, no causalidad. El nivel socioeconómico es un confusor clásico: está asociado tanto con el nivel educativo como con el acceso a salud, la alimentación y otros factores que reducen el riesgo cardiovascular. No se puede atribuir el efecto exclusivamente a la educación.",
+      "section": "## 3. Estudios observacionales versus experimentos"
+    },
+    {
+      "question": "En un dataset de ventas de una tienda, la columna 'categoría de producto' contiene los valores: Electrónica, Ropa, Alimentos, Hogar. ¿Cómo se clasifica esta variable?",
+      "options": [
+        "Cuantitativa discreta, porque hay un número finito de categorías",
+        "Cualitativa ordinal, porque las categorías pueden ordenarse por importancia",
+        "Cualitativa nominal, porque las categorías no tienen orden natural",
+        "Cuantitativa continua, porque representa grupos de muchos productos"
+      ],
+      "correct_index": 2,
+      "explanation": "Una variable es nominal cuando sus categorías no tienen un orden natural inherente. 'Electrónica' no es mayor ni menor que 'Ropa'; son simplemente etiquetas diferentes. Para que sea ordinal necesitaríamos un criterio de orden (por ejemplo, precio promedio del producto), pero ese no es el caso aquí.",
+      "section": "## 2. Tipos de variables y escalas de medición"
+    },
+    {
+      "question": "¿Cuál de las siguientes variables es cuantitativa continua?",
+      "options": [
+        "Número de llamadas telefónicas recibidas en un día",
+        "Temperatura corporal medida con termómetro digital",
+        "Número de estudiantes en un salón de clase",
+        "Calificación en escala del 1 al 10 (solo enteros)"
+      ],
+      "correct_index": 1,
+      "explanation": "La temperatura puede tomar cualquier valor dentro de un rango (36.5°C, 36.53°C, 36.527°C…), lo que la hace continua. Las llamadas y los estudiantes son conteos enteros (discretas). Las calificaciones 1-10 son valores enteros contables, también discretas.",
+      "section": "## 2. Tipos de variables y escalas de medición"
+    },
+    {
+      "question": "Una empresa quiere encuestar a sus 10.000 empleados sobre satisfacción laboral. Decide tomar uno de cada 50 empleados de la lista de nómina, empezando por un número elegido al azar entre 1 y 50. ¿Qué diseño de muestreo es este?",
+      "options": [
+        "Muestreo aleatorio simple",
+        "Muestreo estratificado",
+        "Muestreo por conglomerados",
+        "Muestreo sistemático"
+      ],
+      "correct_index": 3,
+      "explanation": "El muestreo sistemático selecciona un individuo de arranque al azar y luego escoge cada k-ésimo elemento de la lista. Aquí el intervalo declarado es k = 50, lo que produce una muestra de 10.000 / 50 = 200 empleados. Es diferente del MAS porque no se sortea cada individuo por separado, sino que se sigue un intervalo regular.",
+      "section": "## 4. Diseños de muestreo"
+    },
+    {
+      "question": "Un ministerio de educación quiere estimar el promedio de horas de tarea semanales de los estudiantes de secundaria del país. Divide las regiones en costa, sierra y selva, y toma una muestra aleatoria de cada región proporcionalmente a su tamaño. ¿Qué diseño de muestreo usa?",
+      "options": [
+        "Muestreo por conglomerados, porque agrupa a los estudiantes por región geográfica",
+        "Muestreo aleatorio simple, porque dentro de cada región la selección es aleatoria",
+        "Muestreo estratificado, porque se divide la población en grupos homogéneos y se muestrea dentro de cada uno",
+        "Muestreo sistemático, porque se usa un intervalo fijo de selección"
+      ],
+      "correct_index": 2,
+      "explanation": "El muestreo estratificado divide la población en estratos (aquí: costa, sierra, selva) y toma muestras aleatorias dentro de cada estrato. La clave es que no se seleccionan regiones completas (eso sería conglomerados), sino una fracción proporcional de cada región.",
+      "section": "## 4. Diseños de muestreo"
+    },
+    {
+      "question": "En 1936, la revista Literary Digest envió 10 millones de encuestas a personas tomadas de directorios telefónicos y registros de automóviles para predecir las elecciones presidenciales de EE.UU. Recibió 2,4 millones de respuestas y predijo el resultado incorrectamente. ¿Cuál fue la causa principal del error?",
+      "options": [
+        "El tamaño de la muestra era demasiado pequeño para ser representativa",
+        "Sesgo de selección: los encuestados eran de mayor poder adquisitivo y no representaban al electorado general",
+        "Sesgo de respuesta: las preguntas estaban redactadas de forma que sugerían un candidato",
+        "Error de muestreo aleatorio: con un sorteo diferente el resultado habría sido correcto"
+      ],
+      "correct_index": 1,
+      "explanation": "El problema no fue el tamaño de la muestra (2,4 millones es enorme) sino quiénes la componían. Tener teléfono o auto en 1936 era un marcador de riqueza, y ese grupo votaba diferente al electorado general. Este es el ejemplo clásico de sesgo de selección: una muestra grande pero no representativa.",
+      "section": "## 5. Fuentes de sesgo en la recolección de datos"
+    },
+    {
+      "question": "Un hospital solo analiza los datos de pacientes que completaron el seguimiento de un año en un estudio sobre recuperación postoperatoria. Los pacientes que fallecieron o abandonaron el estudio no están incluidos. ¿Qué tipo de sesgo introduce esto?",
+      "options": [
+        "Sesgo de respuesta, porque los pacientes podían mentir sobre sus síntomas",
+        "Sesgo del superviviente (un tipo de sesgo de selección), porque solo se analizan los que 'sobrevivieron' al seguimiento",
+        "Confusión, porque la gravedad inicial del paciente afecta tanto el seguimiento como la recuperación",
+        "Sesgo de no respuesta, porque los médicos tratantes no respondieron la encuesta"
+      ],
+      "correct_index": 1,
+      "explanation": "El sesgo del superviviente es una forma de sesgo de selección que ocurre cuando se analiza solo el subconjunto que completó un proceso (aquí, el año de seguimiento). Los pacientes que fallecieron o se retiraron probablemente tenían peores resultados, por lo que excluirlos sobreestima la tasa de recuperación.",
+      "section": "## 5. Fuentes de sesgo en la recolección de datos"
+    },
+    {
+      "question": "¿Cuál es la diferencia entre la media poblacional μ y la media muestral x̄?",
+      "options": [
+        "μ se calcula con todos los individuos de la población; x̄ se calcula con los individuos de la muestra",
+        "μ siempre es mayor que x̄ porque la población es más grande",
+        "x̄ es un parámetro y μ es un estadístico",
+        "μ se usa en experimentos y x̄ en estudios observacionales"
+      ],
+      "correct_index": 0,
+      "explanation": "μ es un parámetro poblacional: describe a toda la población pero generalmente es desconocido. x̄ es un estadístico muestral: se calcula a partir de los datos de la muestra y se usa para estimar μ. La distinción parámetro/estadístico es fundamental para toda la inferencia estadística del curso.",
+      "section": "## 1. La anatomía de un dataset: población, muestra y unidad de observación"
+    },
+    {
+      "question": "La escala de dolor de una escala médica tiene las categorías: Sin dolor (0), Dolor leve (1-3), Dolor moderado (4-6), Dolor intenso (7-9), Dolor insoportable (10). ¿Qué escala de medición tiene esta variable?",
+      "options": [
+        "Razón, porque incluye el cero absoluto (sin dolor)",
+        "Intervalo, porque los valores están separados por distancias numéricas iguales",
+        "Ordinal, porque las categorías tienen orden pero las distancias entre ellas no son necesariamente iguales",
+        "Nominal, porque son etiquetas descriptivas del estado del paciente"
+      ],
+      "correct_index": 2,
+      "explanation": "La escala de dolor tiene orden claro (intenso > moderado > leve), pero la diferencia entre 'sin dolor' y 'leve' no es necesariamente igual a la diferencia entre 'leve' y 'moderado'. Aunque las etiquetas llevan números, esos números son rangos subjetivos cuya distancia psicológica real no es uniforme. Eso la hace ordinal, no de intervalo ni de razón.",
+      "section": "## 2. Tipos de variables y escalas de medición"
+    },
+    {
+      "question": "Una ONG encuesta a familias sobre acceso a agua potable enviando formularios a los hogares. Solo el 25% devuelve el formulario completado. Los investigadores notan que los hogares sin agua potable probablemente tienen menos tiempo y recursos para devolver formularios. ¿Qué sesgo afecta principalmente a este estudio?",
+      "options": [
+        "Sesgo de selección, porque los formularios se enviaron a hogares escogidos al azar",
+        "Sesgo de no respuesta, porque los que no responden (hogares con menos recursos) son sistemáticamente distintos de los que sí responden",
+        "Confusión, porque el nivel de ingresos afecta tanto al acceso al agua como a la respuesta",
+        "Sesgo de respuesta, porque las familias podrían avergonzarse de admitir que no tienen agua"
+      ],
+      "correct_index": 1,
+      "explanation": "El sesgo de no respuesta ocurre cuando los individuos que no participan son distintos de los que sí lo hacen en una característica relevante. Aquí los hogares sin agua son menos propensos a responder, lo que significa que la muestra final sobrerrepresenta a los hogares con agua. El resultado sobreestimará el acceso al agua potable.",
+      "section": "## 5. Fuentes de sesgo en la recolección de datos"
+    },
+    {
+      "question": "Un investigador quiere estimar el rendimiento académico de una universidad con 4 facultades de tamaños muy distintos: Medicina (500 alumnos), Derecho (800), Ingeniería (1.200) y Humanidades (500). Para que cada facultad tenga representación proporcional en la muestra, ¿qué diseño debe usar?",
+      "options": [
+        "Muestreo aleatorio simple, porque es el más sencillo y libre de sesgo",
+        "Muestreo por conglomerados, porque puede encuestar a todas las facultades seleccionadas",
+        "Muestreo estratificado proporcional, porque garantiza representación de cada facultad según su tamaño",
+        "Muestreo sistemático, porque permite un intervalo fijo entre estudiantes seleccionados"
+      ],
+      "correct_index": 2,
+      "explanation": "El muestreo estratificado proporcional divide la población en estratos (las facultades) y asigna cuotas proporcionales al tamaño de cada uno. Si se quiere una muestra de 300, se toman aproximadamente 50 de Medicina, 80 de Derecho, 120 de Ingeniería y 50 de Humanidades. Esto garantiza que ninguna facultad quede subrepresentada.",
+      "section": "## 4. Diseños de muestreo"
+    },
+    {
+      "question": "¿Cuál de los siguientes ejemplos ilustra correctamente una variable de escala razón?",
+      "options": [
+        "Temperatura en grados Celsius, porque el cero es el punto de congelación del agua",
+        "Año de nacimiento, porque hay una distancia igual entre años consecutivos",
+        "Ingreso mensual en soles, porque el cero absoluto significa ausencia de ingreso",
+        "Posición en un ranking (1.°, 2.°, 3.°), porque hay un orden definido"
+      ],
+      "correct_index": 2,
+      "explanation": "La escala razón requiere un cero absoluto que signifique ausencia de la magnitud. El ingreso de 0 soles significa efectivamente que no hay ingreso. La temperatura Celsius tiene un cero arbitrario (no ausencia de calor), por lo que es de intervalo. El año es de intervalo. El ranking es ordinal.",
+      "section": "## 2. Tipos de variables y escalas de medición"
+    },
+    {
+      "question": "En un experimento clínico, la mitad de los pacientes recibe el medicamento real y la otra mitad recibe una pastilla de azúcar idéntica en apariencia. Ni los pacientes ni los médicos que evalúan el resultado saben quién recibió cada cosa. ¿Cómo se llama este diseño?",
+      "options": [
+        "Estudio de cohorte con grupo de control activo",
+        "Experimento de doble ciegamiento, que controla el efecto placebo y el sesgo del evaluador",
+        "Muestreo estratificado por condición de salud",
+        "Estudio observacional de casos y controles"
+      ],
+      "correct_index": 1,
+      "explanation": "El doble ciegamiento protege contra dos sesgos: el efecto placebo (pacientes que mejoran solo por creer que reciben tratamiento real) y el sesgo del observador (médicos que evalúan diferente según saben quién fue tratado). Cuando ni pacientes ni evaluadores saben la asignación, las mediciones son más objetivas.",
+      "section": "## 3. Estudios observacionales versus experimentos"
+    },
+    {
+      "question": "Un equipo de investigación parte de la pregunta '¿afecta el horario de entrada escolar al rendimiento académico?' y sigue el flujo completo: define la población, elige un diseño experimental con asignación aleatoria de horarios, estratifica la muestra por tipo de escuela y clasifica las variables antes de recolectar datos. ¿Cuál es el beneficio principal de seguir este orden antes de recolectar los datos?",
+      "options": [
+        "Permite calcular la media y la desviación estándar de la muestra antes de iniciar el estudio",
+        "Garantiza que las decisiones de diseño (tipo de estudio, muestreo, variables) sean coherentes con la pregunta y no se tomen ad hoc tras ver los datos",
+        "Elimina completamente el error de muestreo aleatorio en los resultados finales",
+        "Convierte automáticamente el estudio observacional en un experimento con causalidad demostrada"
+      ],
+      "correct_index": 1,
+      "explanation": "El flujo completo (pregunta → población → tipo de estudio → muestreo → variables → recolección) existe para que cada decisión metodológica esté alineada con el objetivo desde el principio. Tomar decisiones de diseño después de ver los datos introduce sesgo de análisis post-hoc y puede invalidar las conclusiones. El orden correcto no elimina el error aleatorio ni transforma por sí solo el diseño, pero asegura coherencia metodológica.",
+      "section": "## 6. Flujo completo: del fenómeno al dato analizable"
+    }
+  ]
+}
