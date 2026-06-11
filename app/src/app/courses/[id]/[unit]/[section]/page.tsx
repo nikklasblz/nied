@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 import { getUnitView } from "@/lib/content/courses";
 import { MermaidRenderer } from "@/components/mermaid-renderer";
 import { ChevronLeft, ChevronRight } from "@/components/icons";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -41,11 +42,11 @@ export default async function SectionPage({
 
       {/* Breadcrumb */}
       <nav
-        aria-label="Breadcrumb"
+        aria-label={t("common.breadcrumb")}
         className="flex items-center gap-1 text-xs text-fg-secondary"
       >
         <Link href="/courses" className="hover:text-fg-primary">
-          Cursos
+          {t("nav.courses")}
         </Link>
         <span className="text-fg-muted">/</span>
         <Link href={`/courses/${id}`} className="hover:text-fg-primary">
@@ -56,13 +57,15 @@ export default async function SectionPage({
           {view.unit.title}
         </Link>
         <span className="text-fg-muted">/</span>
-        <span className="text-fg-primary">Sección {sectionIndex}</span>
+        <span className="text-fg-primary">
+          {t("unit.section")} {sectionIndex}
+        </span>
       </nav>
 
       {/* Indicador de progreso */}
       <div className="flex items-center gap-3">
         <span className="shrink-0 font-mono text-xs text-fg-muted">
-          LECCIÓN {sectionIndex} DE {totalSections}
+          {`${t("unit.lesson")} ${sectionIndex} ${t("unit.of")} ${totalSections}`.toUpperCase()}
         </span>
         <div className="flex-1 h-1 rounded-full bg-bg-overlay">
           <div
@@ -87,7 +90,7 @@ export default async function SectionPage({
           >
             <ChevronLeft className="size-4 shrink-0" strokeWidth={1.5} aria-hidden />
             <div>
-              <div className="text-xs text-fg-muted">Anterior</div>
+              <div className="text-xs text-fg-muted">{t("unit.previous")}</div>
               <div>{prevSection.title}</div>
             </div>
           </Link>
@@ -98,8 +101,8 @@ export default async function SectionPage({
           >
             <ChevronLeft className="size-4 shrink-0" strokeWidth={1.5} aria-hidden />
             <div>
-              <div className="text-xs text-fg-muted">Volver</div>
-              <div>Mapa de la unidad</div>
+              <div className="text-xs text-fg-muted">{t("unit.back")}</div>
+              <div>{t("unit.unitMap")}</div>
             </div>
           </Link>
         )}
@@ -110,7 +113,7 @@ export default async function SectionPage({
             className="inline-flex items-center gap-2 text-sm text-fg-secondary hover:text-fg-primary transition-colors"
           >
             <div className="text-right">
-              <div className="text-xs text-fg-muted">Siguiente</div>
+              <div className="text-xs text-fg-muted">{t("unit.next")}</div>
               <div>{nextSection.title}</div>
             </div>
             <ChevronRight className="size-4 shrink-0" strokeWidth={1.5} aria-hidden />
@@ -121,8 +124,8 @@ export default async function SectionPage({
             className="inline-flex items-center gap-2 text-sm text-fg-secondary hover:text-fg-primary transition-colors"
           >
             <div className="text-right">
-              <div className="text-xs text-fg-muted">Completar</div>
-              <div>Volver al mapa</div>
+              <div className="text-xs text-fg-muted">{t("unit.complete")}</div>
+              <div>{t("unit.backToMap")}</div>
             </div>
             <ChevronRight className="size-4 shrink-0" strokeWidth={1.5} aria-hidden />
           </Link>

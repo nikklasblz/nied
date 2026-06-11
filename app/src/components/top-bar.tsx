@@ -15,7 +15,9 @@ import {
   toIsoDate,
 } from "@/lib/gamification/streaks";
 import { MobileNavTrigger } from "@/components/mobile-nav-trigger";
+import { getNavLabels } from "@/components/app-shell";
 import { Flame, Trophy } from "@/components/icons";
+import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export function TopBar() {
@@ -37,10 +39,10 @@ export function TopBar() {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-bg-base/85 px-4 backdrop-blur-md md:px-6">
-      <MobileNavTrigger />
+      <MobileNavTrigger openLabel={t("nav.open")} navLabels={getNavLabels()} />
       <div className="flex flex-1 items-center">
         <span className="font-sans text-sm font-medium text-fg-secondary">
-          niED · Espacio de capacitación
+          {t("topbar.tagline")}
         </span>
       </div>
       <div className="flex items-center gap-2">
@@ -77,8 +79,10 @@ function StreakBadge({
       )}
       aria-label={
         lost
-          ? "Racha inactiva"
-          : `Racha de ${current} días, multiplicador ×${multiplier}`
+          ? t("topbar.streakInactive")
+          : t("topbar.streakAria")
+              .replace("{current}", String(current))
+              .replace("{multiplier}", String(multiplier))
       }
     >
       <Flame
@@ -100,7 +104,9 @@ function LevelBadge({ level, name }: { level: number; name: string }) {
   return (
     <div
       className="inline-flex items-center gap-1.5 rounded-full border border-accent-primary/30 bg-accent-primary/10 px-2.5 py-1 text-accent-primary"
-      aria-label={`Nivel ${level} ${name}`}
+      aria-label={t("topbar.levelAria")
+        .replace("{level}", String(level))
+        .replace("{name}", name)}
     >
       <Trophy className="size-3.5" strokeWidth={1.8} aria-hidden />
       <span className="font-mono text-xs font-semibold tabular-nums">

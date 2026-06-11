@@ -15,6 +15,7 @@ import { UnitCard, type UnitStatus } from "@/components/unit-card";
 import { levelLabel, levelStyle } from "@/components/course-card";
 import { ChevronLeft, Clock, Zap, Target } from "@/components/icons";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,7 @@ export default async function CoursePage({
         className="inline-flex w-fit items-center gap-1 text-xs text-fg-secondary hover:text-fg-primary"
       >
         <ChevronLeft className="size-3.5" strokeWidth={1.6} aria-hidden />
-        Volver a cursos
+        {t("course.backToCourses")}
       </Link>
 
       {/* Hero */}
@@ -67,10 +68,11 @@ export default async function CoursePage({
               levelStyle[course.meta.level]
             )}
           >
-            {levelLabel[course.meta.level]}
+            {levelLabel(course.meta.level)}
           </span>
           <span className="font-mono text-[10px] uppercase tracking-wider text-fg-muted">
-            {course.meta.language} · {course.writtenUnits.length}/{totalUnits} unidades disponibles
+            {course.meta.language} · {course.writtenUnits.length}/{totalUnits}{" "}
+            {t("course.unitsAvailable")}
           </span>
         </div>
         <h1 className="font-serif text-3xl font-semibold text-fg-primary md:text-4xl">
@@ -82,10 +84,10 @@ export default async function CoursePage({
           </p>
         )}
         <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <HeroStat icon={Target} label="Unidades" value={`${totalUnits}`} />
-          <HeroStat icon={Clock} label="Horas" value={`${course.totalHours}`} />
+          <HeroStat icon={Target} label={t("course.units")} value={`${totalUnits}`} />
+          <HeroStat icon={Clock} label={t("course.hours")} value={`${course.totalHours}`} />
           <HeroStat icon={Zap} label="XP" value={`${earnedXp}/${totalXp}`} />
-          <HeroStat label="Avance" value={`${pct}%`} />
+          <HeroStat label={t("course.progress")} value={`${pct}%`} />
         </div>
         <div className="relative mt-1 h-2 overflow-hidden rounded-full bg-bg-overlay">
           <div
@@ -96,9 +98,9 @@ export default async function CoursePage({
       </header>
 
       {/* Mapa de unidades */}
-      <section aria-label="Mapa de unidades" className="flex flex-col gap-3">
+      <section aria-label={t("course.unitMap")} className="flex flex-col gap-3">
         <h2 className="font-sans text-lg font-semibold text-fg-primary">
-          Mapa de unidades
+          {t("course.unitMap")}
         </h2>
         <div className="flex flex-col gap-2">
           {course.meta.units.map((unit) => (

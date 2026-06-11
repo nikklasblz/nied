@@ -6,6 +6,7 @@
 import { cn } from "@/lib/utils";
 import * as Lucide from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
+import { t } from "@/lib/i18n";
 
 export type AchievementCardProps = {
   icon: string; // nombre Lucide ej "Flame"
@@ -81,7 +82,7 @@ export function AchievementCard({
           </h4>
           {unlocked && (
             <span className="inline-flex h-4 items-center rounded-full bg-accent-primary px-1.5 font-mono text-[9px] uppercase tracking-wider text-primary-foreground">
-              Obtenido
+              {t("achievements.obtained")}
             </span>
           )}
         </div>
@@ -95,7 +96,7 @@ export function AchievementCard({
         </p>
         {unlocked && unlockedAt && (
           <p className="mt-1.5 font-mono text-[10px] uppercase tracking-wider text-fg-muted">
-            Desbloqueado · {formatDate(unlockedAt)}
+            {t("achievements.unlockedAt")} · {formatDate(unlockedAt)}
           </p>
         )}
       </div>

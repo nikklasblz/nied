@@ -2,8 +2,11 @@
  * Niveles globales (10) y por track (5) para niED.
  *
  * Los thresholds son XP acumulados — el usuario nunca pierde XP, así que el
- * nivel solo crece. Nombres alineados con el diseño §10 (Aprendiz → Maestría plena).
+ * nivel solo crece. Nombres alineados con el diseño §10 (Aprendiz → Maestría
+ * plena), resueltos vía i18n (claves level.1..level.10).
  */
+
+import { t } from "../i18n";
 
 export type GlobalLevel = {
   level: number;
@@ -15,18 +18,10 @@ export type GlobalLevel = {
 
 const GLOBAL_THRESHOLDS = [0, 500, 1500, 3500, 7000, 12000, 20000, 32000, 50000, 75000];
 
-const GLOBAL_NAMES = [
-  "Aprendiz",
-  "Iniciado",
-  "Constante",
-  "Practicante",
-  "Aplicado",
-  "Especializado",
-  "Avanzado",
-  "Experto",
-  "Maestro",
-  "Maestría plena",
-];
+/** Nombre del nivel global n (1..10), resuelto server-side vía i18n. */
+export function levelName(n: number): string {
+  return t(`level.${n}`);
+}
 
 function levelInfo(
   totalXp: number,
@@ -46,10 +41,10 @@ export function getGlobalLevel(totalXp: number): GlobalLevel {
   const info = levelInfo(totalXp, GLOBAL_THRESHOLDS);
   return {
     ...info,
-    name: GLOBAL_NAMES[info.level - 1],
+    name: levelName(info.level),
   };
 }
 
 export const GAMIFICATION_LEVELS = {
-  global: { thresholds: GLOBAL_THRESHOLDS, names: GLOBAL_NAMES },
+  global: { thresholds: GLOBAL_THRESHOLDS },
 } as const;

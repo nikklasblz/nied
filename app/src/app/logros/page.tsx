@@ -3,9 +3,14 @@
  */
 
 import { getDb } from "@/lib/db/client";
-import { getAchievementsState } from "@/lib/gamification/achievements";
+import {
+  achievementDesc,
+  achievementTitle,
+  getAchievementsState,
+} from "@/lib/gamification/achievements";
 import { listUnlocked } from "@/lib/db/queries/achievements";
 import { AchievementCard } from "@/components/achievement-card";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -24,10 +29,10 @@ export default function LogrosPage() {
     <div className="mx-auto flex w-full max-w-dashboard flex-col gap-6 px-4 py-8 md:px-6">
       <header className="flex flex-col gap-2">
         <h1 className="font-serif text-3xl font-semibold text-fg-primary">
-          Logros
+          {t("nav.achievements")}
         </h1>
         <p className="text-sm text-fg-secondary">
-          {unlockedCount} de {total} desbloqueados
+          {unlockedCount} {t("unit.of")} {total} {t("achievements.unlocked")}
         </p>
         <div className="relative mt-1 h-2 max-w-md overflow-hidden rounded-full bg-bg-overlay">
           <div
@@ -41,8 +46,8 @@ export default function LogrosPage() {
         {list.map(({ achievement, unlocked }) => (
           <AchievementCard
             key={achievement.id}
-            titulo={achievement.titulo}
-            descripcion={achievement.descripcion}
+            titulo={achievementTitle(achievement.id)}
+            descripcion={achievementDesc(achievement.id)}
             icon={achievement.icon}
             unlocked={unlocked}
             unlockedAt={unlockedAtById.get(achievement.id) ?? null}

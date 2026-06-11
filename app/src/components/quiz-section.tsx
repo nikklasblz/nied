@@ -15,11 +15,24 @@ import { CheckCircle2, XCircle, HelpCircle, Zap } from "@/components/icons";
 import { submitQuizAnswer } from "@/app/actions/quiz";
 import type { Quiz } from "@/lib/content/quiz-loader";
 
+export type QuizLabels = {
+  /** aria-label de la sección. */
+  aria: string;
+  title: string;
+  completed: string;
+  check: string;
+  checking: string;
+  done: string;
+  correctAnswer: string;
+  xpPerQuestion: string;
+};
+
 interface QuizSectionProps {
   courseId: string;
   unitId: string;
   quiz: Quiz;
   previousAttempts: { questionIndex: number; correct: boolean }[];
+  labels: QuizLabels;
 }
 
 interface QuestionState {
@@ -30,7 +43,7 @@ interface QuestionState {
   xpAwarded: number;
 }
 
-function XpGainToast({ xp }: { xp: number }) {
+function XpGainToast({ xp, label }: { xp: number; label: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.85, y: 10 }}
@@ -45,7 +58,7 @@ function XpGainToast({ xp }: { xp: number }) {
           +{xp} XP
         </span>
         <span className="font-mono text-[10px] uppercase tracking-wider text-fg-secondary">
-          respuesta correcta
+          {label}
         </span>
       </div>
     </motion.div>
@@ -64,6 +77,7 @@ function QuizQuestion({
   unitId,
   xpPerQuestion,
   initialState,
+  labels,
 }: {
   question: string;
   options: string[];
@@ -76,6 +90,7 @@ function QuizQuestion({
   unitId: string;
   xpPerQuestion: number;
   initialState: QuestionState;
+  labels: QuizLabels;
 }) {
   const [state, setState] = useState<QuestionState>(initialState);
   const [isPending, startTransition] = useTransition();
@@ -106,7 +121,9 @@ function QuizQuestion({
 
       if (result.correct && result.xpAwarded > 0) {
         toast.custom(
-          () => <XpGainToast xp={result.xpAwarded} />,
+          () => (
+            <XpGainToast xp={result.xpAwarded} label={labels.correctAnswer} />
+          ),
           { duration: 2800 }
         );
       }
@@ -248,7 +265,7 @@ function QuizQuestion({
             )}
             style={{ transition: "all 150ms cubic-bezier(0.23, 1, 0.32, 1)" }}
           >
-            {isPending ? "Verificando..." : "Verificar respuesta"}
+            {isPending ? labels.checking : labels.check}
           </button>
         </div>
       )}
@@ -261,6 +278,7 @@ export function QuizSection({
   unitId,
   quiz,
   previousAttempts,
+  labels,
 }: QuizSectionProps) {
   // Construye el mapa de intentos anteriores por questionIndex
   const attemptMap = new Map<number, boolean>();
@@ -294,18 +312,18 @@ export function QuizSection({
 
   return (
     <section
-      aria-label="Evaluación de la unidad"
+      aria-label={labels.aria}
       className="rounded-xl border border-border bg-card/60 px-5 py-5"
     >
       {/* Encabezado del quiz */}
       <div className="mb-5 flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h2 className="font-mono text-[11px] uppercase tracking-[0.18em] text-fg-muted">
-            Evaluación
+            {labels.title}
           </h2>
           {totalCompleted > 0 && (
             <span className="font-mono text-[11px] text-fg-secondary tabular-nums">
-              {totalCompleted}/{totalQuestions} completadas
+              {totalCompleted}/{totalQuestions} {labels.completed}
             </span>
           )}
         </div>
@@ -315,7 +333,9 @@ export function QuizSection({
         <p className="text-sm text-fg-secondary">{quiz.instructions}</p>
         <div className="flex items-center gap-1.5 font-mono text-xs text-accent-primary">
           <Zap className="size-3" strokeWidth={2} aria-hidden />
-          <span>{quiz.xp_per_question} XP por respuesta correcta</span>
+          <span>
+            {quiz.xp_per_question} {labels.xpPerQuestion}
+          </span>
         </div>
       </div>
 
@@ -349,6 +369,7 @@ export function QuizSection({
             unitId={unitId}
             xpPerQuestion={quiz.xp_per_question}
             initialState={buildInitialState(idx)}
+            labels={labels}
           />
         ))}
       </div>
@@ -364,7 +385,7 @@ export function QuizSection({
           >
             <CheckCircle2 className="size-4 shrink-0 text-success" strokeWidth={2} aria-hidden />
             <p className="text-sm font-medium text-success">
-              Evaluacion completada. Buen trabajo.
+              {labels.done}
             </p>
           </motion.div>
         )}

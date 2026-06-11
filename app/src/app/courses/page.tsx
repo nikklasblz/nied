@@ -11,6 +11,7 @@ import { getAllProgress } from "@/lib/db/queries/progress";
 import { getTotalXpByCourse } from "@/lib/db/queries/xp";
 import { unitXp } from "@/lib/gamification/xp";
 import { CourseCard } from "@/components/course-card";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -34,10 +35,10 @@ export default function CoursesPage() {
     <div className="mx-auto flex w-full max-w-dashboard flex-col gap-6 px-4 py-8 md:px-6">
       <header className="flex flex-col gap-2">
         <h1 className="font-serif text-3xl font-semibold text-fg-primary">
-          Cursos
+          {t("nav.courses")}
         </h1>
         <p className="text-sm text-fg-secondary">
-          {courses.length} cursos · {totalUnits} unidades totales
+          {courses.length} {t("courses.count")} · {totalUnits} {t("courses.totalUnits")}
         </p>
       </header>
 

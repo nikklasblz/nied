@@ -1,11 +1,12 @@
 /**
- * CourseCard — usado en /courses (grid).
+ * CourseCard — usado en /courses (grid). Server component: usa t() directo.
  */
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { CourseMeta } from "@nied/schema";
 import type { CourseEntry } from "@/lib/content/types";
 import { Clock, Zap, Target } from "@/components/icons";
+import { t } from "@/lib/i18n";
 
 export type CourseLevel = CourseMeta["level"];
 
@@ -22,11 +23,10 @@ export const levelStyle: Record<CourseLevel, string> = {
   advanced: "border-rose-500/30 bg-rose-500/10 text-rose-400",
 };
 
-export const levelLabel: Record<CourseLevel, string> = {
-  intro: "Introductorio",
-  intermediate: "Intermedio",
-  advanced: "Avanzado",
-};
+/** Label traducido del nivel de un curso (server-side). */
+export function levelLabel(level: CourseLevel): string {
+  return t(`course.level.${level}`);
+}
 
 export function CourseCard({ data }: { data: CourseCardData }) {
   const { course, completedUnits, totalXp, earnedXp } = data;
@@ -55,7 +55,7 @@ export function CourseCard({ data }: { data: CourseCardData }) {
             levelStyle[course.meta.level]
           )}
         >
-          {levelLabel[course.meta.level]}
+          {levelLabel(course.meta.level)}
         </span>
       </div>
 
@@ -69,9 +69,12 @@ export function CourseCard({ data }: { data: CourseCardData }) {
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between text-xs text-fg-secondary">
           <span>
-            {completedUnits} / {totalUnits} unidades
+            {completedUnits} / {totalUnits} {t("course.units")}
             {writtenUnits < totalUnits && (
-              <span className="text-fg-muted"> · {writtenUnits} disponibles</span>
+              <span className="text-fg-muted">
+                {" "}
+                · {writtenUnits} {t("course.available")}
+              </span>
             )}
           </span>
           <span className="font-mono tabular-nums">{pct}%</span>
@@ -86,8 +89,8 @@ export function CourseCard({ data }: { data: CourseCardData }) {
 
       {/* stats footer */}
       <div className="grid grid-cols-3 gap-2 border-t border-border pt-3 text-xs">
-        <Stat icon={Target} label="Unidades" value={`${totalUnits}`} />
-        <Stat icon={Clock} label="Horas" value={`${course.totalHours}`} />
+        <Stat icon={Target} label={t("course.units")} value={`${totalUnits}`} />
+        <Stat icon={Clock} label={t("course.hours")} value={`${course.totalHours}`} />
         <Stat icon={Zap} label="XP" value={`${earnedXp}/${totalXp}`} />
       </div>
     </Link>

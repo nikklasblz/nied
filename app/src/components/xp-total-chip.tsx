@@ -6,6 +6,7 @@ import { getDb } from "@/lib/db/client";
 import { getTotalXp } from "@/lib/db/queries/xp";
 import { getGlobalLevel } from "@/lib/gamification/levels";
 import { Zap } from "@/components/icons";
+import { t } from "@/lib/i18n";
 
 export function XPTotalChip() {
   const db = getDb();
@@ -28,7 +29,8 @@ export function XPTotalChip() {
         </span>
       </div>
       <div className="text-xs text-fg-secondary">
-        Nivel <span className="font-mono text-fg-primary">{level.level}</span> · {level.name}
+        {t("dashboard.level")}{" "}
+        <span className="font-mono text-fg-primary">{level.level}</span> · {level.name}
       </div>
     </div>
   );

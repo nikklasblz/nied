@@ -1,10 +1,11 @@
 /**
- * UnitCard — usado en el sílabo /courses/[id].
+ * UnitCard — usado en el sílabo /courses/[id]. Server component: usa t() directo.
  */
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { UnitMeta } from "@nied/schema";
 import { Clock, Zap, ChevronRight, CheckCircle2, Circle, CircleDot } from "@/components/icons";
+import { t } from "@/lib/i18n";
 
 export type UnitStatus = "pendiente" | "en-progreso" | "completa";
 
@@ -14,12 +15,6 @@ const statusStyle: Record<UnitStatus, string> = {
     "border-accent-secondary/40 bg-accent-secondary/10 text-accent-secondary",
   completa:
     "border-success/40 bg-success/10 text-success",
-};
-
-const statusLabel: Record<UnitStatus, string> = {
-  pendiente: "Pendiente",
-  "en-progreso": "En progreso",
-  completa: "Completa",
 };
 
 const statusIcon: Record<UnitStatus, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
@@ -71,7 +66,7 @@ export function UnitCard({
           </span>
           {unit.depends_on.length > 0 && (
             <span className="font-mono text-[10px] uppercase tracking-wider text-fg-muted">
-              Requiere: {unit.depends_on.join(", ")}
+              {t("unit.requires")} {unit.depends_on.join(", ")}
             </span>
           )}
         </div>
@@ -89,12 +84,12 @@ export function UnitCard({
           )}
         >
           <Icon className="size-3" strokeWidth={1.8} aria-hidden />
-          {statusLabel[status]}
+          {t(`unit.status.${status}`)}
         </div>
       ) : (
         <div className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-bg-overlay/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-fg-muted">
           <Circle className="size-3" strokeWidth={1.8} aria-hidden />
-          Pendiente de generar
+          {t("course.pendingGeneration")}
         </div>
       )}
       <ChevronRight

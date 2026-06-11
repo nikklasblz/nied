@@ -17,7 +17,19 @@ import { ChevronDown } from "@/components/icons";
 
 const TOC_STORAGE_KEY = "nied-toc";
 
-export function UnitToc({ contentSelector = "#unit-content" }: { contentSelector?: string }) {
+export type UnitTocLabels = {
+  inThisUnit: string;
+  /** aria-label del nav. */
+  toc: string;
+};
+
+export function UnitToc({
+  labels,
+  contentSelector = "#unit-content",
+}: {
+  labels: UnitTocLabels;
+  contentSelector?: string;
+}) {
   const [headings, setHeadings] = useState<{ id: string; text: string; level: number }[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [tocOpen, setTocOpen] = useState(true);
@@ -81,13 +93,13 @@ export function UnitToc({ contentSelector = "#unit-content" }: { contentSelector
   if (headings.length === 0) return null;
 
   return (
-    <nav className="text-sm" aria-label="Tabla de contenidos">
+    <nav className="text-sm" aria-label={labels.toc}>
       <button
         onClick={toggleToc}
         className="mb-2 flex w-full items-center justify-between text-fg-muted hover:text-fg-secondary transition-colors"
       >
         <span className="font-mono text-[10px] uppercase tracking-[0.18em]">
-          En esta unidad
+          {labels.inThisUnit}
         </span>
         <ChevronDown
           className={cn(

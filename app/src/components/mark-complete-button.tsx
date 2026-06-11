@@ -20,16 +20,29 @@ import { Check, Trophy, Zap } from "@/components/icons";
 
 type Status = "pendiente" | "en-progreso" | "completa";
 
+export type MarkCompleteLabels = {
+  markComplete: string;
+  completed: string;
+  unmark: string;
+  unmarked: string;
+  unmarkedDesc: string;
+  markFailed: string;
+  multiplier: string;
+  achievementUnlocked: string;
+};
+
 export function MarkCompleteButton({
   courseId,
   unitId,
   status,
   completedAt,
+  labels,
 }: {
   courseId: string;
   unitId: string;
   status: Status;
   completedAt: string | null;
+  labels: MarkCompleteLabels;
 }) {
   const [pending, startTransition] = useTransition();
 
@@ -39,7 +52,7 @@ export function MarkCompleteButton({
         <div className="flex items-center gap-2 text-success">
           <Check className="size-5" strokeWidth={2} aria-hidden />
           <span className="font-sans text-sm font-medium">
-            Completada
+            {labels.completed}
             {completedAt ? ` · ${formatCompletedAt(completedAt)}` : ""}
           </span>
         </div>
@@ -51,15 +64,14 @@ export function MarkCompleteButton({
             startTransition(async () => {
               const r = await unmarkUnitComplete(courseId, unitId);
               if (r.ok) {
-                toast.message("Unidad marcada como pendiente", {
-                  description:
-                    "El XP ya otorgado se conserva en el historial.",
+                toast.message(labels.unmarked, {
+                  description: labels.unmarkedDesc,
                 });
               }
             })
           }
         >
-          Desmarcar
+          {labels.unmark}
         </Button>
       </div>
     );
@@ -74,14 +86,20 @@ export function MarkCompleteButton({
         startTransition(async () => {
           const result = await markUnitComplete(courseId, unitId);
           if (!result.ok) {
-            toast.error("No se pudo marcar la unidad", {
+            toast.error(labels.markFailed, {
               description: result.error,
             });
             return;
           }
           // XP gain toast
           toast.custom(
-            () => <XpGainToast xp={result.xpAwarded} multiplier={result.multiplier} />,
+            () => (
+              <XpGainToast
+                xp={result.xpAwarded}
+                multiplier={result.multiplier}
+                multiplierLabel={labels.multiplier}
+              />
+            ),
             { duration: 2800 }
           );
           // Achievement toasts (encadenados con leve delay).
@@ -93,6 +111,7 @@ export function MarkCompleteButton({
                     titulo={a.titulo}
                     descripcion={a.descripcion}
                     iconName={a.icon}
+                    unlockedLabel={labels.achievementUnlocked}
                   />
                 ),
                 { duration: 4200 }
@@ -104,7 +123,7 @@ export function MarkCompleteButton({
       className="w-full sm:w-auto"
     >
       <Check className="size-4" strokeWidth={2} aria-hidden />
-      Marcar como completa
+      {labels.markComplete}
     </Button>
   );
 }
@@ -122,7 +141,15 @@ function formatCompletedAt(iso: string): string {
   });
 }
 
-function XpGainToast({ xp, multiplier }: { xp: number; multiplier: number }) {
+function XpGainToast({
+  xp,
+  multiplier,
+  multiplierLabel,
+}: {
+  xp: number;
+  multiplier: number;
+  multiplierLabel: string;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.85, y: 10 }}
@@ -142,7 +169,7 @@ function XpGainToast({ xp, multiplier }: { xp: number; multiplier: number }) {
         </span>
         {multiplier > 1.0 && (
           <span className="font-mono text-[10px] uppercase tracking-wider text-fg-secondary">
-            multiplicador ×{multiplier}
+            {multiplierLabel} ×{multiplier}
           </span>
         )}
       </div>
@@ -172,10 +199,12 @@ function AchievementToast({
   titulo,
   descripcion,
   iconName,
+  unlockedLabel,
 }: {
   titulo: string;
   descripcion: string;
   iconName: string;
+  unlockedLabel: string;
 }) {
   return (
     <motion.div
@@ -196,7 +225,7 @@ function AchievementToast({
             aria-hidden
           />
           <span className="font-mono text-[10px] uppercase tracking-wider text-accent-primary">
-            Logro desbloqueado
+            {unlockedLabel}
           </span>
         </div>
         <span className="font-sans text-sm font-semibold text-fg-primary">

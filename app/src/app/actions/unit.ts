@@ -22,9 +22,11 @@ import {
 } from "@/lib/db/queries/progress";
 import { insertXpEvent } from "@/lib/db/queries/xp";
 import {
+  achievementDesc,
+  achievementTitle,
   evaluateAndUnlock,
-  type Achievement,
 } from "@/lib/gamification/achievements";
+import { t } from "@/lib/i18n";
 import { recordActivity, toIsoDate } from "@/lib/gamification/streaks";
 import { applyMultiplier, XP_RULES } from "@/lib/gamification/xp";
 
@@ -55,7 +57,12 @@ export type MarkUnitCompleteResult = {
     longest: number;
     used_freeze: boolean;
   };
-  newAchievements: Pick<Achievement, "id" | "titulo" | "descripcion" | "icon">[];
+  newAchievements: {
+    id: string;
+    titulo: string;
+    descripcion: string;
+    icon: string;
+  }[];
   alreadyComplete?: boolean;
 };
 
@@ -66,12 +73,12 @@ export async function markUnitComplete(
   const course = getCourse(courseId);
   const unit = course?.meta.units.find((u) => u.id === unitId);
   if (!course || !unit) {
-    return { ok: false, error: `Unidad no encontrada: ${courseId}/${unitId}` };
+    return { ok: false, error: `${t("action.unitNotFound")}: ${courseId}/${unitId}` };
   }
 
   // Guard: solo unidades con contenido escrito pueden completarse
   if (!course.writtenUnits.includes(unitId)) {
-    return { ok: false, error: `Unidad sin contenido: ${courseId}/${unitId}` };
+    return { ok: false, error: `${t("action.unitNoContent")}: ${courseId}/${unitId}` };
   }
 
   const db = getDb();
@@ -133,8 +140,8 @@ export async function markUnitComplete(
     },
     newAchievements: txResult.newlyUnlocked.map((a) => ({
       id: a.id,
-      titulo: a.titulo,
-      descripcion: a.descripcion,
+      titulo: achievementTitle(a.id),
+      descripcion: achievementDesc(a.id),
       icon: a.icon,
     })),
   };

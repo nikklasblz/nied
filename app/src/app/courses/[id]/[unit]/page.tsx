@@ -23,6 +23,7 @@ import { MermaidRenderer } from "@/components/mermaid-renderer";
 import { levelLabel, levelStyle } from "@/components/course-card";
 import { ChevronLeft, ChevronRight, Clock, Zap } from "@/components/icons";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -61,11 +62,11 @@ export default async function UnitPage({
 
       {/* Breadcrumb */}
       <nav
-        aria-label="Breadcrumb"
+        aria-label={t("common.breadcrumb")}
         className="flex items-center gap-1 text-xs text-fg-secondary"
       >
         <Link href="/courses" className="hover:text-fg-primary">
-          Cursos
+          {t("nav.courses")}
         </Link>
         <span className="text-fg-muted">/</span>
         <Link href={`/courses/${id}`} className="hover:text-fg-primary">
@@ -80,7 +81,7 @@ export default async function UnitPage({
         className="inline-flex w-fit items-center gap-1 text-xs text-fg-secondary hover:text-fg-primary"
       >
         <ChevronLeft className="size-3.5" strokeWidth={1.6} aria-hidden />
-        Volver al sílabo
+        {t("unit.backToSyllabus")}
       </Link>
 
       {/* Header */}
@@ -95,7 +96,7 @@ export default async function UnitPage({
               levelStyle[course.meta.level]
             )}
           >
-            {levelLabel[course.meta.level]}
+            {levelLabel(course.meta.level)}
           </span>
           <span className="inline-flex items-center gap-1 font-mono text-xs text-fg-secondary">
             <Clock className="size-3" strokeWidth={1.6} aria-hidden />
@@ -124,9 +125,9 @@ export default async function UnitPage({
 
           {/* Mapa de lecciones */}
           {view.sections.length > 0 && (
-            <section aria-label="Lecciones de la unidad">
+            <section aria-label={t("unit.lessonsAria")}>
               <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-fg-muted">
-                Lecciones ({view.sections.length})
+                {t("unit.lessons")} ({view.sections.length})
               </h2>
               <ol className="flex flex-col gap-3">
                 {view.sections.map((sec) => (
@@ -164,6 +165,16 @@ export default async function UnitPage({
               unitId={unitId}
               quiz={quiz}
               previousAttempts={quizAttempts}
+              labels={{
+                aria: t("quiz.aria"),
+                title: t("quiz.title"),
+                completed: t("quiz.completed"),
+                check: t("quiz.check"),
+                checking: t("quiz.checking"),
+                done: t("quiz.done"),
+                correctAnswer: t("quiz.correctAnswer"),
+                xpPerQuestion: t("quiz.xpPerQuestion"),
+              }}
             />
           )}
 
@@ -174,21 +185,30 @@ export default async function UnitPage({
               unitId={unitId}
               status={status}
               completedAt={completedAt}
+              labels={{
+                markComplete: t("unit.markComplete"),
+                completed: t("unit.completed"),
+                unmark: t("unit.unmark"),
+                unmarked: t("unit.unmarked"),
+                unmarkedDesc: t("unit.unmarkedDesc"),
+                markFailed: t("unit.markFailed"),
+                multiplier: t("unit.multiplier"),
+                achievementUnlocked: t("achievements.toast"),
+              }}
             />
           </div>
         </>
       ) : (
         /* Unidad declarada en course.yaml pero sin units/<id>.md todavía */
         <section
-          aria-label="Unidad pendiente de generar"
+          aria-label={t("unit.pendingAria")}
           className="flex flex-col gap-3 rounded-xl border border-dashed border-border bg-card/60 px-6 py-10 text-center"
         >
           <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-fg-muted">
-            Pendiente de generar
+            {t("course.pendingGeneration")}
           </span>
           <p className="text-sm text-fg-secondary">
-            El contenido de esta unidad aún no ha sido escrito. Sus objetivos
-            declarados son:
+            {t("unit.notWritten")}
           </p>
           <ul className="mx-auto max-w-prose-nied list-inside list-disc text-left text-sm text-fg-secondary">
             {unit.objectives.map((o, i) => (

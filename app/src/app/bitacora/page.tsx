@@ -5,6 +5,7 @@
  */
 
 import { Pen, Lock } from "@/components/icons";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -16,16 +17,14 @@ export default function BitacoraPage() {
           <Pen className="size-6" strokeWidth={1.6} aria-hidden />
         </div>
         <h1 className="font-serif text-2xl font-semibold text-fg-primary">
-          Bitácora
+          {t("nav.journal")}
         </h1>
         <p className="font-serif text-base leading-7 text-fg-secondary">
-          La bitácora será un registro cronológico de tus sesiones de estudio,
-          notas y reflexiones. Llega en v0.5 con editor markdown, anclajes a
-          unidades y entradas con XP.
+          {t("journal.placeholder")}
         </p>
         <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg-overlay/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-fg-muted">
           <Lock className="size-3" strokeWidth={1.8} aria-hidden />
-          Disponible en v0.5
+          {t("common.availableV05")}
         </span>
       </div>
     </div>

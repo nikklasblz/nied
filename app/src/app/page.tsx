@@ -9,7 +9,12 @@ import Link from "next/link";
 import { getDb } from "@/lib/db/client";
 import { getDashboardData } from "@/lib/db/queries/dashboard";
 import { listCourses } from "@/lib/content/courses";
-import { ACHIEVEMENTS } from "@/lib/gamification/achievements";
+import {
+  ACHIEVEMENTS,
+  achievementDesc,
+  achievementTitle,
+} from "@/lib/gamification/achievements";
+import { t } from "@/lib/i18n";
 import { StatCard } from "@/components/stat-card";
 import { XpHeatmap } from "@/components/xp-heatmap";
 import { AchievementCard } from "@/components/achievement-card";
@@ -51,7 +56,7 @@ function computeNextStep(
         unitId: u.id,
         unitTitle: u.title,
         courseTitle: c.meta.title,
-        rationale: "Continúa donde dejaste",
+        rationale: t("dashboard.continueWhereLeft"),
       };
     }
   }
@@ -74,8 +79,8 @@ function computeNextStep(
         courseTitle: c.meta.title,
         rationale:
           progress.length === 0
-            ? "Comienza con la primera unidad disponible"
-            : "Próxima unidad disponible",
+            ? t("dashboard.startFirst")
+            : t("dashboard.nextAvailable"),
       };
     }
   }
@@ -130,8 +135,8 @@ export default async function HomePage() {
     if (!meta) continue;
     recentCards.push({
       id: meta.id,
-      titulo: meta.titulo,
-      descripcion: meta.descripcion,
+      titulo: achievementTitle(meta.id),
+      descripcion: achievementDesc(meta.id),
       icon: meta.icon,
       unlocked: true,
       unlockedAt: r.unlocked_at,
@@ -142,8 +147,8 @@ export default async function HomePage() {
     if (allUnlockedIds.has(a.id)) continue;
     recentCards.push({
       id: a.id,
-      titulo: a.titulo,
-      descripcion: a.descripcion,
+      titulo: achievementTitle(a.id),
+      descripcion: achievementDesc(a.id),
       icon: a.icon,
       unlocked: false,
       unlockedAt: null,
@@ -154,14 +159,14 @@ export default async function HomePage() {
     <div className="mx-auto flex w-full max-w-dashboard flex-col gap-8 px-4 py-8 md:px-6">
       {/* Hero — próximo paso */}
       <section
-        aria-label="Próximo paso"
+        aria-label={t("dashboard.nextStep")}
         className="relative overflow-hidden rounded-2xl bg-card p-6 ring-1 ring-accent-primary/25 md:p-8"
       >
         <div className="absolute right-0 top-0 size-64 -translate-y-1/3 translate-x-1/4 rounded-full bg-accent-primary/8 blur-3xl" />
         <div className="relative flex flex-col gap-4">
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-accent-primary">
             <Sparkles className="size-3.5" strokeWidth={2} aria-hidden />
-            Próximo paso
+            {t("dashboard.nextStep")}
           </div>
           {next ? (
             <>
@@ -183,7 +188,7 @@ export default async function HomePage() {
                     />
                   }
                 >
-                  Continuar
+                  {t("dashboard.continue")}
                   <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
                 </Button>
                 <Button
@@ -191,18 +196,17 @@ export default async function HomePage() {
                   size="lg"
                   render={<Link href={`/courses/${next.courseId}`} />}
                 >
-                  Ver sílabo del curso
+                  {t("dashboard.viewSyllabus")}
                 </Button>
               </div>
             </>
           ) : (
             <div>
               <h1 className="font-serif text-2xl font-semibold text-fg-primary md:text-3xl">
-                Todo al día. Buen trabajo.
+                {t("dashboard.allDone")}
               </h1>
               <p className="mt-1 text-sm text-fg-secondary">
-                No hay unidades pendientes — explora los cursos o registra una
-                entrada en tu bitácora.
+                {t("dashboard.allDoneDesc")}
               </p>
             </div>
           )}
@@ -211,11 +215,11 @@ export default async function HomePage() {
 
       {/* Stat cards */}
       <section
-        aria-label="Estadísticas"
+        aria-label={t("dashboard.statsAria")}
         className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
       >
         <StatCard
-          label="XP total"
+          label={t("dashboard.totalXp")}
           value={data.totalXp.toLocaleString("es-PE")}
           unit="XP"
           icon={Zap}
@@ -223,16 +227,17 @@ export default async function HomePage() {
           accent="primary"
           description={
             <span>
-              Nivel <span className="font-mono text-fg-primary">{data.level.level}</span> · {data.level.name}
+              {t("dashboard.level")}{" "}
+              <span className="font-mono text-fg-primary">{data.level.level}</span> · {data.level.name}
             </span>
           }
           footer={
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-fg-muted">
-                <span>al siguiente</span>
+                <span>{t("dashboard.toNext")}</span>
                 <span>
                   {data.level.xpToNext === null
-                    ? "máximo"
+                    ? t("dashboard.max")
                     : `${(data.level.xpToNext - data.totalXp).toLocaleString("es-PE")} XP`}
                 </span>
               </div>
@@ -246,21 +251,21 @@ export default async function HomePage() {
           }
         />
         <StatCard
-          label="Racha"
+          label={t("dashboard.streak")}
           value={data.streak.current}
-          unit={data.streak.current === 1 ? "día" : "días"}
+          unit={data.streak.current === 1 ? t("dashboard.day") : t("dashboard.days")}
           icon={Flame}
           iconColor={streakInDanger ? "warning" : "secondary"}
           accent={streakInDanger ? "warning" : "secondary"}
           warning={streakInDanger}
           description={
             <span>
-              Multiplicador{" "}
+              {t("dashboard.multiplier")}{" "}
               <span className="font-mono text-fg-primary">
                 ×{data.streak.multiplier}
               </span>
               {" · "}
-              récord{" "}
+              {t("dashboard.longest")}{" "}
               <span className="font-mono text-fg-primary">
                 {data.streak.longest}
               </span>
@@ -269,13 +274,13 @@ export default async function HomePage() {
           footer={
             streakInDanger ? (
               <span className="text-xs text-warning">
-                Activa hoy para mantener tu racha.
+                {t("dashboard.streakDanger")}
               </span>
             ) : undefined
           }
         />
         <StatCard
-          label="Nivel"
+          label={t("dashboard.level")}
           value={`N${data.level.level}`}
           icon={Trophy}
           iconColor="primary"
@@ -288,7 +293,7 @@ export default async function HomePage() {
           footer={
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-fg-muted">
-                <span>progreso</span>
+                <span>{t("dashboard.progress")}</span>
                 <span>{levelPct}%</span>
               </div>
               <div className="relative h-1.5 overflow-hidden rounded-full bg-bg-overlay">
@@ -304,10 +309,21 @@ export default async function HomePage() {
 
       {/* Heatmap */}
       <section
-        aria-label="Heatmap de actividad"
+        aria-label={t("dashboard.heatmapAria")}
         className="rounded-xl bg-card p-5 ring-1 ring-foreground/10 shadow-card"
       >
-        <XpHeatmap data={data.heatmap} />
+        <XpHeatmap
+          data={data.heatmap}
+          labels={{
+            title: t("heatmap.title"),
+            activeDays: t("heatmap.activeDays"),
+            less: t("heatmap.less"),
+            more: t("heatmap.more"),
+            weekdays: t("heatmap.weekdays"),
+            months: t("heatmap.months"),
+            cellAria: t("heatmap.cellAria"),
+          }}
+        />
       </section>
 
       {/* Quests + Logros recientes */}
@@ -316,28 +332,27 @@ export default async function HomePage() {
           <div className="flex items-center gap-2">
             <Lock className="size-4 text-fg-muted" strokeWidth={1.8} aria-hidden />
             <h3 className="font-sans text-sm font-semibold text-fg-primary">
-              Quests semanales
+              {t("dashboard.weeklyQuests")}
             </h3>
           </div>
           <p className="mt-2 text-xs text-fg-secondary">
-            Disponibles en v0.5. Las quests dirigirán bloques cortos de estudio
-            con bonus de XP y badges temporales.
+            {t("dashboard.questsDesc")}
           </p>
           <span className="mt-3 inline-flex items-center rounded-full border border-border bg-bg-overlay/50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-fg-muted">
-            Próximamente
+            {t("common.comingSoon")}
           </span>
         </div>
 
         <div className="lg:col-span-2">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="font-sans text-sm font-semibold text-fg-primary">
-              Logros recientes
+              {t("dashboard.recentAchievements")}
             </h3>
             <Link
               href="/logros"
               className="font-mono text-[10px] uppercase tracking-wider text-fg-secondary hover:text-fg-primary"
             >
-              ver todos →
+              {t("dashboard.viewAll")}
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
