@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  schema:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: schema
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun test
+      - name: Typecheck
+        run: bunx tsc --noEmit
+      - name: Validate fixture course
+        run: bun run validate test/fixtures/valid-course
+      - name: JSON Schema is up to date
+        run: |
+          bun run gen:jsonschema
+          git diff --exit-code json/
+
+  docs-parity:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: README pair check
+        run: |
+          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)
+          if echo "$CHANGED" | grep -q '^README\.md$'; then
+            echo "$CHANGED" | grep -q '^README\.es\.md$' \
+              || { echo "README.md changed without README.es.md"; exit 1; }
+          fi
+          if echo "$CHANGED" | grep -q '^README\.es\.md$'; then
+            echo "$CHANGED" | grep -q '^README\.md$' \
+              || { echo "README.es.md changed without README.md"; exit 1; }
+          fi
