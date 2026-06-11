@@ -1,0 +1,113 @@
+schema_version: 1
+slug: estadistica-aplicada-al-analisis-de-datos
+title: Estadística aplicada al análisis de datos
+language: es
+level: intro
+description: >-
+  Curso introductorio universitario de estadística aplicada. Al finalizar,
+  el estudiante podrá analizar datasets reales con rigor: describir y
+  visualizar datos, razonar con probabilidad, construir intervalos de
+  confianza, ejecutar pruebas de hipótesis (t, z, chi-cuadrado), ajustar
+  regresiones lineales simples e integrar todo en un flujo de trabajo
+  reproducible de análisis de datos.
+units:
+  - id: u1
+    title: Datos, tipos y recolección
+    objectives:
+      - Clasificar variables como cualitativas/cuantitativas y nominales/ordinales/discretas/continuas en datasets reales
+      - Distinguir estudios observacionales de experimentos y explicar qué conclusiones permite cada uno
+      - Identificar diseños de muestreo (aleatorio simple, estratificado, por conglomerados) y fuentes de sesgo en una recolección de datos
+    hours: 6
+    depends_on: []
+  - id: u2
+    title: Estadística descriptiva univariada
+    objectives:
+      - Calcular e interpretar medidas de posición (media, mediana, moda, percentiles) para una variable
+      - Calcular e interpretar medidas de dispersión (rango, varianza, desviación estándar, IQR)
+      - Elegir el resumen apropiado (media vs. mediana, σ vs. IQR) según la forma y los atípicos de la distribución
+      - Detectar valores atípicos con la regla de 1.5·IQR y el z-score
+    hours: 8
+    depends_on: [u1]
+  - id: u3
+    title: Visualización de datos
+    objectives:
+      - Construir e interpretar histogramas, boxplots, gráficos de barras y diagramas de dispersión
+      - Seleccionar el gráfico adecuado según el tipo de variable y la pregunta de análisis
+      - Detectar visualizaciones engañosas (ejes truncados, áreas desproporcionadas) y corregirlas
+    hours: 6
+    depends_on: [u2]
+  - id: u4
+    title: Fundamentos de probabilidad
+    objectives:
+      - Calcular probabilidades usando las reglas de adición, multiplicación y complemento
+      - Calcular probabilidades condicionales y evaluar independencia entre eventos
+      - Aplicar el teorema de Bayes a problemas de diagnóstico y clasificación
+    hours: 8
+    depends_on: [u1]
+  - id: u5
+    title: Variables aleatorias y distribuciones
+    objectives:
+      - Calcular esperanza y varianza de variables aleatorias discretas
+      - Modelar conteos y proporciones con las distribuciones Binomial y Poisson
+      - Calcular probabilidades y cuantiles de la distribución Normal estandarizando con z
+      - Reconocer cuándo usar las distribuciones t, chi-cuadrado y F
+    hours: 8
+    depends_on: [u4]
+  - id: u6
+    title: Muestreo y distribuciones muestrales
+    objectives:
+      - Explicar la distribución muestral de la media y de la proporción
+      - Aplicar el Teorema del Límite Central para aproximar probabilidades sobre medias muestrales
+      - Calcular e interpretar el error estándar y su relación con el tamaño de muestra
+    hours: 6
+    depends_on: [u5]
+  - id: u7
+    title: Estimación e intervalos de confianza
+    objectives:
+      - Construir intervalos de confianza para una media (z y t) y para una proporción
+      - Interpretar correctamente el nivel de confianza y los errores de interpretación comunes
+      - Determinar el tamaño de muestra necesario para un margen de error objetivo
+    hours: 8
+    depends_on: [u6]
+  - id: u8
+    title: Prueba de hipótesis
+    objectives:
+      - Formular hipótesis nula y alternativa a partir de una pregunta de investigación
+      - Ejecutar pruebas de hipótesis para una media y una proporción e interpretar el valor p
+      - Distinguir errores tipo I y II y explicar el rol de la potencia estadística
+      - Diferenciar significancia estadística de relevancia práctica
+    hours: 8
+    depends_on: [u7]
+  - id: u9
+    title: Comparación de dos grupos
+    objectives:
+      - Ejecutar e interpretar pruebas t para muestras independientes y pareadas
+      - Comparar dos proporciones con la prueba z
+      - Verificar supuestos y elegir la alternativa no paramétrica (Wilcoxon/Mann-Whitney) cuando no se cumplen
+    hours: 8
+    depends_on: [u8]
+  - id: u10
+    title: Correlación y regresión lineal simple
+    objectives:
+      - Calcular e interpretar el coeficiente de correlación de Pearson y distinguir correlación de causalidad
+      - Ajustar una regresión lineal simple por mínimos cuadrados e interpretar pendiente e intercepto
+      - Evaluar el ajuste con R² y diagnosticar supuestos mediante análisis de residuos
+      - Realizar inferencia sobre la pendiente (IC y prueba de hipótesis)
+    hours: 8
+    depends_on: [u8]
+  - id: u11
+    title: Análisis de datos categóricos (chi-cuadrado)
+    objectives:
+      - Construir e interpretar tablas de contingencia con frecuencias observadas y esperadas
+      - Ejecutar la prueba chi-cuadrado de independencia y de bondad de ajuste
+      - Verificar las condiciones de validez de la prueba y reportar resultados correctamente
+    hours: 6
+    depends_on: [u8]
+  - id: u12
+    title: Flujo de trabajo práctico de análisis de datos
+    objectives:
+      - Ejecutar un pipeline completo de análisis (importar, limpiar, explorar, inferir, reportar) sobre un dataset real
+      - Seleccionar la prueba estadística correcta según el tipo de variables y el diseño del estudio
+      - Producir un reporte reproducible que documente decisiones, supuestos y limitaciones
+    hours: 8
+    depends_on: [u9, u10, u11]
