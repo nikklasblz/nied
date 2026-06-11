@@ -21,12 +21,12 @@ import { Check, Trophy, Zap } from "@/components/icons";
 type Status = "pendiente" | "en-progreso" | "completa";
 
 export function MarkCompleteButton({
-  trackId,
+  courseId,
   unitId,
   status,
   completedAt,
 }: {
-  trackId: string;
+  courseId: string;
   unitId: string;
   status: Status;
   completedAt: string | null;
@@ -49,7 +49,7 @@ export function MarkCompleteButton({
           disabled={pending}
           onClick={() =>
             startTransition(async () => {
-              const r = await unmarkUnitComplete(trackId, unitId);
+              const r = await unmarkUnitComplete(courseId, unitId);
               if (r.ok) {
                 toast.message("Unidad marcada como pendiente", {
                   description:
@@ -72,7 +72,7 @@ export function MarkCompleteButton({
       disabled={pending}
       onClick={() =>
         startTransition(async () => {
-          const result = await markUnitComplete(trackId, unitId);
+          const result = await markUnitComplete(courseId, unitId);
           if (!result.ok) {
             toast.error("No se pudo marcar la unidad", {
               description: result.error,

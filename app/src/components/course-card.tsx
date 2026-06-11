@@ -1,70 +1,78 @@
 /**
- * TrackCard — usado en /tracks (grid).
+ * CourseCard — usado en /courses (grid).
  */
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import type { NivelDedicacion, Track } from "@/lib/content/types";
+import type { CourseMeta } from "@nied/schema";
+import type { CourseEntry } from "@/lib/content/types";
 import { Clock, Zap, Target } from "@/components/icons";
 
-export type TrackCardData = {
-  track: Track;
-  totalUnits: number;
+export type CourseLevel = CourseMeta["level"];
+
+export type CourseCardData = {
+  course: CourseEntry;
   completedUnits: number;
   totalXp: number;
   earnedXp: number;
-  totalHours: number;
 };
 
-const dedicationStyle: Record<NivelDedicacion, string> = {
-  ligero:
-    "border-foreground/15 bg-foreground/5 text-fg-secondary",
-  sostenido:
-    "border-accent-primary/30 bg-accent-primary/10 text-accent-primary",
-  intensivo:
-    "border-accent-secondary/30 bg-accent-secondary/10 text-accent-secondary",
+export const levelStyle: Record<CourseLevel, string> = {
+  intro: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
+  intermediate: "border-amber-500/30 bg-amber-500/10 text-amber-400",
+  advanced: "border-rose-500/30 bg-rose-500/10 text-rose-400",
 };
 
-const dedicationLabel: Record<NivelDedicacion, string> = {
-  ligero: "Ligero",
-  sostenido: "Sostenido",
-  intensivo: "Intensivo",
+export const levelLabel: Record<CourseLevel, string> = {
+  intro: "Introductorio",
+  intermediate: "Intermedio",
+  advanced: "Avanzado",
 };
 
-export function TrackCard({ data }: { data: TrackCardData }) {
-  const { track, totalUnits, completedUnits, totalXp, earnedXp, totalHours } =
-    data;
+export function CourseCard({ data }: { data: CourseCardData }) {
+  const { course, completedUnits, totalXp, earnedXp } = data;
+  const totalUnits = course.meta.units.length;
+  const writtenUnits = course.writtenUnits.length;
   const pct =
     totalUnits === 0 ? 0 : Math.round((completedUnits / totalUnits) * 100);
 
   return (
     <Link
-      href={`/tracks/${track.track_id}`}
+      href={`/courses/${course.id}`}
       className="group relative flex flex-col gap-4 rounded-xl bg-card p-5 shadow-card ring-1 ring-foreground/10 transition-all hover:ring-accent-primary/40 hover:-translate-y-px focus-visible:ring-accent-primary"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-fg-muted">
-            {track.track_id}
+            {course.id}
           </div>
           <h3 className="mt-1 font-serif text-xl font-semibold leading-tight text-fg-primary">
-            {track.titulo}
+            {course.meta.title}
           </h3>
         </div>
         <span
           className={cn(
             "inline-flex h-5 shrink-0 items-center rounded-full border px-2 font-mono text-[10px] uppercase tracking-wider",
-            dedicationStyle[track.nivel_dedicacion]
+            levelStyle[course.meta.level]
           )}
         >
-          {dedicationLabel[track.nivel_dedicacion]}
+          {levelLabel[course.meta.level]}
         </span>
       </div>
+
+      {course.meta.description && (
+        <p className="line-clamp-2 text-xs leading-5 text-fg-secondary">
+          {course.meta.description}
+        </p>
+      )}
 
       {/* progress */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between text-xs text-fg-secondary">
           <span>
             {completedUnits} / {totalUnits} unidades
+            {writtenUnits < totalUnits && (
+              <span className="text-fg-muted"> · {writtenUnits} disponibles</span>
+            )}
           </span>
           <span className="font-mono tabular-nums">{pct}%</span>
         </div>
@@ -78,21 +86,9 @@ export function TrackCard({ data }: { data: TrackCardData }) {
 
       {/* stats footer */}
       <div className="grid grid-cols-3 gap-2 border-t border-border pt-3 text-xs">
-        <Stat
-          icon={Target}
-          label="Unidades"
-          value={`${totalUnits}`}
-        />
-        <Stat
-          icon={Clock}
-          label="Horas"
-          value={`${totalHours}`}
-        />
-        <Stat
-          icon={Zap}
-          label="XP"
-          value={`${earnedXp}/${totalXp}`}
-        />
+        <Stat icon={Target} label="Unidades" value={`${totalUnits}`} />
+        <Stat icon={Clock} label="Horas" value={`${course.totalHours}`} />
+        <Stat icon={Zap} label="XP" value={`${earnedXp}/${totalXp}`} />
       </div>
     </Link>
   );

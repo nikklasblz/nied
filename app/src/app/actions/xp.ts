@@ -16,7 +16,7 @@ import { recordActivity, toIsoDate } from "@/lib/gamification/streaks";
 
 export async function awardXp(args: {
   activity: Activity;
-  trackId: string | null;
+  courseId: string | null;
   unitId: string | null;
   baseXp: number;
 }) {
@@ -27,7 +27,7 @@ export async function awardXp(args: {
 
   insertXpEvent(db, {
     activity: args.activity,
-    trackId: args.trackId,
+    courseId: args.courseId,
     unitId: args.unitId,
     xp: finalXp,
     multiplier: streak.multiplier,

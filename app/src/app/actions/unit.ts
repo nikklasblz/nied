@@ -4,7 +4,7 @@
  * Server action: marca una unidad como completa.
  *
  * Pipeline (diseño §13):
- *  1. Lee el sílabo y obtiene la metadata de la unidad (xp base).
+ *  1. Lee course.yaml y obtiene la metadata de la unidad (xp base = horas × xpPerHour).
  *  2. Marca progreso = 'completa' en `unit_progress`.
  *  3. Toca racha y obtiene multiplicador.
  *  4. Inserta evento en `xp_events` con xp final.
@@ -14,7 +14,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getDb } from "@/lib/db/client";
-import { getUnit } from "@/lib/content/loader";
+import { getCourse } from "@/lib/content/courses";
 import {
   getUnitProgress,
   setUnitComplete,
@@ -60,19 +60,20 @@ export type MarkUnitCompleteResult = {
 };
 
 export async function markUnitComplete(
-  trackId: string,
+  courseId: string,
   unitId: string
 ): Promise<MarkUnitCompleteResult | { ok: false; error: string }> {
-  const ctx = await getUnit(trackId, unitId);
-  if (!ctx) {
-    return { ok: false, error: `Unidad no encontrada: ${trackId}/${unitId}` };
+  const course = getCourse(courseId);
+  const unit = course?.meta.units.find((u) => u.id === unitId);
+  if (!course || !unit) {
+    return { ok: false, error: `Unidad no encontrada: ${courseId}/${unitId}` };
   }
   const db = getDb();
 
   // Guard de idempotencia: si la unidad ya está completa, no duplicar
   // XP ni ejecutar el pipeline. El historial XP es auditable y único por
   // completion event.
-  const existing = getUnitProgress(db, trackId, unitId);
+  const existing = getUnitProgress(db, courseId, unitId);
   if (existing && existing.status === "completa") {
     return {
       ok: true,
@@ -91,16 +92,16 @@ export async function markUnitComplete(
 
   // Pipeline atómico: setUnitComplete → recordActivity → insertXpEvent →
   // evaluateAndUnlock. Si algo falla, nada queda persistido.
-  const baseXp = XP_RULES.unitComplete(ctx.unit);
+  const baseXp = XP_RULES.unitComplete(unit);
   const today = toIsoDate(new Date());
 
   const txResult = db.transaction(() => {
-    setUnitComplete(db, trackId, unitId);
+    setUnitComplete(db, courseId, unitId);
     const streak = recordActivity(db, today);
     const finalXp = applyMultiplier(baseXp, streak.multiplier);
     insertXpEvent(db, {
       activity: "unit-complete",
-      trackId,
+      courseId,
       unitId,
       xp: finalXp,
       multiplier: streak.multiplier,
@@ -110,9 +111,9 @@ export async function markUnitComplete(
   })();
 
   safeRevalidate("/");
-  safeRevalidate("/tracks");
-  safeRevalidate(`/tracks/${trackId}`);
-  safeRevalidate(`/tracks/${trackId}/${unitId}`);
+  safeRevalidate("/courses");
+  safeRevalidate(`/courses/${courseId}`);
+  safeRevalidate(`/courses/${courseId}/${unitId}`);
 
   return {
     ok: true,
@@ -138,14 +139,14 @@ export async function markUnitComplete(
  * histórico permanece en `xp_events` por auditabilidad.
  */
 export async function unmarkUnitComplete(
-  trackId: string,
+  courseId: string,
   unitId: string
 ): Promise<{ ok: true }> {
   const db = getDb();
-  setUnitPending(db, trackId, unitId);
+  setUnitPending(db, courseId, unitId);
   safeRevalidate("/");
-  safeRevalidate("/tracks");
-  safeRevalidate(`/tracks/${trackId}`);
-  safeRevalidate(`/tracks/${trackId}/${unitId}`);
+  safeRevalidate("/courses");
+  safeRevalidate(`/courses/${courseId}`);
+  safeRevalidate(`/courses/${courseId}/${unitId}`);
   return { ok: true };
 }

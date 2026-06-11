@@ -8,7 +8,7 @@
 import Link from "next/link";
 import { getDb } from "@/lib/db/client";
 import { getDashboardData } from "@/lib/db/queries/dashboard";
-import { getAllTracks } from "@/lib/content/loader";
+import { listCourses } from "@/lib/content/courses";
 import { ACHIEVEMENTS } from "@/lib/gamification/achievements";
 import { StatCard } from "@/components/stat-card";
 import { XpHeatmap } from "@/components/xp-heatmap";
@@ -27,77 +27,55 @@ import { daysBetween, toIsoDate } from "@/lib/gamification/streaks";
 export const dynamic = "force-dynamic";
 
 type NextStep = {
-  trackId: string;
+  courseId: string;
   unitId: string;
   unitTitle: string;
-  trackTitle: string;
+  courseTitle: string;
   rationale: string;
 };
 
-async function computeNextStep(
-  progress: { track_id: string; unit_id: string; status: string }[]
-): Promise<NextStep | null> {
-  const tracks = await getAllTracks();
-  if (tracks.length === 0) return null;
+function computeNextStep(
+  progress: { course_id: string; unit_id: string; status: string }[]
+): NextStep | null {
+  const courses = listCourses();
+  if (courses.length === 0) return null;
 
-  // 1) Última unidad en-progreso (si existe).
+  // 1) Última unidad en-progreso (si existe y está escrita).
   const inProgress = progress.find((p) => p.status === "en-progreso");
   if (inProgress) {
-    const t = tracks.find((tr) => tr.track_id === inProgress.track_id);
-    const u = t?.unidades.find((x) => x.id === inProgress.unit_id);
-    if (t && u) {
+    const c = courses.find((co) => co.id === inProgress.course_id);
+    const u = c?.meta.units.find((x) => x.id === inProgress.unit_id);
+    if (c && u && c.writtenUnits.includes(u.id)) {
       return {
-        trackId: t.track_id,
+        courseId: c.id,
         unitId: u.id,
-        unitTitle: u.titulo,
-        trackTitle: t.titulo,
+        unitTitle: u.title,
+        courseTitle: c.meta.title,
         rationale: "Continúa donde dejaste",
       };
     }
   }
 
-  // 2) Siguiente unidad pendiente del track con `nivel_dedicacion='intensivo'`,
-  //    priorizando el track con actividad más reciente.
-  const intensivos = tracks.filter((t) => t.nivel_dedicacion === "intensivo");
-  if (intensivos.length > 0) {
-    // Preferimos el primer intensivo con alguna unidad pendiente.
-    for (const t of intensivos) {
-      const completedIds = new Set(
-        progress
-          .filter((p) => p.track_id === t.track_id && p.status === "completa")
-          .map((p) => p.unit_id)
-      );
-      const next = t.unidades.find((u) => !completedIds.has(u.id));
-      if (next) {
-        return {
-          trackId: t.track_id,
-          unitId: next.id,
-          unitTitle: next.titulo,
-          trackTitle: t.titulo,
-          rationale:
-            progress.length === 0
-              ? "Comienza con la primera unidad de tu track intensivo"
-              : "Próxima unidad pendiente en tu track intensivo",
-        };
-      }
-    }
-  }
-
-  // 3) Cualquier track con unidades pendientes.
-  for (const t of tracks) {
+  // 2) Primer curso con una unidad ESCRITA aún no completada.
+  for (const c of courses) {
     const completedIds = new Set(
       progress
-        .filter((p) => p.track_id === t.track_id && p.status === "completa")
+        .filter((p) => p.course_id === c.id && p.status === "completa")
         .map((p) => p.unit_id)
     );
-    const next = t.unidades.find((u) => !completedIds.has(u.id));
+    const next = c.meta.units.find(
+      (u) => c.writtenUnits.includes(u.id) && !completedIds.has(u.id)
+    );
     if (next) {
       return {
-        trackId: t.track_id,
+        courseId: c.id,
         unitId: next.id,
-        unitTitle: next.titulo,
-        trackTitle: t.titulo,
-        rationale: "Próxima unidad disponible",
+        unitTitle: next.title,
+        courseTitle: c.meta.title,
+        rationale:
+          progress.length === 0
+            ? "Comienza con la primera unidad disponible"
+            : "Próxima unidad disponible",
       };
     }
   }
@@ -119,7 +97,7 @@ function levelProgressPct(
 export default async function HomePage() {
   const db = getDb();
   const data = getDashboardData(db);
-  const next = await computeNextStep(data.progress);
+  const next = computeNextStep(data.progress);
 
   const today = toIsoDate(new Date());
   const daysSince = data.streak.last_activity_date
@@ -193,7 +171,7 @@ export default async function HomePage() {
                   {next.unitTitle}
                 </h1>
                 <p className="mt-1 font-mono text-xs uppercase tracking-wider text-fg-muted">
-                  {next.trackId} · {next.trackTitle}
+                  {next.courseId} · {next.courseTitle}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -201,7 +179,7 @@ export default async function HomePage() {
                   size="lg"
                   render={
                     <Link
-                      href={`/tracks/${next.trackId}/${next.unitId}`}
+                      href={`/courses/${next.courseId}/${next.unitId}`}
                     />
                   }
                 >
@@ -211,9 +189,9 @@ export default async function HomePage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  render={<Link href={`/tracks/${next.trackId}`} />}
+                  render={<Link href={`/courses/${next.courseId}`} />}
                 >
-                  Ver sílabo del track
+                  Ver sílabo del curso
                 </Button>
               </div>
             </>
@@ -223,7 +201,7 @@ export default async function HomePage() {
                 Todo al día. Buen trabajo.
               </h1>
               <p className="mt-1 text-sm text-fg-secondary">
-                No hay unidades pendientes — explora los tracks o registra una
+                No hay unidades pendientes — explora los cursos o registra una
                 entrada en tu bitácora.
               </p>
             </div>

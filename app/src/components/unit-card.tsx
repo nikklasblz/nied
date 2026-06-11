@@ -1,9 +1,9 @@
 /**
- * UnitCard — usado en el sílabo /tracks/[id].
+ * UnitCard — usado en el sílabo /courses/[id].
  */
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import type { UnitMeta } from "@/lib/content/types";
+import type { UnitMeta } from "@nied/schema";
 import { Clock, Zap, ChevronRight, CheckCircle2, Circle, CircleDot } from "@/components/icons";
 
 export type UnitStatus = "pendiente" | "en-progreso" | "completa";
@@ -30,64 +30,101 @@ const statusIcon: Record<UnitStatus, React.ComponentType<React.SVGProps<SVGSVGEl
 
 export function UnitCard({
   unit,
-  trackId,
+  courseId,
   status,
+  xp,
+  written,
 }: {
   unit: UnitMeta;
-  trackId: string;
+  courseId: string;
   status: UnitStatus;
+  xp: number;
+  written: boolean;
 }) {
   const num = unit.id.replace(/^u/, "");
   const Icon = statusIcon[status];
-  return (
-    <Link
-      href={`/tracks/${trackId}/${unit.id}`}
-      className="group flex items-center gap-4 rounded-xl bg-card p-4 ring-1 ring-foreground/10 transition-all hover:ring-accent-primary/40 hover:-translate-y-px"
-    >
+
+  const body = (
+    <>
       <div className="grid size-12 shrink-0 place-items-center rounded-lg bg-bg-overlay font-mono text-base font-semibold text-fg-primary">
         u{num}
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-3">
-          <h3 className="font-sans text-base font-semibold text-fg-primary group-hover:text-accent-primary">
-            {unit.titulo}
+          <h3
+            className={cn(
+              "font-sans text-base font-semibold text-fg-primary",
+              written && "group-hover:text-accent-primary"
+            )}
+          >
+            {unit.title}
           </h3>
         </div>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-secondary">
           <span className="inline-flex items-center gap-1 font-mono tabular-nums">
             <Clock className="size-3" strokeWidth={1.6} aria-hidden />
-            {unit.horas_estimadas}h
+            {unit.hours}h
           </span>
           <span className="inline-flex items-center gap-1 font-mono tabular-nums text-accent-primary">
             <Zap className="size-3" strokeWidth={1.6} aria-hidden />
-            {unit.xp_reward} XP
+            {xp} XP
           </span>
-          {unit.dominio && (
+          {unit.depends_on.length > 0 && (
             <span className="font-mono text-[10px] uppercase tracking-wider text-fg-muted">
-              {unit.dominio}
+              Requiere: {unit.depends_on.join(", ")}
             </span>
           )}
         </div>
-        {unit.anclaje_sugerido && (
+        {unit.objectives[0] && (
           <div className="mt-1.5 line-clamp-2 text-xs text-fg-muted">
-            Anclaje: {unit.anclaje_sugerido}
+            {unit.objectives[0]}
           </div>
         )}
       </div>
-      <div
-        className={cn(
-          "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider",
-          statusStyle[status]
-        )}
-      >
-        <Icon className="size-3" strokeWidth={1.8} aria-hidden />
-        {statusLabel[status]}
-      </div>
+      {written ? (
+        <div
+          className={cn(
+            "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider",
+            statusStyle[status]
+          )}
+        >
+          <Icon className="size-3" strokeWidth={1.8} aria-hidden />
+          {statusLabel[status]}
+        </div>
+      ) : (
+        <div className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-bg-overlay/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-fg-muted">
+          <Circle className="size-3" strokeWidth={1.8} aria-hidden />
+          Pendiente de generar
+        </div>
+      )}
       <ChevronRight
-        className="size-4 shrink-0 text-fg-muted transition-transform group-hover:translate-x-0.5 group-hover:text-fg-primary"
+        className={cn(
+          "size-4 shrink-0 text-fg-muted",
+          written && "transition-transform group-hover:translate-x-0.5 group-hover:text-fg-primary"
+        )}
         strokeWidth={1.6}
         aria-hidden
       />
+    </>
+  );
+
+  if (!written) {
+    return (
+      <div
+        aria-disabled
+        className="flex items-center gap-4 rounded-xl bg-card p-4 opacity-60 ring-1 ring-foreground/10"
+      >
+        {body}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={`/courses/${courseId}/${unit.id}`}
+      className="group flex items-center gap-4 rounded-xl bg-card p-4 ring-1 ring-foreground/10 transition-all hover:ring-accent-primary/40 hover:-translate-y-px"
+    >
+      {body}
     </Link>
   );
 }

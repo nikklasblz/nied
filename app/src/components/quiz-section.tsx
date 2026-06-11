@@ -13,10 +13,10 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, XCircle, HelpCircle, Zap } from "@/components/icons";
 import { submitQuizAnswer } from "@/app/actions/quiz";
-import type { Quiz } from "@/lib/content/quiz-types";
+import type { Quiz } from "@/lib/content/quiz-loader";
 
 interface QuizSectionProps {
-  trackId: string;
+  courseId: string;
   unitId: string;
   quiz: Quiz;
   previousAttempts: { questionIndex: number; correct: boolean }[];
@@ -26,7 +26,7 @@ interface QuestionState {
   selectedOption: number | null;
   submitted: boolean;
   correct: boolean | null;
-  explicacion: string | null;
+  explanation: string | null;
   xpAwarded: number;
 }
 
@@ -53,26 +53,26 @@ function XpGainToast({ xp }: { xp: number }) {
 }
 
 function QuizQuestion({
-  pregunta,
-  opciones,
-  respuestaCorrecta,
-  explicacion,
-  seccion,
+  question,
+  options,
+  correctIndex,
+  explanation,
+  section,
   index,
   totalQuestions,
-  trackId,
+  courseId,
   unitId,
   xpPerQuestion,
   initialState,
 }: {
-  pregunta: string;
-  opciones: string[];
-  respuestaCorrecta: number;
-  explicacion: string;
-  seccion?: string;
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+  section?: string;
   index: number;
   totalQuestions: number;
-  trackId: string;
+  courseId: string;
   unitId: string;
   xpPerQuestion: number;
   initialState: QuestionState;
@@ -90,12 +90,12 @@ function QuizQuestion({
 
     startTransition(async () => {
       const result = await submitQuizAnswer(
-        trackId,
+        courseId,
         unitId,
         index,
         state.selectedOption!,
-        respuestaCorrecta,
-        explicacion,
+        correctIndex,
+        explanation,
         xpPerQuestion
       );
 
@@ -103,7 +103,7 @@ function QuizQuestion({
         ...prev,
         submitted: true,
         correct: result.correct,
-        explicacion: result.explicacion,
+        explanation: result.explanation,
         xpAwarded: result.xpAwarded,
       }));
 
@@ -135,22 +135,22 @@ function QuizQuestion({
           </span>
         </div>
         <div className="flex-1">
-          {seccion && (
+          {section && (
             <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.15em] text-fg-muted">
-              {seccion}
+              {section}
             </p>
           )}
           <p className="font-sans text-sm font-medium leading-relaxed text-fg-primary">
-            {pregunta}
+            {question}
           </p>
         </div>
       </div>
 
       {/* Opciones */}
       <div className="flex flex-col gap-2">
-        {opciones.map((opcion, optIdx) => {
+        {options.map((option, optIdx) => {
           const isSelected = state.selectedOption === optIdx;
-          const isCorrect = optIdx === respuestaCorrecta;
+          const isCorrect = optIdx === correctIndex;
           const showResult = state.submitted;
 
           return (
@@ -185,7 +185,7 @@ function QuizQuestion({
                 >
                   {String.fromCharCode(65 + optIdx)}
                 </span>
-                <span className="text-sm leading-snug">{opcion}</span>
+                <span className="text-sm leading-snug">{option}</span>
                 {/* Icono de resultado */}
                 {showResult && isCorrect && (
                   <CheckCircle2 className="ml-auto size-4 shrink-0 text-success" strokeWidth={2} aria-hidden />
@@ -201,7 +201,7 @@ function QuizQuestion({
 
       {/* Feedback post-envío */}
       <AnimatePresence>
-        {state.submitted && state.explicacion && (
+        {state.submitted && state.explanation && (
           <motion.div
             initial={{ opacity: 0, height: 0, marginTop: 0 }}
             animate={{ opacity: 1, height: "auto", marginTop: 12 }}
@@ -229,7 +229,7 @@ function QuizQuestion({
                     state.correct ? "text-success" : "text-danger"
                   )}
                 >
-                  {state.explicacion}
+                  {state.explanation}
                 </p>
               </div>
             </div>
@@ -260,7 +260,7 @@ function QuizQuestion({
 }
 
 export function QuizSection({
-  trackId,
+  courseId,
   unitId,
   quiz,
   previousAttempts,
@@ -276,10 +276,10 @@ export function QuizSection({
     const wasCorrect = attemptMap.get(idx);
     if (wasCorrect !== undefined) {
       return {
-        selectedOption: quiz.preguntas[idx].respuesta_correcta,
+        selectedOption: quiz.questions[idx].correct_index,
         submitted: true,
         correct: wasCorrect,
-        explicacion: quiz.preguntas[idx].explicacion,
+        explanation: quiz.questions[idx].explanation,
         xpAwarded: 0, // Ya otorgado en sesión anterior
       };
     }
@@ -287,13 +287,13 @@ export function QuizSection({
       selectedOption: null,
       submitted: false,
       correct: null,
-      explicacion: null,
+      explanation: null,
       xpAwarded: 0,
     };
   };
 
   const totalCompleted = previousAttempts.length;
-  const totalQuestions = quiz.preguntas.length;
+  const totalQuestions = quiz.questions.length;
 
   return (
     <section
@@ -313,12 +313,12 @@ export function QuizSection({
           )}
         </div>
         <p className="font-sans text-base font-semibold text-fg-primary">
-          {quiz.titulo}
+          {quiz.title}
         </p>
-        <p className="text-sm text-fg-secondary">{quiz.instrucciones}</p>
+        <p className="text-sm text-fg-secondary">{quiz.instructions}</p>
         <div className="flex items-center gap-1.5 font-mono text-xs text-accent-primary">
           <Zap className="size-3" strokeWidth={2} aria-hidden />
-          <span>{quiz.xp_por_pregunta} XP por respuesta correcta</span>
+          <span>{quiz.xp_per_question} XP por respuesta correcta</span>
         </div>
       </div>
 
@@ -338,19 +338,19 @@ export function QuizSection({
 
       {/* Preguntas */}
       <div className="flex flex-col gap-4">
-        {quiz.preguntas.map((q, idx) => (
+        {quiz.questions.map((q, idx) => (
           <QuizQuestion
             key={idx}
-            pregunta={q.pregunta}
-            opciones={q.opciones}
-            respuestaCorrecta={q.respuesta_correcta}
-            explicacion={q.explicacion}
-            seccion={q.seccion}
+            question={q.question}
+            options={q.options}
+            correctIndex={q.correct_index}
+            explanation={q.explanation}
+            section={q.section}
             index={idx}
             totalQuestions={totalQuestions}
-            trackId={trackId}
+            courseId={courseId}
             unitId={unitId}
-            xpPerQuestion={quiz.xp_por_pregunta}
+            xpPerQuestion={quiz.xp_per_question}
             initialState={buildInitialState(idx)}
           />
         ))}

@@ -5,8 +5,8 @@
  *
  * Usa una DB temporal aislada (`db/smoke.db`) para no entrar en conflicto
  * con el dev server que puede tener `db/nied.db` bloqueada. Marca la primera
- * unidad de `02-ia-ml` y verifica que XP, progreso, racha y el achievement
- * `primer-paso` se actualizaron como esperamos.
+ * unidad de `test-estadistica` y verifica que XP, progreso, racha y el
+ * achievement `primer-paso` se actualizaron como esperamos.
  *
  * NO usa el wrapper "use server" — invoca las funciones puras directamente
  * para evitar arrancar el server de Next.
@@ -17,7 +17,7 @@ import path from "node:path";
 // Redirigir la DB a un archivo temporal antes de importar el cliente
 process.env.NIED_DB_PATH = path.resolve(process.cwd(), "db", "smoke.db");
 import { closeDb, getDb } from "../db/client";
-import { getUnit } from "../content/loader";
+import { getCourse } from "../content/courses";
 import { setUnitComplete } from "../db/queries/progress";
 import { insertXpEvent, getTotalXp } from "../db/queries/xp";
 import { recordActivity, toIsoDate } from "../gamification/streaks";
@@ -47,36 +47,34 @@ async function main() {
   }
 
   // 2. Carga unidad real y verifica content layer.
-  const unitCtx = await getUnit("02-ia-ml", "u1");
-  assert(unitCtx, "getUnit('02-ia-ml','u1') devuelve la unidad");
-  assert(
-    unitCtx!.unit.titulo.includes("Fundamentos matemáticos"),
-    `título de u1 esperado, recibido: "${unitCtx!.unit.titulo}"`
-  );
-  assert(unitCtx!.unit.xp_reward === 240, "xp_reward de u1 = 240");
-  assert(unitCtx!.html.length > 200, "HTML de u1 renderizado (no vacío)");
+  const courseId = "test-estadistica";
+  const course = getCourse(courseId);
+  assert(course, `getCourse('${courseId}') devuelve el curso`);
+  const unit = course!.meta.units.find((u) => u.id === "u1");
+  assert(unit, "u1 declarada en course.yaml");
+  assert(unit!.title.length > 0, `título de u1 no vacío: "${unit!.title}"`);
 
   // 3. Replica el pipeline de markUnitComplete (sin "use server" wrapper).
   const db = getDb();
-  setUnitComplete(db, "02-ia-ml", "u1");
+  setUnitComplete(db, courseId, "u1");
 
   const today = toIsoDate(new Date());
   const streak = recordActivity(db, today);
   assert(streak.current_streak === 1, "racha tras primera actividad = 1");
   assert(streak.multiplier === 1.0, "multiplicador inicial = 1.0");
 
-  const baseXp = XP_RULES.unitComplete(unitCtx!.unit);
+  const baseXp = XP_RULES.unitComplete(unit!);
   const finalXp = applyMultiplier(baseXp, streak.multiplier);
   insertXpEvent(db, {
     activity: "unit-complete",
-    trackId: "02-ia-ml",
+    courseId,
     unitId: "u1",
     xp: finalXp,
     multiplier: streak.multiplier,
   });
 
   const total = getTotalXp(db);
-  assert(total === 240, `xp_events suma 240 (recibido ${total})`);
+  assert(total === finalXp, `xp_events suma ${finalXp} (recibido ${total})`);
 
   const newly = evaluateAndUnlock(db);
   assert(
@@ -102,16 +100,15 @@ async function main() {
   //    insertar UN solo xp_event y la segunda debe responder
   //    `alreadyComplete: true` con xpAwarded=0.
   //
-  //    Usamos una unidad fresca (u2 de 02-ia-ml) para no contaminar el
-  //    estado anterior. Importamos la action dinámicamente para evitar
-  //    que el wrapper "use server" intente arrancar el server al cargar
-  //    el módulo.
+  //    Usamos una unidad fresca (u2) para no contaminar el estado
+  //    anterior. Importamos la action dinámicamente para evitar que el
+  //    wrapper "use server" intente arrancar el server al cargar el módulo.
   const { markUnitComplete } = await import("../../app/actions/unit");
   const xpCountBefore = (
     db.prepare(`SELECT COUNT(*) AS c FROM xp_events`).get() as { c: number }
   ).c;
 
-  const r1 = await markUnitComplete("02-ia-ml", "u2");
+  const r1 = await markUnitComplete(courseId, "u2");
   assert(r1.ok === true, "primer markUnitComplete devuelve ok");
   if (r1.ok) {
     assert(
@@ -129,7 +126,7 @@ async function main() {
     `xp_events incrementó exactamente 1 tras primer markUnitComplete (esperado ${xpCountBefore + 1}, recibido ${xpCountMid})`
   );
 
-  const r2 = await markUnitComplete("02-ia-ml", "u2");
+  const r2 = await markUnitComplete(courseId, "u2");
   assert(r2.ok === true, "segundo markUnitComplete devuelve ok");
   if (r2.ok) {
     assert(

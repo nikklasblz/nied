@@ -30,7 +30,7 @@ type NavItem = {
 
 const NAV: NavItem[] = [
   { href: "/", label: "Dashboard", icon: Home },
-  { href: "/tracks", label: "Tracks", icon: BookOpen, matchPrefix: "/tracks" },
+  { href: "/courses", label: "Cursos", icon: BookOpen, matchPrefix: "/courses" },
   { href: "/logros", label: "Logros", icon: Trophy, matchPrefix: "/logros" },
   { href: "/bitacora", label: "Bitácora", icon: Pen, matchPrefix: "/bitacora" },
   { href: "/ajustes", label: "Ajustes", icon: Settings, matchPrefix: "/ajustes" },

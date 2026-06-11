@@ -1,5 +1,5 @@
 /**
- * /tracks/[id]/[unidad]/s[N] — lección individual (una sección de la unidad).
+ * /courses/[id]/[unit]/s[N] — lección individual (una sección de la unidad).
  *
  * Server component. Renderiza el contenido de la sección con navegación
  * anterior/siguiente y un indicador de progreso.
@@ -7,7 +7,7 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getUnit, getUnitSections } from "@/lib/content/loader";
+import { getUnitView } from "@/lib/content/courses";
 import { MermaidRenderer } from "@/components/mermaid-renderer";
 import { ChevronLeft, ChevronRight } from "@/components/icons";
 
@@ -16,33 +16,24 @@ export const dynamic = "force-dynamic";
 export default async function SectionPage({
   params,
 }: {
-  params: Promise<{ id: string; unidad: string; seccion: string }>;
+  params: Promise<{ id: string; unit: string; section: string }>;
 }) {
-  const { id, unidad, seccion } = await params;
+  const { id, unit: unitId, section: sectionParam } = await params;
 
   // Solo acepta "s1", "s2", "s3", …
-  const sMatch = /^s(\d+)$/.exec(seccion);
+  const sMatch = /^s(\d+)$/.exec(sectionParam);
   if (!sMatch) notFound();
   const sectionIndex = Number(sMatch[1]);
 
-  const ctx = await getUnit(id, unidad);
-  if (!ctx) notFound();
+  const view = await getUnitView(id, unitId);
+  if (!view || view.sections.length === 0) notFound();
 
-  const unitSections = await getUnitSections(id, unidad);
-  if (!unitSections || unitSections.sections.length === 0) notFound();
-
-  const section = unitSections.sections.find((s) => s.index === sectionIndex);
+  const section = view.sections.find((s) => s.index === sectionIndex);
   if (!section) notFound();
 
-  const prevSection = unitSections.sections.find(
-    (s) => s.index === sectionIndex - 1
-  );
-  const nextSection = unitSections.sections.find(
-    (s) => s.index === sectionIndex + 1
-  );
-  const totalSections = unitSections.sections.length;
-
-  const { track, unit } = ctx;
+  const prevSection = view.sections.find((s) => s.index === sectionIndex - 1);
+  const nextSection = view.sections.find((s) => s.index === sectionIndex + 1);
+  const totalSections = view.sections.length;
 
   return (
     <div className="mx-auto flex w-full max-w-dashboard flex-col gap-6 px-4 py-8 md:px-6">
@@ -53,16 +44,16 @@ export default async function SectionPage({
         aria-label="Breadcrumb"
         className="flex items-center gap-1 text-xs text-fg-secondary"
       >
-        <Link href="/tracks" className="hover:text-fg-primary">
-          Tracks
+        <Link href="/courses" className="hover:text-fg-primary">
+          Cursos
         </Link>
         <span className="text-fg-muted">/</span>
-        <Link href={`/tracks/${id}`} className="hover:text-fg-primary">
-          {track.titulo}
+        <Link href={`/courses/${id}`} className="hover:text-fg-primary">
+          {view.course.meta.title}
         </Link>
         <span className="text-fg-muted">/</span>
-        <Link href={`/tracks/${id}/${unidad}`} className="hover:text-fg-primary">
-          {unit.titulo}
+        <Link href={`/courses/${id}/${unitId}`} className="hover:text-fg-primary">
+          {view.unit.title}
         </Link>
         <span className="text-fg-muted">/</span>
         <span className="text-fg-primary">Sección {sectionIndex}</span>
@@ -91,7 +82,7 @@ export default async function SectionPage({
       <div className="flex items-center justify-between border-t border-border pt-6">
         {prevSection ? (
           <Link
-            href={`/tracks/${id}/${unidad}/s${prevSection.index}`}
+            href={`/courses/${id}/${unitId}/s${prevSection.index}`}
             className="inline-flex items-center gap-2 text-sm text-fg-secondary hover:text-fg-primary transition-colors"
           >
             <ChevronLeft className="size-4 shrink-0" strokeWidth={1.5} aria-hidden />
@@ -102,7 +93,7 @@ export default async function SectionPage({
           </Link>
         ) : (
           <Link
-            href={`/tracks/${id}/${unidad}`}
+            href={`/courses/${id}/${unitId}`}
             className="inline-flex items-center gap-2 text-sm text-fg-secondary hover:text-fg-primary transition-colors"
           >
             <ChevronLeft className="size-4 shrink-0" strokeWidth={1.5} aria-hidden />
@@ -115,7 +106,7 @@ export default async function SectionPage({
 
         {nextSection ? (
           <Link
-            href={`/tracks/${id}/${unidad}/s${nextSection.index}`}
+            href={`/courses/${id}/${unitId}/s${nextSection.index}`}
             className="inline-flex items-center gap-2 text-sm text-fg-secondary hover:text-fg-primary transition-colors"
           >
             <div className="text-right">
@@ -126,7 +117,7 @@ export default async function SectionPage({
           </Link>
         ) : (
           <Link
-            href={`/tracks/${id}/${unidad}`}
+            href={`/courses/${id}/${unitId}`}
             className="inline-flex items-center gap-2 text-sm text-fg-secondary hover:text-fg-primary transition-colors"
           >
             <div className="text-right">
