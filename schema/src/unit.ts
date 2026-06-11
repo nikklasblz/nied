@@ -9,12 +9,19 @@ const unitFrontmatterSchema = z.object({
   title: z.string().min(1),
 });
 
+// block-level only: indented or list-item directives are not matched
+// note: [^}]* spans newlines — multiline directives are accepted
 const VIDEO_DIRECTIVE_RE = /^::video\{([^}]*)\}/gm;
+
+// Remove fenced code blocks so documented directive examples are not validated.
+function stripFences(body: string): string {
+  return body.replace(/^```[\s\S]*?^```/gm, "");
+}
 
 function parseAttrs(raw: string): Map<string, string> {
   const attrs = new Map<string, string>();
-  const ATTR_RE = /(\w+)="([^"]*)"/g;
-  for (const m of raw.matchAll(ATTR_RE)) attrs.set(m[1]!, m[2]!);
+  const ATTR_RE = /(\w+)=(?:"([^"]*)"|'([^']*)')/g;
+  for (const m of raw.matchAll(ATTR_RE)) attrs.set(m[1]!, m[2] ?? m[3] ?? "");
   return attrs;
 }
 
@@ -58,7 +65,7 @@ export function validateUnitMarkdown(
     });
   }
 
-  for (const m of fm.content.matchAll(VIDEO_DIRECTIVE_RE)) {
+  for (const m of stripFences(fm.content).matchAll(VIDEO_DIRECTIVE_RE)) {
     const attrs = parseAttrs(m[1]!);
     if (!attrs.has("src")) {
       issues.push({ file, severity: "error", message: "::video directive missing src attribute" });
