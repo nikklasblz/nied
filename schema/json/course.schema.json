@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "number",
+      "const": 1
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z]{4})?(-([A-Z]{2}|\\d{3}))?$"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "intro",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "units": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^u[1-9]\\d*$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "objectives": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "hours": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "contact hours; fractions allowed, e.g. 1.5"
+          },
+          "depends_on": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^u[1-9]\\d*$"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "objectives",
+          "hours",
+          "depends_on"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "slug",
+    "title",
+    "language",
+    "level",
+    "description",
+    "units"
+  ],
+  "additionalProperties": false
+}
