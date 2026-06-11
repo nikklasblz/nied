@@ -12,6 +12,11 @@ export const quizQuestionSchema = z
   })
   .refine((q) => q.correct_index < q.options.length, {
     message: "correct_index out of range for options",
+    path: ["correct_index"],
+  })
+  .refine((q) => new Set(q.options).size === q.options.length, {
+    message: "options must be unique",
+    path: ["options"],
   });
 
 export const quizSchema = z.strictObject({

@@ -23,7 +23,8 @@ describe("validateQuizJson", () => {
 
   test("malformed JSON -> error", () => {
     const issues = validateQuizJson("{nope", "u1", "quizzes/u1.json");
-    expect(issues[0]!.severity).toBe("error");
+    expect(issues.length).toBe(1);
+    expect(issues[0]!.message).toBe("malformed JSON");
   });
 
   test("correct_index out of range -> error", () => {
@@ -53,5 +54,33 @@ describe("validateQuizJson", () => {
     const withSection = JSON.parse(valid);
     withSection.questions[0].section = "Sección 1";
     expect(validateQuizJson(JSON.stringify(withSection), "u1", "quizzes/u1.json")).toEqual([]);
+  });
+
+  // Boundary tests
+  test("unit_id 'u0' is rejected", () => {
+    const bad = JSON.stringify({ ...JSON.parse(valid), unit_id: "u0" });
+    const issues = validateQuizJson(bad, "u0", "quizzes/u0.json");
+    expect(issues.length).toBeGreaterThan(0);
+    expect(issues.some((i) => i.message.includes("unit_id"))).toBe(true);
+  });
+
+  test("xp_per_question 0 is rejected", () => {
+    const bad = JSON.stringify({ ...JSON.parse(valid), xp_per_question: 0 });
+    const issues = validateQuizJson(bad, "u1", "quizzes/u1.json");
+    expect(issues.length).toBeGreaterThan(0);
+  });
+
+  test("correct_index 0 is accepted (first option)", () => {
+    const fixture = JSON.parse(valid);
+    fixture.questions[0].correct_index = 0;
+    const issues = validateQuizJson(JSON.stringify(fixture), "u1", "quizzes/u1.json");
+    expect(issues).toEqual([]);
+  });
+
+  test("duplicate options are rejected", () => {
+    const fixture = JSON.parse(valid);
+    fixture.questions[0].options = ["same", "same"];
+    const issues = validateQuizJson(JSON.stringify(fixture), "u1", "quizzes/u1.json");
+    expect(issues.some((i) => i.message.includes("options"))).toBe(true);
   });
 });
