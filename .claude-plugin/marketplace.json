@@ -1,0 +1,13 @@
+{
+  "name": "nied",
+  "description": "nied framework marketplace",
+  "owner": { "name": "nied contributors" },
+  "plugins": [
+    {
+      "name": "nied",
+      "source": "./plugin",
+      "description": "Educational agent: generate university-grade courses with verified free sources",
+      "category": "education"
+    }
+  ]
+}

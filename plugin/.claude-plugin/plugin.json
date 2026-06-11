@@ -1,0 +1,8 @@
+{
+  "name": "nied",
+  "description": "Educational agent: generate university-grade courses on any topic with verified free sources, quizzes, and a pedagogical audit",
+  "version": "0.1.0",
+  "author": { "name": "nied contributors" },
+  "license": "MIT",
+  "keywords": ["education", "courses", "learning", "content-generation"]
+}
