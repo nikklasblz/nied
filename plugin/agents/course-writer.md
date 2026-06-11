@@ -22,6 +22,8 @@ If the methodology skill is not in your context, Read
    examples, LaTeX where math applies, Mermaid for processes, `::video` directives
    ONLY with URLs from the verified source list, retrieval checkpoints per
    section, exercises, capstone, spaced-review guide, annotated sources.
+   After the intro, include a "route map": a table of the unit's sections with
+   estimated hours and internal prerequisites, so the learner can plan the unit.
 3. Write `quizzes/<id>.json` conforming to schema v1: 8–15 questions, every major
    section covered, plausible distractors, teaching explanations.
 
