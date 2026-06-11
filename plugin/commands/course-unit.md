@@ -36,12 +36,24 @@ Dispatch `nied:course-auditor` on the unit. Then:
 
 - **PASS** -> continue to step 4.
 - **FAIL** -> send the blockers back to `nied:course-writer` for revision and
-  re-audit. Maximum 3 write-audit cycles; if still FAIL, stop and present the
-  remaining blockers to the user with your recommendation.
+  re-audit. Each revision dispatch to `nied:course-writer` must include: the
+  course directory, unit id, the syllabus entry, the FULL verified source list,
+  and the auditor's blockers (subagents are stateless). Maximum 3 write-audit
+  cycles; if still FAIL, stop and present the remaining blockers to the user
+  with your recommendation.
 
 ## 4. Validate schema and commit
 
-From the schema package directory: `bun run validate <course-dir>` — must exit 0.
+Locate the schema validator, in order: (1) `schema/` in the repo this plugin
+was loaded from (`${CLAUDE_PLUGIN_ROOT}/../schema` when running from a clone of
+the nied repo), (2) `schema/` in the user's current project. If found and `bun`
+is installed, run from that directory:
+`bun run validate <course-dir> --allow-missing-units` (incremental builds) —
+must exit 0. For a final/release audit, run without the flag. If the validator
+or `bun` is unavailable, do NOT fail: perform a manual structural check against
+the methodology's schema summary and report `schema_errors: not-run`, telling
+the user to install bun / clone the repo for full validation.
+
 If the course directory is inside a git repo, commit:
 `content(<course-slug>): <unit-id> — <unit title>`
 

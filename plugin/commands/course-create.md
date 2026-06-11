@@ -26,26 +26,36 @@ curriculum sequence, 8–12 major topic blocks, the consensus textbooks/courses
 Build the unit sequence from the DISCIPLINE's canonical order, not from the
 user's personal projects (hard rule 7).
 
+If research returns no verified canonical sources for the topic, stop and
+present the gaps to the user before generating course.yaml.
+
 ## 3. Generate artifacts
 
 Write into the target directory:
 
-1. `course.yaml` — conforming to schema v1: `schema_version: 1`, kebab-case
-   `slug`, `title`, `language`, `level`, `description`, and `units[]` where each
-   unit has `id` (u1, u2, ...), `title`, `objectives` (2–5 measurable, verb-first),
-   `hours`, `depends_on`.
+1. `course.yaml` — conforming to schema v1 (strict schema — no additional
+   keys): `schema_version: 1`, kebab-case `slug`, `title`, `language`, `level`,
+   `description`, and `units[]` where each unit has `id` (u1, u2, ...), `title`,
+   `objectives` (2–5 measurable, verb-first), `hours`, `depends_on`.
 2. `SYLLABUS.md` — human-readable syllabus: course overview, per-unit section
    (objectives, key concepts, the verified canonical sources from research),
    dependency map (Mermaid), suggested weekly pacing for the user's hours/week.
-3. Empty `units/` and `quizzes/` directories (units are generated later,
-   one by one, via /nied:course-unit — hard rule 6).
+3. `units/` and `quizzes/` directories, each containing a `.gitkeep` file
+   (`units/.gitkeep`, `quizzes/.gitkeep`) so git preserves them (units are
+   generated later, one by one, via /nied:course-unit — hard rule 6).
 
 ## 4. Validate and finish
 
-If this repo's schema validator is available (`schema/` exists in the plugin's
-repo or the user's project), run:
-`bun run validate <target-dir>` from the schema package directory and fix any
-errors before finishing.
+Locate the schema validator, in order: (1) `schema/` in the repo this plugin
+was loaded from (`${CLAUDE_PLUGIN_ROOT}/../schema` when running from a clone of
+the nied repo), (2) `schema/` in the user's current project. If found and `bun`
+is installed, run from that directory:
+`bun run validate <target-dir> --allow-missing-units` (incremental builds) —
+must exit 0; fix any errors before finishing. For a final/release audit, run
+without the flag. If the validator or `bun` is unavailable, do NOT fail:
+perform a manual structural check against the methodology's schema summary and
+report `schema_errors: not-run`, telling the user to install bun / clone the
+repo for full validation.
 
 Report: course location, unit list, and the next command to run
 (`/nied:course-unit u1 --dir <target-dir>`).

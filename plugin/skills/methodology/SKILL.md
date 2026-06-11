@@ -52,6 +52,30 @@ in this plugin MUST follow them; violations are audit blockers.
 - Wrong options must be plausible misconceptions, not jokes.
 - `explanation` teaches WHY the answer is right (1–3 sentences).
 
+Canonical shape (STRICT — no extra keys anywhere; unknown keys are validation errors):
+
+```json
+{
+  "unit_id": "u1",
+  "title": "Quiz: <unit title>",
+  "instructions": "<how to take it>",
+  "xp_per_question": 10,
+  "questions": [
+    {
+      "question": "<text>",
+      "options": ["<a>", "<b>", "<c>"],
+      "correct_index": 1,
+      "explanation": "<why>",
+      "section": "<## section name>"
+    }
+  ]
+}
+```
+
+Rules: `unit_id` must equal the unit id in the filename; `correct_index` is
+0-based and must be < options length; options must be unique; `xp_per_question`
+is a positive integer.
+
 ## Language
 
 The course's `language` field in `course.yaml` governs ALL generated content,
