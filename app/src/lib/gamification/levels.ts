@@ -1,5 +1,5 @@
 /**
- * Niveles globales (10) y por track (5) para niED.
+ * Niveles globales (10) y por curso (5) para niED.
  *
  * Los thresholds son XP acumulados — el usuario nunca pierde XP, así que el
  * nivel solo crece. Nombres alineados con el diseño §10 (Aprendiz → Maestría
