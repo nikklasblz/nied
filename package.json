@@ -1,0 +1,5 @@
+{
+  "name": "nied-monorepo",
+  "private": true,
+  "workspaces": ["schema", "app"]
+}

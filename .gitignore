@@ -7,3 +7,6 @@ Thumbs.db
 .env
 .env.*
 coverage/
+app/.next/
+app/db/
+app/_vendor/

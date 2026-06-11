@@ -1,0 +1,53 @@
+/**
+ * Re-export centralizado de los iconos de Lucide usados en niED.
+ *
+ * Todos los iconos llegan via `lucide-react`. NO usar emojis como iconos
+ * en ninguna parte del UI (regla del sistema de diseño v1).
+ */
+
+export {
+  Home,
+  BookOpen,
+  Trophy,
+  Pen,
+  Settings,
+  Flame,
+  Lock,
+  ChevronRight,
+  ChevronLeft,
+  Check,
+  CheckCircle2,
+  Circle,
+  CircleDot,
+  Zap,
+  Star,
+  Award,
+  Shield,
+  AlertTriangle,
+  Crown,
+  Flag,
+  Layers,
+  Sparkles,
+  Moon,
+  Sunrise,
+  Menu,
+  X,
+  ArrowRight,
+  Clock,
+  Target,
+  Cpu,
+  Database,
+  Server,
+  Code2,
+  Briefcase,
+  Library,
+  TrendingUp,
+  Map,
+  ListChecks,
+  PlayCircle,
+  PanelLeft,
+  PanelLeftClose,
+  ChevronDown,
+  XCircle,
+  HelpCircle,
+} from "lucide-react";

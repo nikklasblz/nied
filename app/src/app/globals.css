@@ -1,0 +1,596 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   niED — Sistema de Diseño v1
+   Dark-first. La paleta y tokens vienen del documento de diseño v1
+   (D:\niED\00-meta\diseño\2026-04-25-niED-design-system.md).
+   ========================================================================== */
+
+@theme inline {
+  /* Fonts (cargados via next/font en src/app/layout.tsx) */
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-source-serif);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-heading: var(--font-inter);
+
+  /* niED palette — surfaces, foregrounds */
+  --color-bg-base: var(--bg-base);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-overlay: var(--bg-overlay);
+  --color-fg-primary: var(--fg-primary);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-fg-muted: var(--fg-muted);
+
+  /* Accents */
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  /* shadcn/ui surface mapping */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Radii */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+
+  /* niED max-widths */
+  --max-width-prose-nied: 70ch;
+  --max-width-reading: 65ch;
+  --max-width-dashboard: 1200px;
+
+  /* niED shadows (overridden via custom utilities) */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-modal: 0 4px 16px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-xp-glow: 0 0 12px rgba(20, 184, 166, 0.35), 0 0 24px rgba(20, 184, 166, 0.15);
+}
+
+/* :root is dark-first for v0.3 — no light theme shipped */
+:root {
+  /* niED raw tokens */
+  --bg-base: #0b0f1a;
+  --bg-elevated: #111827;
+  --bg-overlay: #1e2533;
+  --fg-primary: #f1f5f9;
+  --fg-secondary: #94a3b8;
+  --fg-muted: #475569;
+  --accent-primary: #14b8a6;
+  --accent-secondary: #ea580c;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --xp-glow: rgba(20, 184, 166, 0.35);
+
+  /* shadcn surface mapping */
+  --background: var(--bg-base);
+  --foreground: var(--fg-primary);
+  --card: var(--bg-elevated);
+  --card-foreground: var(--fg-primary);
+  --popover: var(--bg-overlay);
+  --popover-foreground: var(--fg-primary);
+  --primary: var(--accent-primary);
+  --primary-foreground: #07221f;
+  --secondary: var(--bg-overlay);
+  --secondary-foreground: var(--fg-primary);
+  --muted: var(--bg-overlay);
+  --muted-foreground: var(--fg-secondary);
+  --accent: var(--accent-secondary);
+  --accent-foreground: #1a0a02;
+  --destructive: var(--danger);
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: var(--accent-primary);
+
+  --chart-1: #14b8a6;
+  --chart-2: #ea580c;
+  --chart-3: #22c55e;
+  --chart-4: #f59e0b;
+  --chart-5: #94a3b8;
+
+  --radius: 0.75rem; /* 12px → matches --radius-card token */
+
+  --sidebar: var(--bg-elevated);
+  --sidebar-foreground: var(--fg-primary);
+  --sidebar-primary: var(--accent-primary);
+  --sidebar-primary-foreground: #07221f;
+  --sidebar-accent: var(--bg-overlay);
+  --sidebar-accent-foreground: var(--fg-primary);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: var(--accent-primary);
+}
+
+/* The app shell is dark-first. The .dark class mirrors :root so any
+   shadcn component branching on it still works. */
+.dark {
+  --bg-base: #0b0f1a;
+  --bg-elevated: #111827;
+  --bg-overlay: #1e2533;
+  --fg-primary: #f1f5f9;
+  --fg-secondary: #94a3b8;
+  --fg-muted: #475569;
+  --accent-primary: #14b8a6;
+  --accent-secondary: #ea580c;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --xp-glow: rgba(20, 184, 166, 0.35);
+
+  --background: var(--bg-base);
+  --foreground: var(--fg-primary);
+  --card: var(--bg-elevated);
+  --card-foreground: var(--fg-primary);
+  --popover: var(--bg-overlay);
+  --popover-foreground: var(--fg-primary);
+  --primary: var(--accent-primary);
+  --primary-foreground: #07221f;
+  --secondary: var(--bg-overlay);
+  --secondary-foreground: var(--fg-primary);
+  --muted: var(--bg-overlay);
+  --muted-foreground: var(--fg-secondary);
+  --accent: var(--accent-secondary);
+  --accent-foreground: #1a0a02;
+  --destructive: var(--danger);
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: var(--accent-primary);
+
+  --sidebar: var(--bg-elevated);
+  --sidebar-foreground: var(--fg-primary);
+  --sidebar-primary: var(--accent-primary);
+  --sidebar-primary-foreground: #07221f;
+  --sidebar-accent: var(--bg-overlay);
+  --sidebar-accent-foreground: var(--fg-primary);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: var(--accent-primary);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer utilities {
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-modal {
+    box-shadow: var(--shadow-modal);
+  }
+  .shadow-xp-glow {
+    box-shadow: var(--shadow-xp-glow);
+  }
+  .max-w-prose-nied {
+    max-width: var(--max-width-prose-nied);
+  }
+  .max-w-reading {
+    max-width: var(--max-width-reading);
+  }
+  .max-w-dashboard {
+    max-width: var(--max-width-dashboard);
+  }
+
+  /* Heatmap cells — 5 niveles de intensidad sobre --accent-primary */
+  .heatmap-cell-0 {
+    background-color: var(--bg-overlay);
+  }
+  .heatmap-cell-1 {
+    background-color: rgba(20, 184, 166, 0.18);
+  }
+  .heatmap-cell-2 {
+    background-color: rgba(20, 184, 166, 0.38);
+  }
+  .heatmap-cell-3 {
+    background-color: rgba(20, 184, 166, 0.62);
+  }
+  .heatmap-cell-4 {
+    background-color: var(--accent-primary);
+  }
+}
+
+/* ==========================================================================
+   prose-niED — tipografía editorial para lectura larga de unidades.
+   Reemplazo manual de @tailwindcss/typography (no v4-compatible aún).
+   ========================================================================== */
+.prose-niED {
+  font-family: var(--font-serif), Georgia, serif;
+  color: var(--fg-primary);
+  font-size: 1.0625rem; /* ~17px */
+  line-height: 1.75;
+  max-width: var(--max-width-prose-nied);
+}
+.prose-niED > * + * {
+  margin-top: 1.1em;
+}
+.prose-niED h1,
+.prose-niED h2,
+.prose-niED h3,
+.prose-niED h4 {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  color: var(--fg-primary);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.prose-niED h1 {
+  font-size: 1.875rem;
+  margin-top: 0;
+  margin-bottom: 0.6em;
+}
+.prose-niED h2 {
+  font-size: 1.5rem;
+  margin-top: 2.5em;
+  margin-bottom: 0.6em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--border);
+  scroll-margin-top: 5rem;
+}
+.prose-niED h3 {
+  font-size: 1.25rem;
+  margin-top: 1.6em;
+  margin-bottom: 0.5em;
+  scroll-margin-top: 4.5rem;
+}
+.prose-niED h4 {
+  font-size: 1.05rem;
+  margin-top: 1.4em;
+  margin-bottom: 0.4em;
+}
+.prose-niED p {
+  color: var(--fg-primary);
+}
+.prose-niED a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(20, 184, 166, 0.4);
+  transition: border-color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+              color 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.prose-niED a:hover {
+  border-bottom-color: var(--accent-primary);
+}
+.prose-niED strong {
+  color: var(--fg-primary);
+  font-weight: 600;
+}
+.prose-niED em {
+  color: var(--fg-primary);
+}
+.prose-niED ul,
+.prose-niED ol {
+  padding-left: 1.4em;
+}
+.prose-niED ul {
+  list-style: disc;
+}
+.prose-niED ol {
+  list-style: decimal;
+}
+.prose-niED li {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+.prose-niED li::marker {
+  color: var(--accent-primary);
+}
+.prose-niED blockquote {
+  border-left: 3px solid;
+  border-image: linear-gradient(to bottom, var(--accent-primary), transparent) 1;
+  padding-left: 1.25rem;
+  color: var(--fg-secondary);
+  font-style: italic;
+}
+.prose-niED code {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.9em;
+  background: var(--bg-elevated);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--fg-primary);
+}
+.prose-niED pre {
+  font-family: var(--font-mono), monospace;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1em 1.1em;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.prose-niED pre code {
+  background: transparent;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  font-size: inherit;
+}
+.prose-niED hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.12) 20%,
+    rgba(255, 255, 255, 0.12) 80%,
+    transparent
+  );
+  margin: 2.5rem auto;
+  max-width: 60%;
+}
+.prose-niED table {
+  width: 100%;
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  margin: 1.5rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+.prose-niED thead {
+  background: var(--bg-overlay);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+}
+.prose-niED th {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-secondary);
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+}
+.prose-niED td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: top;
+}
+.prose-niED tbody tr {
+  transition: background 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.prose-niED tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.015);
+}
+.prose-niED tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+@media (max-width: 640px) {
+  .prose-niED table::after {
+    content: "Desliza →";
+    display: block;
+    font-size: 0.75rem;
+    color: var(--fg-muted);
+    text-align: right;
+    padding-top: 0.25rem;
+    font-family: var(--font-sans), system-ui, sans-serif;
+  }
+}
+.prose-niED img {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+/* === MEDIA EMBEBIDA (video, mermaid, imágenes, KaTeX) === */
+
+.video-embed {
+  margin: 2rem 0;
+}
+
+.video-embed-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.video-embed-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 12px;
+}
+
+.video-embed figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--fg-secondary);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  text-align: center;
+  font-style: italic;
+}
+
+.video-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--fg-muted);
+  background: var(--bg-overlay);
+  border-radius: 12px;
+}
+
+.video-placeholder svg {
+  width: 3rem;
+  height: 3rem;
+  opacity: 0.4;
+}
+
+.video-placeholder span {
+  font-size: 0.875rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.mermaid-rendered {
+  margin: 1.5rem auto;
+  display: flex;
+  justify-content: center;
+  background: var(--bg-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  overflow-x: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.mermaid-rendered svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-rendered::-webkit-scrollbar {
+  height: 6px;
+}
+
+.mermaid-rendered::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mermaid-rendered::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.mermaid-rendered::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mermaid-error {
+  color: var(--danger, #ef4444);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border-left: 3px solid var(--danger, #ef4444);
+  background: var(--bg-elevated, var(--card));
+  margin: 0.5rem 0;
+}
+
+/* prose-niED — figuras e imágenes con caption opcional */
+.prose-niED img {
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  margin: 1rem auto;
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.prose-niED figure {
+  margin: 1.5rem 0;
+}
+
+.prose-niED figcaption {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* KaTeX overrides — ajustar tamaño y color para dark mode niED */
+.katex {
+  font-size: 1.05em;
+  color: var(--fg-primary);
+}
+
+.katex-display {
+  margin: 1.5rem 0 !important;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent-primary);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.katex-display > .katex {
+  white-space: nowrap;
+}
+
+.katex-display::-webkit-scrollbar {
+  height: 4px;
+}
+
+.katex-display::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.katex-display::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+/* Heatmap pulse para racha en peligro (suave) */
+@keyframes nied-pulse-warning {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+  }
+}
+.streak-warning-pulse {
+  animation: nied-pulse-warning 2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .streak-warning-pulse {
+    animation: none;
+  }
+}
