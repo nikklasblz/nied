@@ -3,8 +3,8 @@
 > An open-source educational agent framework: generate complete, university-grade
 > courses on any topic with Claude Code, then study them in a gamified local web app.
 
-**Status: pre-release (v0.1 — Phase 1 in progress).** The course schema and the
-generator plugin are under active development. The reader app lands in Phase 2.
+**Status: Phase 1 (schema + plugin) and Phase 2 (reader app) shipped.
+Phase 3 (public demo + release) is next.**
 
 [Versión en español](README.es.md)
 
@@ -44,6 +44,23 @@ claude --plugin-dir ./plugin
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
+
+## Reader app
+
+A gamified local web app to study your generated courses: XP, streaks,
+achievements, auto-graded quizzes, and spaced-repetition review (Leitner).
+
+```text
+bun install
+cd app && bun run dev
+```
+
+Open http://localhost:3000. Configuration via env vars: `NIED_COURSES_ROOT`
+(default `../courses`), `NIED_UI_LANGUAGE` (`es` | `en`), `NIED_DB_PATH`,
+`NIED_INSTANCE_NAME`, `NIED_XP_PER_HOUR` (default `25`).
+
+Progress lives in a local SQLite file; the app never modifies course content.
+The progress database is disposable — markdown is the truth.
 
 ## License
 

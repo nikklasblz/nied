@@ -4,8 +4,8 @@
 > universitario sobre cualquier tema con Claude Code, y estúdialos en una app web
 > local gamificada.
 
-**Estado: pre-lanzamiento (v0.1 — Fase 1 en progreso).** El esquema de cursos y el
-plugin generador están en desarrollo activo. La app lectora llega en la Fase 2.
+**Estado: la Fase 1 (esquema + plugin) y la Fase 2 (app lectora) están listas.
+La Fase 3 (demo público + release) es la siguiente.**
 
 [English version](README.md)
 
@@ -47,6 +47,25 @@ claude --plugin-dir ./plugin
 ```
 
 Lee [CONTRIBUTING.md](CONTRIBUTING.md) para empezar.
+
+## App lectora
+
+Una app web local gamificada para estudiar los cursos generados: XP, rachas,
+logros, quizzes con corrección automática y revisión por repetición espaciada
+(método Leitner).
+
+```text
+bun install
+cd app && bun run dev
+```
+
+Abre http://localhost:3000. Configuración mediante variables de entorno:
+`NIED_COURSES_ROOT` (por defecto `../courses`), `NIED_UI_LANGUAGE` (`es` | `en`),
+`NIED_DB_PATH`, `NIED_INSTANCE_NAME`, `NIED_XP_PER_HOUR` (por defecto `25`).
+
+El progreso se guarda en un archivo SQLite local; la app nunca modifica el
+contenido de los cursos. La base de datos de progreso es desechable —
+el markdown es la verdad.
 
 ## Licencia
 

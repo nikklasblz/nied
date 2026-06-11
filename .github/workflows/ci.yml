@@ -8,9 +8,6 @@ on:
 jobs:
   schema:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: schema
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -18,14 +15,36 @@ jobs:
           bun-version: latest
       - run: bun install --frozen-lockfile
       - run: bun test
+        working-directory: schema
       - name: Typecheck
         run: bunx tsc --noEmit
+        working-directory: schema
       - name: Validate fixture course
         run: bun run validate test/fixtures/valid-course
+        working-directory: schema
       - name: JSON Schema is up to date
         run: |
           bun run gen:jsonschema
           git diff --exit-code json/
+        working-directory: schema
+
+  app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun test src/lib/__test__
+        working-directory: app
+      - run: bunx tsc --noEmit
+        working-directory: app
+      - name: Build
+        run: bun run build
+        working-directory: app
+        env:
+          NIED_COURSES_ROOT: ${{ github.workspace }}/courses
 
   docs-parity:
     runs-on: ubuntu-latest
