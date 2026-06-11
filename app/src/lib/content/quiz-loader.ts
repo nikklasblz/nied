@@ -1,31 +1,20 @@
-/**
- * Carga el archivo de quiz correspondiente a un track y unidad.
- *
- * Convención de nombres: q-{unitId}-*.json dentro de {trackId}/evaluaciones/
- */
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { quizSchema, type Quiz } from "@nied/schema";
+import { getConfig } from "../config";
 
-import { readFileSync, existsSync } from "fs";
-import { join } from "path";
-import type { Quiz } from "./quiz-types";
+export type { Quiz };
 
-const CONTENT_ROOT = join(process.cwd(), "..");
+const COURSE_ID_RE = /^[a-z0-9][a-z0-9-]*$/i;
 
-export function loadQuiz(trackId: string, unitId: string): Quiz | null {
-  // Busca un archivo que empiece con q-{unitId}- en la carpeta evaluaciones del track
-  const evalDir = join(CONTENT_ROOT, trackId, "evaluaciones");
-  if (!existsSync(evalDir)) return null;
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const fs = require("fs");
-  const files = fs.readdirSync(evalDir) as string[];
-  const quizFile = files.find(
-    (f: string) => f.startsWith(`q-${unitId}-`) && f.endsWith(".json")
-  );
-  if (!quizFile) return null;
-
+/** Carga quizzes/<unitId>.json (schema v1, claves en inglés). */
+export function loadQuiz(courseId: string, unitId: string): Quiz | null {
+  if (!COURSE_ID_RE.test(courseId)) return null;
+  const p = join(getConfig().coursesRoot, courseId, "quizzes", `${unitId}.json`);
+  if (!existsSync(p)) return null;
   try {
-    const raw = readFileSync(join(evalDir, quizFile), "utf-8");
-    return JSON.parse(raw) as Quiz;
+    const parsed = quizSchema.safeParse(JSON.parse(readFileSync(p, "utf-8")));
+    return parsed.success ? parsed.data : null;
   } catch {
     return null;
   }
