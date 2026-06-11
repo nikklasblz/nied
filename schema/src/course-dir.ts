@@ -19,8 +19,16 @@ function split(issues: Issue[]): { errors: Issue[]; warnings: Issue[] } {
   };
 }
 
+export interface ValidateCourseOptions {
+  /** When true, a declared unit whose units/<id>.md file doesn't exist yet
+   *  produces a warning instead of an error, and skips unit/quiz checks for
+   *  that unit. Useful during incremental builds where units are written one
+   *  at a time. Default: false (strict). */
+  allowMissingUnits?: boolean;
+}
+
 /** Valida una carpeta de curso completa contra el schema v1. */
-export function validateCourseDir(dir: string): ValidationResult {
+export function validateCourseDir(dir: string, opts: ValidateCourseOptions = {}): ValidationResult {
   const issues: Issue[] = [];
   const courseFile = join(dir, "course.yaml");
 
@@ -61,10 +69,17 @@ export function validateCourseDir(dir: string): ValidationResult {
   for (const unit of course.units) {
     const unitPath = join(dir, "units", `${unit.id}.md`);
     if (!existsSync(unitPath)) {
-      issues.push({
-        file: `units/${unit.id}.md`, severity: "error",
-        message: `declared in course.yaml but units/${unit.id}.md not found`,
-      });
+      if (opts.allowMissingUnits) {
+        issues.push({
+          file: `units/${unit.id}.md`, severity: "warning",
+          message: `declared in course.yaml but units/${unit.id}.md not written yet`,
+        });
+      } else {
+        issues.push({
+          file: `units/${unit.id}.md`, severity: "error",
+          message: `declared in course.yaml but units/${unit.id}.md not found`,
+        });
+      }
       continue;
     }
     const unitRelPath = `units/${unit.id}.md`;

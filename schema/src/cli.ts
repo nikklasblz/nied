@@ -4,7 +4,11 @@ import { z } from "zod";
 import { courseSchema } from "./types";
 import { validateCourseDir } from "./course-dir";
 
-const arg = process.argv[2];
+// Separate flags from positional args
+const rawArgs = process.argv.slice(2);
+const allowMissingUnits = rawArgs.includes("--allow-missing-units");
+const positional = rawArgs.filter((a) => a !== "--allow-missing-units");
+const arg = positional[0];
 
 if (arg === "--emit-jsonschema") {
   const jsonSchema = z.toJSONSchema(courseSchema);
@@ -19,11 +23,11 @@ if (arg === "--emit-jsonschema") {
 }
 
 if (!arg) {
-  console.error("usage: bun run src/cli.ts <course-dir> | --emit-jsonschema");
+  console.error("usage: bun run src/cli.ts <course-dir> [--allow-missing-units] | --emit-jsonschema");
   process.exit(2);
 }
 
-const result = validateCourseDir(arg);
+const result = validateCourseDir(arg, { allowMissingUnits });
 
 for (const w of result.warnings) console.log(`WARN  ${w.file}: ${w.message}`);
 for (const e of result.errors) console.log(`ERROR ${e.file}: ${e.message}`);

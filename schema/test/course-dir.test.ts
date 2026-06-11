@@ -6,6 +6,38 @@ import { validateCourseDir } from "../src/course-dir";
 
 const FIXTURE = join(import.meta.dir, "fixtures", "valid-course");
 
+/** Creates a temp course with u1.md written but u2.md absent. */
+function makePartialCourse(): string {
+  const dir = mkdtempSync(join(tmpdir(), "nied-partial-"));
+  mkdirSync(join(dir, "units"), { recursive: true });
+  writeFileSync(
+    join(dir, "course.yaml"),
+    [
+      "schema_version: 1",
+      "slug: partial-course",
+      "title: Partial",
+      "language: es",
+      "level: intro",
+      "description: d",
+      "units:",
+      "  - id: u1",
+      "    title: U1",
+      "    objectives: [o]",
+      "    hours: 1",
+      "  - id: u2",
+      "    title: U2",
+      "    objectives: [o]",
+      "    hours: 1",
+    ].join("\n")
+  );
+  writeFileSync(
+    join(dir, "units", "u1.md"),
+    "---\nid: u1\ntitle: U1\n---\n\nContent.\n"
+  );
+  // u2.md intentionally NOT written
+  return dir;
+}
+
 describe("validateCourseDir", () => {
   test("valid fixture course -> no errors (warnings allowed)", () => {
     const result = validateCourseDir(FIXTURE);
@@ -91,5 +123,43 @@ describe("validateCourseDir", () => {
     writeFileSync(join(dir, "units", "u2.md"), "---\nid: u2\ntitle: U2\n---\n\nContent.\n");
     const result = validateCourseDir(dir);
     expect(result.errors.some((e) => e.message.includes("cycle"))).toBe(true);
+  });
+});
+
+describe("validateCourseDir — incremental (allowMissingUnits)", () => {
+  test("partial course default mode -> error mentioning units/u2.md", () => {
+    const dir = makePartialCourse();
+    const result = validateCourseDir(dir);
+    expect(result.errors.some((e) => e.message.includes("units/u2.md"))).toBe(true);
+  });
+
+  test("partial course allowMissingUnits -> zero errors", () => {
+    const dir = makePartialCourse();
+    const result = validateCourseDir(dir, { allowMissingUnits: true });
+    expect(result.errors).toEqual([]);
+  });
+
+  test("partial course allowMissingUnits -> warning 'not written yet' for u2", () => {
+    const dir = makePartialCourse();
+    const result = validateCourseDir(dir, { allowMissingUnits: true });
+    expect(
+      result.warnings.some((w) => w.message.includes("not written yet") && w.message.includes("u2"))
+    ).toBe(true);
+  });
+
+  test("partial course allowMissingUnits -> NO quiz-missing warning for u2", () => {
+    const dir = makePartialCourse();
+    const result = validateCourseDir(dir, { allowMissingUnits: true });
+    expect(
+      result.warnings.some((w) => w.message.includes("quiz") && w.message.includes("u2"))
+    ).toBe(false);
+  });
+
+  test("complete fixture with allowMissingUnits -> identical result as without flag", () => {
+    const without = validateCourseDir(FIXTURE);
+    const withFlag = validateCourseDir(FIXTURE, { allowMissingUnits: true });
+    expect(withFlag.errors).toEqual(without.errors);
+    expect(withFlag.warnings).toEqual(without.warnings);
+    expect(withFlag.course?.slug).toBe(without.course?.slug);
   });
 });
