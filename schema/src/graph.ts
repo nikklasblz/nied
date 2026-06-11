@@ -31,22 +31,46 @@ export function checkCourseGraph(course: CourseMeta): Issue[] {
   }
 
   // Detección de ciclos por DFS con colores blanco/gris/negro.
+  //
+  // Design note (a): Only the first cycle is reported by design (fix-and-rerun UX).
+  // Reporting all cycles simultaneously is noisy and misleading because fixing one
+  // cycle often resolves others; the author re-runs validation after each fix.
+  //
+  // Design note (b) WARNING: after an early cycle return, nodes on the current DFS
+  // path remain in "visiting" state and are never transitioned to "done". Do NOT
+  // remove the break below without also resetting those nodes to "white" (unvisited),
+  // otherwise subsequent outer-loop iterations would silently skip them and miss cycles.
   const deps = new Map(course.units.map((u) => [u.id, u.depends_on]));
   const state = new Map<string, "visiting" | "done">();
-  const visit = (id: string): boolean => {
-    if (state.get(id) === "visiting") return true;
-    if (state.get(id) === "done") return false;
+
+  /**
+   * Returns the actual cycle node — the node already in "visiting" state when the
+   * back-edge is traversed — or null if no cycle is reachable from `id`.
+   * Returning the back-edge target (not the DFS entry point) gives an accurate
+   * attribution: the reported node is always a member of the cycle.
+   */
+  const visit = (id: string): string | null => {
+    if (state.get(id) === "visiting") return id; // back-edge: `id` is in the cycle
+    if (state.get(id) === "done") return null;
     state.set(id, "visiting");
     for (const dep of deps.get(id) ?? []) {
-      if (idSet.has(dep) && visit(dep)) return true;
+      // Skip self-deps: phase 2 already reports them as "depends on itself".
+      // Including them here would produce a spurious duplicate "cycle" error.
+      if (dep === id) continue;
+      if (idSet.has(dep)) {
+        const cycleNode = visit(dep);
+        if (cycleNode !== null) return cycleNode;
+      }
     }
     state.set(id, "done");
-    return false;
+    return null;
   };
+
   for (const id of ids) {
-    if (visit(id)) {
-      issues.push({ file, severity: "error", message: `dependency cycle involving ${id}` });
-      break;
+    const cycleNode = visit(id);
+    if (cycleNode !== null) {
+      issues.push({ file, severity: "error", message: `dependency cycle involving ${cycleNode}` });
+      break; // Only the first cycle is reported — see design note (a) and WARNING (b) above.
     }
   }
 
