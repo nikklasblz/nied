@@ -1,0 +1,20 @@
+schema_version: 1
+slug: valid-course
+title: Curso de prueba
+language: es
+level: intro
+description: Fixture para tests de integración del validador.
+units:
+  - id: u1
+    title: Unidad uno
+    objectives:
+      - Objetivo de prueba
+    hours: 4
+    depends_on: []
+  - id: u2
+    title: Unidad dos
+    objectives:
+      - Otro objetivo
+    hours: 6
+    depends_on:
+      - u1

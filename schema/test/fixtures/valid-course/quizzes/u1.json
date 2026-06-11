@@ -1,0 +1,14 @@
+{
+  "unit_id": "u1",
+  "title": "Quiz unidad uno",
+  "instructions": "Responde de memoria.",
+  "xp_per_question": 10,
+  "questions": [
+    {
+      "question": "¿Pregunta de prueba?",
+      "options": ["No", "Sí"],
+      "correct_index": 1,
+      "explanation": "Es un fixture."
+    }
+  ]
+}
