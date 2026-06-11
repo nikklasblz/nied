@@ -93,10 +93,7 @@ function QuizQuestion({
         courseId,
         unitId,
         index,
-        state.selectedOption!,
-        correctIndex,
-        explanation,
-        xpPerQuestion
+        state.selectedOption!
       );
 
       setState((prev) => ({

@@ -68,6 +68,12 @@ export async function markUnitComplete(
   if (!course || !unit) {
     return { ok: false, error: `Unidad no encontrada: ${courseId}/${unitId}` };
   }
+
+  // Guard: solo unidades con contenido escrito pueden completarse
+  if (!course.writtenUnits.includes(unitId)) {
+    return { ok: false, error: `Unidad sin contenido: ${courseId}/${unitId}` };
+  }
+
   const db = getDb();
 
   // Guard de idempotencia: si la unidad ya está completa, no duplicar

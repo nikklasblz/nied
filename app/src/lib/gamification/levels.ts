@@ -13,12 +13,6 @@ export type GlobalLevel = {
   xpToNext: number | null;
 };
 
-export type TrackLevel = {
-  level: number;
-  xpRequired: number;
-  xpToNext: number | null;
-};
-
 const GLOBAL_THRESHOLDS = [0, 500, 1500, 3500, 7000, 12000, 20000, 32000, 50000, 75000];
 
 const GLOBAL_NAMES = [
@@ -33,8 +27,6 @@ const GLOBAL_NAMES = [
   "Maestro",
   "Maestría plena",
 ];
-
-const TRACK_THRESHOLDS = [0, 500, 1500, 3500, 7000];
 
 function levelInfo(
   totalXp: number,
@@ -58,11 +50,6 @@ export function getGlobalLevel(totalXp: number): GlobalLevel {
   };
 }
 
-export function getTrackLevel(trackXp: number): TrackLevel {
-  return levelInfo(trackXp, TRACK_THRESHOLDS);
-}
-
 export const GAMIFICATION_LEVELS = {
   global: { thresholds: GLOBAL_THRESHOLDS, names: GLOBAL_NAMES },
-  track: { thresholds: TRACK_THRESHOLDS },
 } as const;

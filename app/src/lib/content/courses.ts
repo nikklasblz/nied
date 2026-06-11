@@ -7,7 +7,7 @@ import { renderMarkdownToHtml } from "./parser";
 import { splitMarkdownSections } from "./sections";
 import type { CourseEntry, UnitView } from "./types";
 
-const COURSE_ID_RE = /^[a-z0-9][a-z0-9-]*$/i;
+const COURSE_ID_RE = /^[a-z0-9][a-z0-9-]*$/;
 
 function loadEntry(root: string, id: string): CourseEntry | null {
   const dir = join(root, id);

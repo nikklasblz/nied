@@ -4,11 +4,12 @@
  * Server action: procesa la respuesta a una pregunta de quiz.
  *
  * Pipeline:
- *  1. Verifica idempotencia (ya respondida correctamente → no XP).
- *  2. Si es correcta: toca racha, aplica multiplicador, inserta evento XP.
- *  3. Registra el intento en quiz_attempts.
- *  4. Crea la card SRS (Leitner caja 1, due mañana) si no existe.
- *  5. Invalida cache de la ruta.
+ *  1. Carga el quiz desde el servidor (no confía en datos del cliente).
+ *  2. Verifica idempotencia (ya respondida correctamente → no XP).
+ *  3. Si es correcta: toca racha, aplica multiplicador, inserta evento XP.
+ *  4. Registra el intento en quiz_attempts.
+ *  5. Crea la card SRS (Leitner caja 1, due mañana) si no existe.
+ *  6. Invalida cache de la ruta.
  */
 
 import { revalidatePath } from "next/cache";
@@ -19,6 +20,7 @@ import { upsertCard } from "@/lib/db/queries/srs";
 import { nextDueDate } from "@/lib/srs/leitner";
 import { recordActivity, toIsoDate } from "@/lib/gamification/streaks";
 import { applyMultiplier } from "@/lib/gamification/xp";
+import { loadQuiz } from "@/lib/content/quiz-loader";
 
 export type SubmitQuizAnswerResult = {
   correct: boolean;
@@ -31,26 +33,32 @@ export async function submitQuizAnswer(
   courseId: string,
   unitId: string,
   questionIndex: number,
-  selectedAnswer: number,
-  correctAnswer: number,
-  explanation: string,
-  xpPerQuestion: number
+  selectedAnswer: number
 ): Promise<SubmitQuizAnswerResult> {
+  const quiz = loadQuiz(courseId, unitId);
+  if (!quiz) {
+    throw new Error(`Quiz no encontrado: ${courseId}/${unitId}`);
+  }
+  const q = quiz.questions[questionIndex];
+  if (!q) {
+    throw new Error(`Pregunta fuera de rango: índice ${questionIndex}`);
+  }
+
   const db = getDb();
-  const correct = selectedAnswer === correctAnswer;
+  const correct = selectedAnswer === q.correct_index;
 
   // Idempotencia: si ya respondió correctamente, no volver a dar XP
   const already = hasAttemptedQuestion(db, courseId, unitId, questionIndex);
   if (already) {
     return {
       correct,
-      explanation,
+      explanation: q.explanation,
       xpAwarded: 0,
       alreadyAnswered: true,
     };
   }
 
-  const xpBase = correct ? xpPerQuestion : 0;
+  const xpBase = correct ? quiz.xp_per_question : 0;
 
   const result = db.transaction(() => {
     const today = toIsoDate(new Date());
@@ -67,8 +75,8 @@ export async function submitQuizAnswer(
     });
 
     // SRS: la pregunta entra al sistema Leitner en caja 1, due mañana.
-    const srsToday = new Date().toISOString().slice(0, 10);
-    upsertCard(db, courseId, unitId, questionIndex, nextDueDate(1, srsToday));
+    // Usamos la misma fecha local que el resto del pipeline (toIsoDate).
+    upsertCard(db, courseId, unitId, questionIndex, nextDueDate(1, today));
 
     if (correct && finalXp > 0) {
       insertXpEvent(db, {
@@ -92,7 +100,7 @@ export async function submitQuizAnswer(
 
   return {
     correct,
-    explanation,
+    explanation: q.explanation,
     xpAwarded: result.finalXp,
     alreadyAnswered: false,
   };
