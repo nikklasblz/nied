@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import {
   Home,
   BookOpen,
+  Layers,
   Trophy,
   Pen,
   Settings,
@@ -26,6 +27,7 @@ import type { ComponentType, SVGProps } from "react";
 export type NavLabels = {
   dashboard: string;
   courses: string;
+  review: string;
   achievements: string;
   journal: string;
   settings: string;
@@ -46,6 +48,7 @@ type NavItem = {
 const NAV: NavItem[] = [
   { href: "/", labelKey: "dashboard", icon: Home },
   { href: "/courses", labelKey: "courses", icon: BookOpen, matchPrefix: "/courses" },
+  { href: "/review", labelKey: "review", icon: Layers, matchPrefix: "/review" },
   { href: "/logros", labelKey: "achievements", icon: Trophy, matchPrefix: "/logros" },
   { href: "/bitacora", labelKey: "journal", icon: Pen, matchPrefix: "/bitacora" },
   { href: "/ajustes", labelKey: "settings", icon: Settings, matchPrefix: "/ajustes" },
@@ -74,9 +77,12 @@ export function NavSidebarLogo({ ariaLabel }: { ariaLabel: string }) {
 
 export function NavSidebarItems({
   labels,
+  reviewDue = 0,
   onNavigate,
 }: {
   labels: NavLabels;
+  /** Cards SRS vencidas hoy — badge en el item "Repaso" (solo si > 0). */
+  reviewDue?: number;
   onNavigate?: () => void;
 }) {
   const pathname = usePathname() || "/";
@@ -111,6 +117,11 @@ export function NavSidebarItems({
               aria-hidden
             />
             <span>{labels[item.labelKey]}</span>
+            {item.labelKey === "review" && reviewDue > 0 && (
+              <span className="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-accent-primary/15 px-1.5 py-0.5 font-mono text-[10px] font-semibold tabular-nums text-accent-primary ring-1 ring-accent-primary/30">
+                {reviewDue}
+              </span>
+            )}
           </Link>
         );
       })}

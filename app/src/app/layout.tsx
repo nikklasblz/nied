@@ -3,6 +3,8 @@ import { Inter, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppShell } from "@/components/app-shell";
+import { getConfig } from "@/lib/config";
+import { t } from "@/lib/i18n";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 
@@ -28,11 +30,12 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "niED — Espacio de Capacitación",
-  description:
-    "Espacio personal de capacitación: IA, ingeniería, datos, gestión farma. Aprende, registra progreso y conecta con tus proyectos reales.",
-};
+export function generateMetadata(): Metadata {
+  return {
+    title: `${getConfig().instanceName} — ${t("app.title")}`,
+    description: t("app.description"),
+  };
+}
 
 export default function RootLayout({
   children,
@@ -41,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="es"
+      lang={getConfig().uiLanguage}
       className={`dark ${inter.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >

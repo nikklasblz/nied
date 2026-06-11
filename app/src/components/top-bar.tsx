@@ -15,7 +15,7 @@ import {
   toIsoDate,
 } from "@/lib/gamification/streaks";
 import { MobileNavTrigger } from "@/components/mobile-nav-trigger";
-import { getNavLabels } from "@/components/app-shell";
+import { getNavLabels, getReviewDueCount } from "@/components/app-shell";
 import { Flame, Trophy } from "@/components/icons";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -39,7 +39,11 @@ export function TopBar() {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-bg-base/85 px-4 backdrop-blur-md md:px-6">
-      <MobileNavTrigger openLabel={t("nav.open")} navLabels={getNavLabels()} />
+      <MobileNavTrigger
+        openLabel={t("nav.open")}
+        navLabels={getNavLabels()}
+        reviewDue={getReviewDueCount()}
+      />
       <div className="flex flex-1 items-center">
         <span className="font-sans text-sm font-medium text-fg-secondary">
           {t("topbar.tagline")}

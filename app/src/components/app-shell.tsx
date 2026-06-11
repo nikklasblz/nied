@@ -19,12 +19,16 @@ import { XPTotalChip } from "@/components/xp-total-chip";
 import { TopBar } from "@/components/top-bar";
 import { SidebarProvider } from "@/components/sidebar-provider";
 import { CollapsibleSidebar } from "@/components/collapsible-sidebar";
+import { getDb } from "@/lib/db/client";
+import { countDue } from "@/lib/db/queries/srs";
+import { toIsoDate } from "@/lib/gamification/streaks";
 import { t } from "@/lib/i18n";
 
 export function getNavLabels(): NavLabels {
   return {
     dashboard: t("nav.dashboard"),
     courses: t("nav.courses"),
+    review: t("nav.review"),
     achievements: t("nav.achievements"),
     journal: t("nav.journal"),
     settings: t("nav.settings"),
@@ -33,8 +37,14 @@ export function getNavLabels(): NavLabels {
   };
 }
 
+/** Cards SRS vencidas hoy — badge del item "Repaso" en el nav. */
+export function getReviewDueCount(): number {
+  return countDue(getDb(), toIsoDate(new Date()));
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const navLabels = getNavLabels();
+  const reviewDue = getReviewDueCount();
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
@@ -49,7 +59,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         >
           <NavSidebarLogo ariaLabel={navLabels.logoAria} />
           <div className="mt-2 flex-1 overflow-y-auto pb-2">
-            <NavSidebarItems labels={navLabels} />
+            <NavSidebarItems labels={navLabels} reviewDue={reviewDue} />
           </div>
           <div className="border-t border-border p-3">
             <XPTotalChip />

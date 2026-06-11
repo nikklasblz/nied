@@ -20,9 +20,11 @@ import {
 export function MobileNavTrigger({
   openLabel,
   navLabels,
+  reviewDue = 0,
 }: {
   openLabel: string;
   navLabels: NavLabels;
+  reviewDue?: number;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -43,7 +45,11 @@ export function MobileNavTrigger({
         <div className="flex h-full flex-col py-2">
           <NavSidebarLogo ariaLabel={navLabels.logoAria} />
           <div className="mt-2 flex-1 overflow-y-auto">
-            <NavSidebarItems labels={navLabels} onNavigate={() => setOpen(false)} />
+            <NavSidebarItems
+              labels={navLabels}
+              reviewDue={reviewDue}
+              onNavigate={() => setOpen(false)}
+            />
           </div>
         </div>
       </SheetContent>

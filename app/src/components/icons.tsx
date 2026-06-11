@@ -50,4 +50,5 @@ export {
   ChevronDown,
   XCircle,
   HelpCircle,
+  Eye,
 } from "lucide-react";
