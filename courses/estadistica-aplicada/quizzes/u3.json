@@ -1,0 +1,188 @@
+{
+  "unit_id": "u3",
+  "title": "Quiz: Visualización de datos",
+  "instructions": "Responde cada pregunta seleccionando la opción que mejor complete o responda el enunciado. Cada respuesta correcta otorga 10 XP. Lee los enunciados con cuidado: algunas opciones son errores comunes plausibles.",
+  "xp_per_question": 10,
+  "questions": [
+    {
+      "question": "¿Qué demostró el cuarteto de Anscombe sobre los estadísticos descriptivos?",
+      "options": [
+        "Que la media siempre es el estadístico más informativo para describir un conjunto de datos",
+        "Que los gráficos son innecesarios cuando se tienen suficientes estadísticos calculados",
+        "Que cuatro conjuntos de datos con estadísticos casi idénticos pueden tener formas completamente distintas al graficarse",
+        "Que la varianza es más informativa que la media para detectar diferencias entre grupos"
+      ],
+      "correct_index": 2,
+      "explanation": "Anscombe construyó cuatro conjuntos con casi la misma media, varianza y correlación, pero que al graficarse revelan formas radicalmente distintas (lineal, curva, con outlier masivo, casi vertical). Esto demuestra que los números solos no son suficientes: el gráfico revela la estructura que los estadísticos ocultan.",
+      "section": "1. De la tabla al gráfico: por qué visualizar"
+    },
+    {
+      "question": "Según la jerarquía de percepción visual de Cleveland y McGill, ¿cuál canal visual transmite información cuantitativa con mayor precisión?",
+      "options": [
+        "Posición a lo largo de un eje común",
+        "Área de una figura",
+        "Ángulo o inclinación",
+        "Tono o intensidad de color"
+      ],
+      "correct_index": 0,
+      "explanation": "Cleveland y McGill midieron experimentalmente la precisión con que el cerebro humano extrae cantidades de distintos canales visuales. La posición a lo largo de un eje común (como las barras en un gráfico de barras o los puntos en un scatter) es el más preciso. El área y el color son los menos precisos, lo que explica por qué los gráficos de burbujas y de torta son difíciles de leer cuantitativamente.",
+      "section": "1. De la tabla al gráfico: por qué visualizar"
+    },
+    {
+      "question": "Con un conjunto de datos de n = 25 observaciones, la regla de la raíz cuadrada sugiere usar aproximadamente cuántos bins para el histograma:",
+      "options": [
+        "10 bins",
+        "25 bins",
+        "3 bins",
+        "5 bins"
+      ],
+      "correct_index": 3,
+      "explanation": "La regla de la raíz cuadrada dice que el número de bins debe ser aproximadamente √n. Con n = 25, √25 = 5. Es solo una guía de partida: si el histograma resultante parece demasiado suave o demasiado dentado, se ajusta el número de bins.",
+      "section": "2. Histogramas: construcción, bins y formas de distribución"
+    },
+    {
+      "question": "Un histograma de tiempos de atención muestra una cola larga hacia la derecha con la mayor parte de los datos concentrados en la izquierda. ¿Qué medida de tendencia central es más apropiada para describir estos datos?",
+      "options": [
+        "La media aritmética, porque usa toda la información disponible",
+        "La mediana, porque es más robusta frente a la cola derecha que la media",
+        "La moda, porque es el valor más frecuente y no se ve afectada por extremos",
+        "Cualquiera de las tres, porque con n grande todas convergen al mismo valor"
+      ],
+      "correct_index": 1,
+      "explanation": "En una distribución asimétrica a la derecha, la media se desplaza hacia la cola y resulta mayor que la mediana, dejando de representar al valor 'típico'. La mediana es robusta: no se ve afectada por los valores extremos de la cola, por lo que describe mejor el centro de los datos. La moda también es robusta pero puede estar en un bin muy estrecho y no resume toda la distribución.",
+      "section": "2. Histogramas: construcción, bins y formas de distribución"
+    },
+    {
+      "question": "¿Qué ocurre si se elige un número excesivamente alto de bins (bins demasiado estrechos) al construir un histograma?",
+      "options": [
+        "El histograma siempre revela con mayor precisión la distribución verdadera de los datos",
+        "El histograma pierde todos los detalles y parece una meseta plana",
+        "El histograma muestra un patrón dentado y errático que puede ser un artefacto, ocultando la forma real",
+        "Los bins con frecuencia cero desaparecen automáticamente y el gráfico es más limpio"
+      ],
+      "correct_index": 2,
+      "explanation": "Con bins demasiado estrechos, cada bin contiene muy pocos datos, y las fluctuaciones aleatorias producen un patrón dentado. Lo que parece una estructura compleja es en realidad ruido estadístico, no la forma verdadera de la distribución. La solución es reducir el número de bins hasta que el histograma muestre una forma interpretable.",
+      "section": "2. Histogramas: construcción, bins y formas de distribución"
+    },
+    {
+      "question": "En un boxplot, ¿hasta dónde se extiende el bigote derecho?",
+      "options": [
+        "Exactamente hasta Q3 + 1.5·IQR, independientemente de si hay un dato allí",
+        "Hasta el valor máximo del conjunto de datos, incluyendo atípicos",
+        "Hasta Q3 + 3·IQR, que es la 'cerca extrema' de Tukey",
+        "Hasta el dato real más alto que todavía está dentro de la cerca superior (Q3 + 1.5·IQR)"
+      ],
+      "correct_index": 3,
+      "explanation": "El bigote llega hasta el dato real más extremo que aún se encuentra dentro de la cerca de Tukey (Q3 + 1.5·IQR). No llega hasta la cerca misma a menos que haya un dato exactamente en ese valor. Los valores que superan la cerca se grafican como puntos individuales (atípicos). Esta distinción es importante: el bigote siempre apunta a un dato real, no a una fórmula.",
+      "section": "3. Boxplots: del resumen de cinco números al diagrama"
+    },
+    {
+      "question": "Tienes datos de tiempo de espera para tres sucursales bancarias y quieres comparar sus distribuciones de un solo vistazo, incluyendo la variabilidad y los valores extremos. ¿Qué gráfico es más apropiado?",
+      "options": [
+        "Boxplots paralelos, uno por sucursal en el mismo eje",
+        "Un histograma apilado con los tres grupos superpuestos",
+        "Un diagrama de dispersión con la sucursal en el eje x y el tiempo en el eje y",
+        "Un gráfico de barras con la media de cada sucursal"
+      ],
+      "correct_index": 0,
+      "explanation": "Los boxplots paralelos permiten comparar simultáneamente la mediana (tiempo típico), el IQR (variabilidad central) y los atípicos de varios grupos en un mismo gráfico. El histograma apilado es difícil de leer cuando hay más de dos grupos. El gráfico de barras con medias pierde información sobre dispersión y atípicos, que son precisamente los datos más relevantes para un gerente de operaciones.",
+      "section": "3. Boxplots: del resumen de cinco números al diagrama"
+    },
+    {
+      "question": "¿Cuál es la diferencia visual más inmediata entre un histograma y un gráfico de barras?",
+      "options": [
+        "El histograma siempre tiene el eje y en porcentajes; el gráfico de barras usa conteos absolutos",
+        "En el histograma las barras son adyacentes (sin espacio entre ellas); en el gráfico de barras hay espacio entre las barras",
+        "El gráfico de barras solo se usa con variables ordinales; el histograma con variables nominales",
+        "En el histograma el eje x es categórico; en el gráfico de barras es numérico continuo"
+      ],
+      "correct_index": 1,
+      "explanation": "Las barras adyacentes del histograma reflejan que los bins son intervalos contiguos en una escala numérica continua: no hay 'espacio' entre un bin y el siguiente. El espacio entre barras del gráfico de barras indica que las categorías son independientes entre sí y que su orden podría cambiarse. Esta diferencia visual codifica una diferencia conceptual: escala continua vs. categorías discretas.",
+      "section": "4. Gráficos de barras y variables categóricas"
+    },
+    {
+      "question": "Se quiere comparar la distribución del modo de transporte al trabajo entre dos ciudades: Ciudad A (n = 200) y Ciudad B (n = 800). ¿Qué debe mostrar el eje y del gráfico de barras para que la comparación sea honesta?",
+      "options": [
+        "Conteos absolutos de cada categoría",
+        "La diferencia entre los conteos de ambas ciudades",
+        "El logaritmo de los conteos para equiparar las escalas",
+        "Porcentajes o proporciones, no conteos absolutos"
+      ],
+      "correct_index": 3,
+      "explanation": "Con tamaños de muestra tan distintos (200 vs. 800), los conteos absolutos harán que Ciudad B siempre tenga barras más altas aunque su distribución porcentual sea idéntica. Para comparar la *distribución* (la proporción de personas en cada modo de transporte), se deben usar porcentajes o proporciones. El logaritmo no tiene interpretación directa en este contexto.",
+      "section": "4. Gráficos de barras y variables categóricas"
+    },
+    {
+      "question": "En un diagrama de dispersión de 'horas de ejercicio semanal' (eje x) vs. 'índice de masa corporal' (eje y), los puntos forman una nube dispersa con una leve tendencia a bajar de izquierda a derecha. ¿Cómo se describe esta relación?",
+      "options": [
+        "Tendencia positiva débil: a más horas de ejercicio, el IMC tiende a ser ligeramente mayor",
+        "Sin tendencia: la nube dispersa indica que no hay ninguna relación entre las variables",
+        "Tendencia negativa débil: a más horas de ejercicio, el IMC tiende a ser ligeramente menor",
+        "Relación curva: el scatter en forma de arco indica una relación no lineal"
+      ],
+      "correct_index": 2,
+      "explanation": "Cuando los puntos descienden de izquierda a derecha (conforme x aumenta, y tiende a disminuir), la dirección es negativa. La palabra 'débil' describe que los puntos están muy dispersos alrededor de la tendencia, no que la tendencia no exista. La nube dispersa no significa ausencia de relación; solo significa que la relación no es fuerte.",
+      "section": "5. Diagramas de dispersión: dos variables cuantitativas"
+    },
+    {
+      "question": "¿Por qué es fundamental construir el diagrama de dispersión ANTES de calcular el coeficiente de correlación de Pearson?",
+      "options": [
+        "Porque Pearson mide solo relaciones lineales, y el scatter revela si la relación es curva, lo que haría inválida la interpretación de la correlación",
+        "Porque el scatter permite calcular visualmente el valor exacto de Pearson sin fórmulas",
+        "Porque la correlación de Pearson solo puede calcularse si los puntos forman una nube perfectamente elíptica",
+        "Porque el scatter reemplaza a la correlación cuando n es pequeño"
+      ],
+      "correct_index": 0,
+      "explanation": "La correlación de Pearson cuantifica la fuerza de una relación *lineal*. Si la relación es curva (como la U del cuarteto de Anscombe II), Pearson dará un valor bajo aunque la relación sea muy fuerte, lo que lleva a concluir erróneamente que 'no hay relación'. El scatter es el diagnóstico visual que valida si el modelo lineal es el apropiado antes de aplicar la fórmula.",
+      "section": "5. Diagramas de dispersión: dos variables cuantitativas"
+    },
+    {
+      "question": "Tienes datos de temperatura media mensual (°C) para los últimos 5 años (60 meses en orden cronológico). ¿Qué gráfico es más apropiado para mostrar la evolución temporal?",
+      "options": [
+        "Histograma",
+        "Gráfico de líneas (serie de tiempo)",
+        "Gráfico de barras",
+        "Boxplot"
+      ],
+      "correct_index": 1,
+      "explanation": "Cuando los datos tienen un orden temporal explícito y el interés está en el *cambio a lo largo del tiempo*, el gráfico de líneas es el más apropiado porque los puntos conectados enfatizan la continuidad y el patrón temporal. El histograma ignora el orden temporal (agrupa por magnitud). El boxplot resume la distribución completa, perdiendo el patrón mes a mes.",
+      "section": "6. Elegir el gráfico correcto"
+    },
+    {
+      "question": "Un gráfico de barras muestra las ventas trimestrales de una empresa con el eje y comenzando en 9 500 (en lugar de 0). Las ventas pasaron de 9 600 en Q1 a 9 900 en Q2. ¿Cuál es el principal problema de este gráfico?",
+      "options": [
+        "El gráfico de barras es incorrecto para datos trimestrales; debería usarse un gráfico de líneas",
+        "Las ventas deberían expresarse en porcentajes, no en valores absolutos",
+        "El eje y debería empezar en el valor más alto, no en el más bajo, para facilitar la lectura",
+        "El eje y truncado amplifica visualmente la diferencia: la barra de Q2 parece varias veces más alta que la de Q1, cuando el aumento real es del 3.1%"
+      ],
+      "correct_index": 3,
+      "explanation": "En un gráfico de barras, la altura de la barra codifica el valor total a través del canal de longitud. Si el eje no empieza en cero, la proporción visual entre barras deja de ser proporcional al dato. En este ejemplo, el crecimiento real es (9 900 - 9 600) / 9 600 ≈ 3.1%, pero visualmente la barra de Q2 puede parecer tres o más veces más alta que la de Q1, dependiendo del rango del eje.",
+      "section": "7. Visualizaciones engañosas y honestidad gráfica"
+    },
+    {
+      "question": "El 'principio de la tinta proporcional' de Tufte establece que:",
+      "options": [
+        "Los gráficos deben usar el mínimo de tinta posible, eliminando todas las líneas de cuadrícula",
+        "El color de las barras debe ser proporcional a la magnitud que representan",
+        "La cantidad de tinta (o área) usada para representar un valor debe ser proporcional a ese valor",
+        "Solo se deben usar gráficos en blanco y negro para evitar que el color distorsione la percepción"
+      ],
+      "correct_index": 2,
+      "explanation": "El principio de tinta proporcional dice que si el valor A es el doble de B, el área o longitud visual que representa A debe ser exactamente el doble que la de B. Su violación más común es usar figuras 2D (burbujas, íconos) para representar cantidades: si se dobla el diámetro, el área se cuadruplica, haciendo que el dato parezca cuatro veces mayor cuando solo es el doble.",
+      "section": "7. Visualizaciones engañosas y honestidad gráfica"
+    },
+    {
+      "question": "Un gráfico de torta tiene 9 sectores con valores entre 8% y 14%. ¿Cuál es el principal problema y cuál sería la alternativa más adecuada?",
+      "options": [
+        "Los gráficos de torta solo pueden tener hasta 6 sectores por convención estadística; habría que agrupar categorías",
+        "El cerebro humano no puede comparar con precisión ángulos similares; un gráfico de barras ordenado descendentemente sería más claro",
+        "El problema es que los porcentajes no suman exactamente 100% con 9 categorías; habría que usar frecuencias absolutas",
+        "Los sectores de tamaño similar en realidad no son un problema; el gráfico de torta es igualmente preciso que el de barras"
+      ],
+      "correct_index": 1,
+      "explanation": "La jerarquía de Cleveland-McGill muestra que comparar ángulos es menos preciso que comparar longitudes en un eje común. Con 9 sectores de tamaño similar (entre 8% y 14%), el lector no puede ordenarlos de mayor a menor sin leer las etiquetas. Un gráfico de barras ordenado descendentemente (diagrama de Pareto) transmite la misma información con mucha más claridad, porque usa el canal de posición/longitud en lugar del canal de ángulo.",
+      "section": "7. Visualizaciones engañosas y honestidad gráfica"
+    }
+  ]
+}
