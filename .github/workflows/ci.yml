@@ -64,3 +64,28 @@ jobs:
             echo "$CHANGED" | grep -q '^README\.md$' \
               || { echo "README.es.md changed without README.md"; exit 1; }
           fi
+      - name: Docs pair check
+        run: |
+          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)
+          # Filter docs/*.md files, excluding docs/assets/
+          DOCS=$(echo "$CHANGED" | grep -E '^docs/[^/]+\.md$' || true)
+          if [ -z "$DOCS" ]; then
+            exit 0
+          fi
+          FAIL=0
+          while IFS= read -r FILE; do
+            [ -z "$FILE" ] && continue
+            # Derive the pair: docs/foo.es.md <-> docs/foo.md
+            if echo "$FILE" | grep -q '\.es\.md$'; then
+              # This is a .es.md file; pair is the non-.es version
+              PAIR=$(echo "$FILE" | sed 's/\.es\.md$/.md/')
+            else
+              # This is a plain .md file; pair is the .es version
+              PAIR=$(echo "$FILE" | sed 's/\.md$/.es.md/')
+            fi
+            if ! echo "$DOCS" | grep -qF "$PAIR"; then
+              echo "ERROR: '$FILE' changed but its pair '$PAIR' was not found in the diff."
+              FAIL=1
+            fi
+          done <<< "$DOCS"
+          exit $FAIL
