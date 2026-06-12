@@ -151,7 +151,7 @@ function QuizQuestion({
         <div className="flex-1">
           {section && (
             <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.15em] text-fg-muted">
-              {section}
+              {section.replace(/^#+\s*/, "")}
             </p>
           )}
           <p className="font-sans text-sm font-medium leading-relaxed text-fg-primary">

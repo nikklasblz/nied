@@ -54,7 +54,13 @@ const NAV: NavItem[] = [
   { href: "/ajustes", labelKey: "settings", icon: Settings, matchPrefix: "/ajustes" },
 ];
 
-export function NavSidebarLogo({ ariaLabel }: { ariaLabel: string }) {
+export function NavSidebarLogo({
+  ariaLabel,
+  instanceName,
+}: {
+  ariaLabel: string;
+  instanceName: string;
+}) {
   return (
     <Link
       href="/"
@@ -69,7 +75,7 @@ export function NavSidebarLogo({ ariaLabel }: { ariaLabel: string }) {
         />
       </span>
       <span className="font-sans text-lg font-semibold tracking-tight text-fg-primary">
-        niED
+        {instanceName}
       </span>
     </Link>
   );

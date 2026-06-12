@@ -23,8 +23,10 @@ import { getDb } from "@/lib/db/client";
 import { countDue } from "@/lib/db/queries/srs";
 import { toIsoDate } from "@/lib/gamification/streaks";
 import { t } from "@/lib/i18n";
+import { getConfig } from "@/lib/config";
 
 export function getNavLabels(): NavLabels {
+  const instanceName = getConfig().instanceName;
   return {
     dashboard: t("nav.dashboard"),
     courses: t("nav.courses"),
@@ -33,7 +35,7 @@ export function getNavLabels(): NavLabels {
     journal: t("nav.journal"),
     settings: t("nav.settings"),
     main: t("nav.main"),
-    logoAria: t("nav.logoAria"),
+    logoAria: `${instanceName} — ${t("nav.dashboard")}`,
   };
 }
 
@@ -45,6 +47,7 @@ export function getReviewDueCount(): number {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const navLabels = getNavLabels();
   const reviewDue = getReviewDueCount();
+  const instanceName = getConfig().instanceName;
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
@@ -57,7 +60,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             showShort: t("sidebar.showShort"),
           }}
         >
-          <NavSidebarLogo ariaLabel={navLabels.logoAria} />
+          <NavSidebarLogo ariaLabel={navLabels.logoAria} instanceName={instanceName} />
           <div className="mt-2 flex-1 overflow-y-auto pb-2">
             <NavSidebarItems labels={navLabels} reviewDue={reviewDue} />
           </div>

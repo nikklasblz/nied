@@ -20,10 +20,12 @@ import {
 export function MobileNavTrigger({
   openLabel,
   navLabels,
+  instanceName,
   reviewDue = 0,
 }: {
   openLabel: string;
   navLabels: NavLabels;
+  instanceName: string;
   reviewDue?: number;
 }) {
   const [open, setOpen] = useState(false);
@@ -43,7 +45,7 @@ export function MobileNavTrigger({
       </SheetTrigger>
       <SheetContent side="left" className="w-72 max-w-full bg-bg-elevated p-0">
         <div className="flex h-full flex-col py-2">
-          <NavSidebarLogo ariaLabel={navLabels.logoAria} />
+          <NavSidebarLogo ariaLabel={navLabels.logoAria} instanceName={instanceName} />
           <div className="mt-2 flex-1 overflow-y-auto">
             <NavSidebarItems
               labels={navLabels}

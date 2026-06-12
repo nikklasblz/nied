@@ -49,7 +49,10 @@ export async function getUnitView(courseId: string, unitId: string): Promise<Uni
   const path = join(getConfig().coursesRoot, courseId, "units", `${unitId}.md`);
   if (!existsSync(path)) return null;
   const { content } = matter(readFileSync(path, "utf-8"));
-  const split = splitMarkdownSections(content);
+  // Strip a single leading h1 line (e.g. "# Title") if present — the page
+  // already renders the unit title as <h1>, so showing it again is duplicate.
+  const contentWithoutH1 = content.replace(/^([ \t]*\r?\n)*# (?!#)[^\n]*(\r?\n|$)/, "");
+  const split = splitMarkdownSections(contentWithoutH1);
   return {
     course,
     unit,

@@ -18,6 +18,7 @@ import { MobileNavTrigger } from "@/components/mobile-nav-trigger";
 import { getNavLabels, getReviewDueCount } from "@/components/app-shell";
 import { Flame, Trophy } from "@/components/icons";
 import { t } from "@/lib/i18n";
+import { getConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
 export function TopBar() {
@@ -42,11 +43,12 @@ export function TopBar() {
       <MobileNavTrigger
         openLabel={t("nav.open")}
         navLabels={getNavLabels()}
+        instanceName={getConfig().instanceName}
         reviewDue={getReviewDueCount()}
       />
       <div className="flex flex-1 items-center">
         <span className="font-sans text-sm font-medium text-fg-secondary">
-          {t("topbar.tagline")}
+          {t("app.title")}
         </span>
       </div>
       <div className="flex items-center gap-2">

@@ -30,6 +30,8 @@ describe("courses loader", () => {
     expect(v!.unit.title).toBe("Unidad uno");
     expect(v!.sections.length).toBeGreaterThan(0);
     expect(v!.sections[0]!.html).toContain("<");
+    // preamble must never contain a duplicate h1 (the page renders the title separately)
+    expect(v!.preambleHtml).not.toContain("<h1");
   });
 
   test("getUnitView null for unwritten unit", async () => {
