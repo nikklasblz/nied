@@ -1,11 +1,15 @@
 # nied
 
+![CI](https://github.com/nikklasblz/nied/actions/workflows/ci.yml/badge.svg)
+
 > Un framework educativo de agentes open-source: genera cursos completos de nivel
 > universitario sobre cualquier tema con Claude Code, y estúdialos en una app web
 > local gamificada.
 
-**Estado: la Fase 1 (esquema + plugin) y la Fase 2 (app lectora) están listas.
-La Fase 3 (demo público + release) es la siguiente.**
+**Estado: v0.1.0 — esquema de cursos, plugin de Claude Code, app lectora y un
+curso demo generado por el framework.** Mira el [CHANGELOG](CHANGELOG.md).
+
+![Dashboard de la app lectora de nied](docs/assets/dashboard.png)
 
 [English version](README.md)
 
@@ -20,6 +24,26 @@ La Fase 3 (demo público + release) es la siguiente.**
 - `/nied:course-audit` — QA bloqueante: validación de esquema, verificación de URLs
   en vivo y una rúbrica pedagógica (profundidad universitaria, alineación con Bloom).
 
+## Cómo funciona
+
+```mermaid
+flowchart LR
+    A["/nied:course-create"] --> B[course.yaml + SYLLABUS.md]
+    B --> C["/nied:course-unit uN"]
+    C --> R[researcher\nverifies free sources] --> W[writer\nunits/uN.md + quizzes/uN.json] --> X[auditor\n6-dimension rubric]
+    X -->|FAIL ≤3 cycles| W
+    X -->|PASS| V[schema validate]
+    V --> S[reader app\nXP · quizzes · spaced repetition]
+```
+
+El agente escritor no tiene herramientas de red, así que no puede fabricar URLs —
+solo puede citar fuentes que el investigador ya descargó y verificó. El auditor es
+una puerta bloqueante: una unidad que falla la rúbrica de 6 dimensiones vuelve al
+escritor, hasta tres ciclos, antes de publicarse. La app lectora lee cualquier
+curso que valide contra el esquema v1 — generado por nied o escrito a mano.
+
+![Una lección de nied con matemática inline, diagramas y un quiz](docs/assets/lesson.png)
+
 ## Metodología (las reglas duras)
 
 1. Fuentes 100% libres y primarias — cero contenido de pago.
@@ -31,9 +55,27 @@ La Fase 3 (demo público + release) es la siguiente.**
 7. Estructura canónica de dominio top-down; el anclaje a proyectos personales es
    opcional.
 
-## Instalación (desarrollo)
+La justificación completa vive en [docs/methodology.es.md](docs/methodology.es.md).
 
-Desde un clon local de este repositorio, dentro de Claude Code:
+## Curso demo
+
+[`courses/estadistica-aplicada`](courses/estadistica-aplicada) es un curso de
+estadística aplicada en español (nivel intro, 12 unidades). Sus unidades escritas
+fueron generadas de punta a punta por el propio framework — investigación con
+fuentes libres verificadas, escritura y auditoría adversarial — y las unidades
+restantes están declaradas en el sílabo y pendientes, como ejemplo vivo de la
+regla dura 6: los cursos crecen una unidad auditada a la vez.
+
+## Instalación
+
+Dentro de Claude Code:
+
+```text
+/plugin marketplace add nikklasblz/nied
+/plugin install nied@nied
+```
+
+Como alternativa, desde un clon local de este repositorio:
 
 ```text
 /plugin marketplace add <ruta-local-al-clon>   # registra el marketplace "nied" (el nombre viene de .claude-plugin/marketplace.json)
@@ -46,13 +88,16 @@ O carga el plugin directamente para una sola sesión:
 claude --plugin-dir ./plugin
 ```
 
-Lee [CONTRIBUTING.md](CONTRIBUTING.md) para empezar.
+Mira [docs/getting-started.es.md](docs/getting-started.es.md) para la guía
+completa, y [CONTRIBUTING.md](CONTRIBUTING.md) para contribuir.
 
 ## App lectora
 
 Una app web local gamificada para estudiar los cursos generados: XP, rachas,
 logros, quizzes con corrección automática y revisión por repetición espaciada
 (método Leitner).
+
+![Sesión de repaso por repetición espaciada en la app lectora de nied](docs/assets/review.png)
 
 ```text
 bun install
@@ -66,6 +111,13 @@ Abre http://localhost:3000. Configuración mediante variables de entorno:
 El progreso se guarda en un archivo SQLite local; la app nunca modifica el
 contenido de los cursos. La base de datos de progreso es desechable —
 el markdown es la verdad.
+
+## Documentación
+
+- [Primeros pasos](docs/getting-started.es.md) — de cero a un curso generado.
+- [Metodología](docs/methodology.es.md) — las 7 reglas duras y por qué existen.
+- [CHANGELOG.md](CHANGELOG.md) — historial de releases.
+- [CONTRIBUTING.md](CONTRIBUTING.md) — cómo contribuir.
 
 ## Licencia
 
