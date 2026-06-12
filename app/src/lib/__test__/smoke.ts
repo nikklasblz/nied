@@ -42,11 +42,11 @@ async function main() {
   // ----------------------------------------------------------------
   const { listCourses } = await import("../content/courses");
   const courses = listCourses();
-  const te = courses.find((c) => c.id === "test-estadistica");
-  assert(te !== undefined, "listCourses() encuentra 'test-estadistica'");
+  const te = courses.find((c) => c.id === "estadistica-aplicada");
+  assert(te !== undefined, "listCourses() encuentra 'estadistica-aplicada'");
   assert(
     te?.meta.units.length === 12,
-    `test-estadistica tiene 12 unidades declaradas (encontrado: ${te?.meta.units.length})`
+    `estadistica-aplicada tiene 12 unidades declaradas (encontrado: ${te?.meta.units.length})`
   );
   assert(
     te?.writtenUnits.includes("u1"),
@@ -57,23 +57,29 @@ async function main() {
   // 2. Content layer: getUnitView u1
   // ----------------------------------------------------------------
   const { getUnitView } = await import("../content/courses");
-  const view = await getUnitView("test-estadistica", "u1");
-  assert(view !== null, "getUnitView('test-estadistica','u1') es no-null");
+  const view = await getUnitView("estadistica-aplicada", "u1");
+  assert(view !== null, "getUnitView('estadistica-aplicada','u1') es no-null");
   assert(
     (view?.sections.length ?? 0) >= 5,
     `getUnitView tiene >= 5 secciones (encontrado: ${view?.sections.length})`
   );
+  // El preámbulo puede quedar vacío legítimamente (el h1 duplicado se elimina
+  // y muchas unidades pasan directo del título al primer ##).
   assert(
-    (view?.preambleHtml.length ?? 0) > 0,
-    "getUnitView preambleHtml no vacia"
+    typeof view?.preambleHtml === "string",
+    "getUnitView preambleHtml es string"
+  );
+  assert(
+    (view?.sections[0]?.html.length ?? 0) > 0,
+    "primera sección tiene html renderizado"
   );
 
   // ----------------------------------------------------------------
   // 3. Quiz loader: 15 preguntas en u1
   // ----------------------------------------------------------------
   const { loadQuiz } = await import("../content/quiz-loader");
-  const quiz = loadQuiz("test-estadistica", "u1");
-  assert(quiz !== null, "loadQuiz('test-estadistica','u1') no-null");
+  const quiz = loadQuiz("estadistica-aplicada", "u1");
+  assert(quiz !== null, "loadQuiz('estadistica-aplicada','u1') no-null");
   assert(
     quiz?.questions.length === 15,
     `quiz u1 tiene 15 preguntas (encontrado: ${quiz?.questions.length})`
@@ -101,8 +107,8 @@ async function main() {
     const { markUnitComplete, unmarkUnitComplete } = await import(
       "../../app/actions/unit"
     );
-    const r1 = await markUnitComplete("test-estadistica", "u1");
-    assert(r1.ok === true, "markUnitComplete('test-estadistica','u1') ok=true");
+    const r1 = await markUnitComplete("estadistica-aplicada", "u1");
+    assert(r1.ok === true, "markUnitComplete('estadistica-aplicada','u1') ok=true");
     if (r1.ok) {
       assert(
         !r1.alreadyComplete,
@@ -118,14 +124,14 @@ async function main() {
 
     // progress row existe
     const { getUnitProgress } = await import("../db/queries/progress");
-    const row = getUnitProgress(db, "test-estadistica", "u1");
+    const row = getUnitProgress(db, "estadistica-aplicada", "u1");
     progressRowExists = row !== null && row.status === "completa";
     assert(progressRowExists, "progress row existe y status='completa' para u1");
 
     // unmark (si existe)
     try {
-      await unmarkUnitComplete("test-estadistica", "u1");
-      const rowAfter = getUnitProgress(db, "test-estadistica", "u1");
+      await unmarkUnitComplete("estadistica-aplicada", "u1");
+      const rowAfter = getUnitProgress(db, "estadistica-aplicada", "u1");
       assert(
         rowAfter?.status === "pendiente",
         "unmarkUnitComplete deja status='pendiente'"
@@ -148,14 +154,14 @@ async function main() {
     );
     const { applyMultiplier, XP_RULES } = await import("../gamification/xp");
 
-    setUnitComplete(db, "test-estadistica", "u1");
+    setUnitComplete(db, "estadistica-aplicada", "u1");
     const today = toIsoDate(new Date());
     const streak = recordActivity(db, today);
     const baseXp = XP_RULES.unitComplete(u1Meta);
     const finalXp = applyMultiplier(baseXp, streak.multiplier);
     insertXpEvent(db, {
       activity: "unit-complete",
-      courseId: "test-estadistica",
+      courseId: "estadistica-aplicada",
       unitId: "u1",
       xp: finalXp,
       multiplier: streak.multiplier,
@@ -163,7 +169,7 @@ async function main() {
     totalXpAfterMark = getTotalXp(db);
     assert(totalXpAfterMark > 0, `totalXp > 0 despues de mark directo (${totalXpAfterMark})`);
 
-    const row = getUnitProgress(db, "test-estadistica", "u1");
+    const row = getUnitProgress(db, "estadistica-aplicada", "u1");
     progressRowExists = row !== null && row.status === "completa";
     assert(progressRowExists, "progress row existe y status='completa' para u1 (directo)");
   }
@@ -178,7 +184,7 @@ async function main() {
 
   const today = new Date().toISOString().slice(0, 10);
   // Insertar card con due_date = hoy para que aparezca como vencida
-  upsertCard(db, "test-estadistica", "u1", 0, today);
+  upsertCard(db, "estadistica-aplicada", "u1", 0, today);
 
   const due = getDueCards(db, today);
   assert(due.length > 0, `getDueCards devuelve >= 1 card debida hoy (${due.length})`);
