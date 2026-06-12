@@ -29,6 +29,19 @@ function escapeHtml(s: string): string {
 }
 
 /**
+ * Convierte URLs de YouTube (watch?v=, youtu.be/, shorts/) a formato /embed/
+ * — YouTube bloquea el framing de las URLs normales con X-Frame-Options.
+ * URLs de otros orígenes se devuelven sin tocar.
+ */
+export function toEmbedUrl(src: string): string {
+  const m =
+    src.match(/^https?:\/\/(?:www\.|m\.)?youtube\.com\/watch\?(?:.*&)?v=([\w-]{6,})/) ??
+    src.match(/^https?:\/\/youtu\.be\/([\w-]{6,})/) ??
+    src.match(/^https?:\/\/(?:www\.)?youtube\.com\/shorts\/([\w-]{6,})/);
+  return m ? `https://www.youtube.com/embed/${m[1]}` : src;
+}
+
+/**
  * Custom remark plugin que convierte directivas `:::video{src=... caption=...}`
  * en un wrapper 16:9 con <iframe> (lazy load, allowfullscreen) y figcaption.
  */
@@ -57,7 +70,7 @@ const remarkVideoDirective: Plugin = () => (tree) => {
           n.children = [
             {
               type: "html",
-              value: `<div class="video-embed-container"><iframe src="${escapeHtml(src)}" loading="lazy" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" title="${escapeHtml(caption || "Video")}"></iframe></div>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`,
+              value: `<div class="video-embed-container"><iframe src="${escapeHtml(toEmbedUrl(src))}" loading="lazy" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" title="${escapeHtml(caption || "Video")}"></iframe></div>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`,
             },
           ];
         } else {
