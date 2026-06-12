@@ -40,10 +40,10 @@ export function getXpByDate(
 ): Map<string, number> {
   const rows = db
     .prepare(
-      `SELECT date(occurred_at) AS d, SUM(xp) AS xp
+      `SELECT date(occurred_at, 'localtime') AS d, SUM(xp) AS xp
        FROM xp_events
        WHERE occurred_at >= datetime('now', ?)
-       GROUP BY date(occurred_at)`
+       GROUP BY date(occurred_at, 'localtime')`
     )
     .all(`-${days} days`) as { d: string; xp: number }[];
   const map = new Map<string, number>();
