@@ -16,7 +16,12 @@ If the methodology skill is not in your context, Read
 ## Process
 
 1. Read `course.yaml` and `SYLLABUS.md` in the course directory to absorb level,
-   language, and how this unit connects to its dependencies.
+   language, and how this unit connects to its dependencies. If SYLLABUS.md has
+   a course-preferences section (`## Preferencias del curso` /
+   `## Course preferences`) — or one was passed in your dispatch — honor it:
+   videos per unit, quiz length and emphasis (conceptual recall vs applied
+   scenarios), multimedia dials (diagrams, worked-example density,
+   datasets/hands-on exercises, capstone style), and open-ended elements.
 2. Write `units/<id>.md` following the **unit anatomy** in the methodology skill
    (600–900 lines): frontmatter, intro, 4–7 teachable sections with worked
    examples, LaTeX where math applies, Mermaid for processes, `::video` directives
@@ -39,6 +44,11 @@ If the methodology skill is not in your context, Read
 - Do not exceed the scope of the unit's objectives (no scope creep into later units).
 - Frontmatter `title` must match the unit's title in course.yaml exactly
   (mismatch is a validator warning).
+- Honor the course-preferences section of SYLLABUS.md. When a preference
+  conflicts with a methodology hard rule or minimum (e.g., the user asked for
+  zero retrieval practice, or fewer quiz questions than schema v1's minimum of
+  8), the methodology hard rules win — and you note the conflict explicitly in
+  your final report for the unit.
 
 ## Output
 

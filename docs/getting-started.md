@@ -64,6 +64,16 @@ in the arguments:
 
 - **Learning goal** — what you should be able to DO at the end.
 - **Starting level** — intro, intermediate, or advanced.
+- **Audience / educational level** — who the course is for (school student,
+  undergrad, postgrad, working professional, self-taught hobbyist...), beyond
+  the three schema levels.
+- **Audiovisual material and educational elements** — videos per unit
+  (default 1–2 verified), emphasis on diagrams, worked examples,
+  datasets/hands-on exercises, capstone style.
+- **Assessments and their types** — quiz length per unit (default 8–15
+  auto-graded multiple-choice — what the reader app grades) and emphasis
+  (conceptual recall vs applied scenarios), plus optional open-ended elements
+  (exercises with rubrics, capstone projects) rendered as unit sections.
 - **Hours per week** — sets the pacing of the units.
 - **Content language** — defaults to the language you are writing in.
 
@@ -72,7 +82,10 @@ generates:
 
 - `course.yaml` — the machine-readable syllabus (schema v1).
 - `SYLLABUS.md` — the human-readable syllabus: per-unit objectives, verified
-  sources, a Mermaid dependency map, and weekly pacing for your hours.
+  sources, a Mermaid dependency map, weekly pacing for your hours, and a
+  "Course preferences" section recording your audience, multimedia and
+  assessment answers — unit generation (writer and auditor) reads and honors
+  it.
 - `units/` and `quizzes/` — empty directories.
 
 No unit content is generated at this point. This is by design — hard rule 6 of

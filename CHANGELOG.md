@@ -21,3 +21,6 @@ First public release.
   KaTeX/Mermaid/video embeds, Leitner spaced-repetition review, ES/EN UI.
 - **Demo course**: applied statistics (Spanish), units generated end-to-end by
   the framework itself with verified free sources.
+- **Course preferences**: the `/nied:course-create` interview captures
+  audience/educational level, audiovisual material and assessment-type
+  preferences; recorded in SYLLABUS.md and honored by the writer and auditor.

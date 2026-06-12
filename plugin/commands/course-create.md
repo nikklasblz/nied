@@ -12,6 +12,25 @@ Load the `nied:methodology` skill rules first. Then:
 Ask only what was not provided in the arguments:
 - Learning goal: what should the learner be able to DO at the end?
 - Starting level (maps to `level`: intro / intermediate / advanced).
+- Audience / educational level: who is this course for, beyond the schema's
+  three levels — e.g. school student, university undergrad, postgrad, working
+  professional, self-taught hobbyist. Map the answer to the closest schema
+  `level` (which is what course.yaml stores) AND record the answer verbatim as
+  the course's audience (it lives in SYLLABUS.md, not in course.yaml — the
+  schema is strict and takes no extra keys).
+- Audiovisual material and educational elements: how many verified videos per
+  unit (default: 1–2, per the methodology's unit anatomy; options: none, or
+  more), and how much emphasis on diagrams (Mermaid), worked-example density,
+  datasets / hands-on exercises, and capstone style. Defaults are the
+  methodology's unit anatomy; this question lets the user dial each element up
+  or down within the hard rules.
+- Assessments and their types: quiz length per unit (default: 8–15 auto-graded
+  multiple-choice questions — the only auto-graded type in schema v1), the
+  quiz's emphasis (conceptual recall vs applied scenarios), and whether to
+  include open-ended elements (exercises with rubrics, capstone projects).
+  Be explicit with the user: multiple-choice quizzes are what the reader app
+  auto-grades; any other assessment type lives as exercise/capstone sections
+  inside the unit (manual / honor-system, rendered as unit sections).
 - Hours per week available (sets unit pacing).
 - Content language (`language`, default: the language the user is writing in).
 - Target directory (default: `./courses/<slug>` relative to current directory).
@@ -39,7 +58,14 @@ Write into the target directory:
    `objectives` (2–5 measurable, verb-first), `hours`, `depends_on`.
 2. `SYLLABUS.md` — human-readable syllabus: course overview, per-unit section
    (objectives, key concepts, the verified canonical sources from research),
-   dependency map (Mermaid), suggested weekly pacing for the user's hours/week.
+   dependency map (Mermaid), suggested weekly pacing for the user's hours/week,
+   and a `## Preferencias del curso` section (heading `## Course preferences`
+   when the course language is English) recording the interview answers:
+   audiencia (verbatim), videos por unidad, énfasis multimedia (diagramas,
+   ejemplos resueltos, datasets/ejercicios prácticos, estilo de capstone),
+   longitud y énfasis del quiz, y elementos abiertos (ejercicios con rúbrica,
+   capstone). Downstream agents (writer/auditor) read SYLLABUS.md and MUST
+   honor this section.
 3. `units/` and `quizzes/` directories, each containing a `.gitkeep` file
    (`units/.gitkeep`, `quizzes/.gitkeep`) so git preserves them (units are
    generated later, one by one, via /nied:course-unit — hard rule 6).

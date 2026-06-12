@@ -66,6 +66,17 @@ los argumentos:
 
 - **Objetivo de aprendizaje** — qué deberías poder HACER al terminar.
 - **Nivel de partida** — intro, intermediate o advanced.
+- **Audiencia / nivel educativo** — para quién es el curso (escolar,
+  universitario de pregrado, posgrado, profesional en ejercicio,
+  autodidacta...), más allá de los tres niveles del esquema.
+- **Material audiovisual y elementos educativos** — videos por unidad (por
+  defecto 1–2 verificados), énfasis en diagramas, ejemplos resueltos,
+  datasets/ejercicios prácticos, estilo del capstone.
+- **Evaluaciones y sus tipos** — longitud del quiz por unidad (por defecto
+  8–15 preguntas de opción múltiple autocalificadas — lo que la app de lectura
+  califica) y su énfasis (recuerdo conceptual vs escenarios aplicados), más
+  elementos abiertos opcionales (ejercicios con rúbrica, proyectos capstone)
+  que se renderizan como secciones de la unidad.
 - **Horas por semana** — define el ritmo de las unidades.
 - **Idioma del contenido** — por defecto, el idioma en el que escribes.
 
@@ -73,8 +84,10 @@ Después investiga la estructura canónica universitaria del dominio y genera:
 
 - `course.yaml` — el sílabo legible por máquina (schema v1).
 - `SYLLABUS.md` — el sílabo legible por humanos: objetivos por unidad, fuentes
-  verificadas, un mapa de dependencias en Mermaid y el ritmo semanal según tus
-  horas.
+  verificadas, un mapa de dependencias en Mermaid, el ritmo semanal según tus
+  horas, y una sección "Preferencias del curso" que registra tus respuestas de
+  audiencia, multimedia y evaluaciones — la generación de unidades (escritor y
+  auditor) la lee y la respeta.
 - `units/` y `quizzes/` — directorios vacíos.
 
 En este punto no se genera contenido de ninguna unidad. Es por diseño — regla

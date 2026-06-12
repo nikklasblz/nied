@@ -12,9 +12,12 @@ Load the `nied:methodology` skill rules first.
 - Resolve the course directory (`--dir`, or the only `course.yaml` under
   `./courses/`, or ask).
 - Read `course.yaml` and `SYLLABUS.md`. Extract this unit's title, objectives,
-  hours, and `depends_on`. Read the last ~50 lines of each dependency unit's
-  `units/<dep>.md` (if written) so the new unit builds on, and does not repeat,
-  prior material.
+  hours, and `depends_on`. Also extract the course-preferences section from
+  SYLLABUS.md (`## Preferencias del curso` / `## Course preferences`), if
+  present — it must be passed verbatim to BOTH the course-writer and
+  course-auditor dispatches below, alongside the syllabus entry. Read the last
+  ~50 lines of each dependency unit's `units/<dep>.md` (if written) so the new
+  unit builds on, and does not repeat, prior material.
 - If the unit file already exists, STOP and ask whether to overwrite or revise.
 
 ## 1. Research
@@ -27,18 +30,21 @@ sources or adjust the objective).
 ## 2. Write
 
 Dispatch `nied:course-writer` with: course directory, unit id, the syllabus
-entry, and the FULL verified source list. It writes `units/<id>.md` and
-`quizzes/<id>.json`.
+entry, the course-preferences section (verbatim, if present), and the FULL
+verified source list. It writes `units/<id>.md` and `quizzes/<id>.json`.
 
 ## 3. Audit (blocking)
 
-Dispatch `nied:course-auditor` on the unit. Then:
+Dispatch `nied:course-auditor` on the unit, including the course-preferences
+section (verbatim, if present) alongside the course directory and unit id.
+Then:
 
 - **PASS** -> continue to step 4.
 - **FAIL** -> send the blockers back to `nied:course-writer` for revision and
   re-audit. Each revision dispatch to `nied:course-writer` must include: the
-  course directory, unit id, the syllabus entry, the FULL verified source list,
-  and the auditor's blockers (subagents are stateless). Maximum 3 write-audit
+  course directory, unit id, the syllabus entry, the course-preferences
+  section (verbatim, if present), the FULL verified source list, and the
+  auditor's blockers (subagents are stateless). Maximum 3 write-audit
   cycles; if still FAIL, stop and present the remaining blockers to the user
   with your recommendation.
 

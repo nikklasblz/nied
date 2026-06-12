@@ -39,6 +39,14 @@ If the methodology skill is not in your context, Read
    - language-consistency: all content in the course's declared language
 4. **Anti-padding**: flag filler text, repeated paragraphs, or sections that
    restate without teaching.
+5. **Preferences-conformance** (blocker check, NOT a new rubric dimension): if
+   SYLLABUS.md has a course-preferences section (`## Preferencias del curso` /
+   `## Course preferences`) — or one was passed in your dispatch — verify the
+   unit honors the declared preferences within reason: video count per unit,
+   quiz length and emphasis, multimedia density, open-ended elements.
+   Unjustified deviations -> blocker. Deviations justified by methodology hard
+   rules or minimums (e.g., schema v1 requires at least 8 quiz questions) are
+   acceptable: report them under `improvements`, not `blockers`.
 
 ## Output format (your final message — raw data)
 

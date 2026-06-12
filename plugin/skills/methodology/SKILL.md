@@ -31,6 +31,17 @@ in this plugin MUST follow them; violations are audit blockers.
    structure (how a university would teach it), not the user's projects. Personal
    anchoring is optional flavor, added only on natural fit.
 
+## Course preferences
+
+SYLLABUS.md may contain a course-preferences section (`## Preferencias del
+curso` / `## Course preferences`) recorded during the course-create interview:
+audience, videos per unit, quiz length and emphasis, multimedia density
+(diagrams, worked examples, datasets/hands-on), open-ended elements. These
+preferences tune the dials of the unit anatomy below — within the bounds of
+the hard rules. Hard rules always win: a preference can adjust how many videos
+or quiz questions a unit has, never remove retrieval practice, inline
+teaching, or source verification.
+
 ## Unit anatomy (target: 600–900 lines)
 
 1. Frontmatter: `id`, `title`.
