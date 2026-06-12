@@ -1,0 +1,164 @@
+{
+  "unit_id": "u2",
+  "title": "Quiz: Estadística descriptiva univariada",
+  "instructions": "13 preguntas sobre medidas de posición, dispersión, forma de la distribución y detección de atípicos. Elige la única opción correcta en cada caso. Puedes usar calculadora. Responde sin consultar la unidad: el quiz es práctica de recuperación, no examen con libro abierto.",
+  "xp_per_question": 10,
+  "questions": [
+    {
+      "question": "En un reporte lees: 'la media muestral fue x̄ = 4.2'. ¿Qué símbolo correspondería si esa media describiera a la población completa en lugar de a la muestra?",
+      "options": [
+        "σ",
+        "s²",
+        "μ",
+        "N"
+      ],
+      "correct_index": 2,
+      "explanation": "Los parámetros poblacionales usan letras griegas: μ es la media poblacional (σ es la desviación estándar poblacional y N el tamaño de la población). La distinción estadístico/parámetro será la base de toda la inferencia desde u6.",
+      "section": "De los datos crudos al resumen: notación y datasets de trabajo"
+    },
+    {
+      "question": "Los salarios de 10 empleados tienen media 3.77 y mediana 2.9 (miles de soles). Si el salario más alto (12.0) subiera a 120.0, ¿qué pasaría con cada medida?",
+      "options": [
+        "La media aumentaría mucho y la mediana no cambiaría",
+        "Ambas aumentarían en la misma proporción",
+        "La mediana aumentaría más que la media, porque es el valor central",
+        "Ninguna cambiaría, porque solo se modificó un dato de diez"
+      ],
+      "correct_index": 0,
+      "explanation": "La media usa la magnitud de todos los valores, así que el extremo la arrastra (subiría a 14.57). La mediana solo depende del orden: el valor más alto sigue siendo el más alto, y el centro queda intacto en 2.9. Eso es la robustez de la mediana.",
+      "section": "Medidas de posición central: media, mediana y moda"
+    },
+    {
+      "question": "Para el dataset ordenado 5, 7, 8, 10, 12, 15 (n = 6), ¿cuál es la mediana?",
+      "options": [
+        "8",
+        "9",
+        "10",
+        "9.5"
+      ],
+      "correct_index": 1,
+      "explanation": "Con n par, la mediana es el promedio de los dos valores centrales (posiciones 3 y 4): (8 + 10) / 2 = 9. Un error común es tomar solo uno de los dos valores centrales.",
+      "section": "Medidas de posición central: media, mediana y moda"
+    },
+    {
+      "question": "¿Cuál de estas variables admite la moda como ÚNICA medida de tendencia central válida?",
+      "options": [
+        "Temperatura diaria en °C (continua)",
+        "Número de hijos por hogar (discreta)",
+        "Ingreso mensual en soles (continua)",
+        "Color preferido de empaque (nominal)"
+      ],
+      "correct_index": 3,
+      "explanation": "Una variable nominal no tiene orden ni magnitud: no se puede promediar ni ordenar para hallar el valor central, pero sí contar cuál categoría es más frecuente. Las otras tres son cuantitativas y admiten media y mediana.",
+      "section": "Medidas de posición central: media, mediana y moda"
+    },
+    {
+      "question": "Tu puntaje en una prueba nacional está en el percentil 80. ¿Cuál es la interpretación correcta?",
+      "options": [
+        "Respondiste correctamente el 80% de las preguntas",
+        "Tu puntaje fue el 80% del puntaje máximo posible",
+        "Aproximadamente el 80% de los participantes obtuvo un puntaje menor que el tuyo",
+        "Solo el 80% de los participantes aprobó la prueba"
+      ],
+      "correct_index": 2,
+      "explanation": "Un percentil mide posición relativa dentro de la distribución de participantes, no desempeño absoluto: P80 significa que cerca del 80% quedó por debajo de ti, sin importar cuántas preguntas acertaste.",
+      "section": "Percentiles, cuartiles y el resumen de cinco números"
+    },
+    {
+      "question": "Un dataset tiene el resumen de cinco números (3, 8, 11.5, 15.5, 30). ¿Cuál es su IQR?",
+      "options": [
+        "7.5",
+        "27",
+        "12",
+        "3.5"
+      ],
+      "correct_index": 0,
+      "explanation": "IQR = Q3 − Q1 = 15.5 − 8 = 7.5: el ancho de la franja donde vive el 50% central de los datos. 27 es el rango (máx − mín), un distractor clásico que confunde dispersión total con dispersión central.",
+      "section": "Percentiles, cuartiles y el resumen de cinco números"
+    },
+    {
+      "question": "¿Por qué la varianza eleva al cuadrado las desviaciones (xᵢ − x̄) en lugar de promediarlas directamente?",
+      "options": [
+        "Porque elevar al cuadrado convierte la varianza a las unidades originales de los datos",
+        "Porque el cuadrado hace la varianza inmune a los valores atípicos",
+        "Porque solo así la varianza puede tomar valores negativos cuando los datos decrecen",
+        "Porque las desviaciones siempre suman cero: las negativas cancelan a las positivas y el promedio directo sería 0"
+      ],
+      "correct_index": 3,
+      "explanation": "La media es el punto de equilibrio, así que Σ(xᵢ − x̄) = 0 siempre. El cuadrado vuelve positivas todas las desviaciones antes de promediar. De hecho ocurre lo contrario a las otras opciones: el cuadrado deja unidades al cuadrado (por eso existe s = √s²) y AMPLIFICA el efecto de los atípicos.",
+      "section": "Medidas de dispersión: rango, varianza, desviación estándar e IQR"
+    },
+    {
+      "question": "Para la muestra 4, 6, 6, 8, 11 (media = 7, suma de desviaciones al cuadrado = 28), ¿cuál es la varianza muestral s²?",
+      "options": [
+        "5.6",
+        "7",
+        "28",
+        "2.65"
+      ],
+      "correct_index": 1,
+      "explanation": "s² = 28 / (n − 1) = 28 / 4 = 7. Dividir entre n = 5 da 5.6, que sería la varianza poblacional σ²; 28 es solo la suma de cuadrados sin promediar; 2.65 es s = √7, la desviación estándar.",
+      "section": "Medidas de dispersión: rango, varianza, desviación estándar e IQR"
+    },
+    {
+      "question": "Quieres comparar la variabilidad de los salarios (x̄ = 3000 soles, s = 600) con la de los tiempos de espera (x̄ = 12 min, s = 6). ¿Cuál es la herramienta correcta y su conclusión?",
+      "options": [
+        "El coeficiente de variación: CV = 0.20 vs. CV = 0.50, los tiempos son relativamente más variables",
+        "Comparar las desviaciones estándar directamente: 600 > 6, los salarios son más variables",
+        "Comparar los rangos, porque es la única medida sin unidades",
+        "Comparar las varianzas: 360000 > 36, los salarios son más variables"
+      ],
+      "correct_index": 0,
+      "explanation": "Con unidades distintas, comparar s o s² directamente no tiene sentido (soles vs. minutos). El CV = s/x̄ es adimensional: 600/3000 = 0.20 contra 6/12 = 0.50, así que los tiempos se dispersan más en relación con su propia media.",
+      "section": "Medidas de dispersión: rango, varianza, desviación estándar e IQR"
+    },
+    {
+      "question": "En una ciudad, el precio medio de las viviendas es $285,000 y el mediano $210,000. ¿Qué indica esto sobre la forma de la distribución?",
+      "options": [
+        "Asimetría a la izquierda: hay muchas viviendas baratas que bajan la mediana",
+        "Distribución simétrica con alta varianza",
+        "Asimetría a la derecha: unas pocas viviendas muy caras estiran la cola y arrastran la media hacia arriba",
+        "Un error de cálculo: la media y la mediana siempre deben coincidir"
+      ],
+      "correct_index": 2,
+      "explanation": "Cuando media > mediana, la cola larga apunta hacia los valores altos (sesgo positivo): los extremos caros mueven la media pero no la mediana. Media y mediana solo coinciden (aproximadamente) en distribuciones simétricas.",
+      "section": "Forma de la distribución y elección del resumen apropiado"
+    },
+    {
+      "question": "¿En cuál escenario es preferible reportar media y desviación estándar en lugar de mediana e IQR?",
+      "options": [
+        "Ingresos de hogares con unos pocos millonarios en la muestra",
+        "Una distribución aproximadamente simétrica y sin valores atípicos",
+        "Tiempos de espera con fuerte cola a la derecha",
+        "Cualquier escenario: mediana e IQR son siempre inferiores por usar menos información"
+      ],
+      "correct_index": 1,
+      "explanation": "Con simetría y sin atípicos, media y s aprovechan toda la información de los datos (son más eficientes) y conectan con la inferencia posterior. Ante sesgo marcado o atípicos (ingresos, tiempos de espera), los resúmenes robustos cuentan la historia fiel. La última opción invierte el razonamiento.",
+      "section": "Forma de la distribución y elección del resumen apropiado"
+    },
+    {
+      "question": "Un dataset tiene Q1 = 40 y Q3 = 60. Según la regla de 1.5·IQR, ¿cuál es la cerca superior y es atípico un valor de 95?",
+      "options": [
+        "Cerca superior = 90; el valor 95 no es atípico porque no supera 3·IQR",
+        "Cerca superior = 75; cualquier valor sobre Q3 es atípico",
+        "Cerca superior = 130; el valor 95 no es atípico",
+        "Cerca superior = 90; el valor 95 sí es atípico"
+      ],
+      "correct_index": 3,
+      "explanation": "IQR = 60 − 40 = 20; cerca superior = Q3 + 1.5·IQR = 60 + 30 = 90. Como 95 > 90, se marca como atípico. La regla de Tukey marca atípicos al cruzar las cercas de 1.5·IQR; el umbral 3·IQR solo distingue a los 'extremos'.",
+      "section": "Detección de valores atípicos: regla 1.5·IQR y z-score"
+    },
+    {
+      "question": "En el dataset de salarios, el valor del gerente (12.0) fue marcado como atípico por la regla 1.5·IQR pero NO por el criterio |z| > 3 (su z fue 2.80). ¿Cuál es la mejor explicación?",
+      "options": [
+        "La regla 1.5·IQR es más imprecisa y produce falsos positivos; el z-score es siempre el método correcto",
+        "El propio atípico infló la media y sobre todo s, agrandando la vara con que se le mide (enmascaramiento); las cercas usan cuartiles, que el extremo no puede mover",
+        "El z-score solo funciona con variables en unidades monetarias, no con salarios en miles",
+        "Fue una coincidencia del redondeo: con más decimales ambos métodos siempre coinciden"
+      ],
+      "correct_index": 1,
+      "explanation": "El z-score se calcula con x̄ y s, estadísticos no robustos que el mismo atípico distorsiona (el gerente aportaba el 87% de la suma de cuadrados), así que se camufla bajo el umbral 3. Las cercas de Tukey dependen de Q1 y Q3, posiciones de orden inmunes al extremo: por eso son preferibles en muestras pequeñas o sesgadas.",
+      "section": "Detección de valores atípicos: regla 1.5·IQR y z-score"
+    }
+  ]
+}
