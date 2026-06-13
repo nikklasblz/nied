@@ -10,3 +10,7 @@ coverage/
 app/.next/
 app/db/
 app/_vendor/
+
+# User-generated courses stay local; only the demo ships with the repo
+courses/*
+!courses/estadistica-aplicada/
