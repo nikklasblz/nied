@@ -14,3 +14,6 @@ app/_vendor/
 # User-generated courses stay local; only the demo ships with the repo
 courses/*
 !courses/estadistica-aplicada/
+
+# Visual brainstorming companion (local mockups)
+.superpowers/
