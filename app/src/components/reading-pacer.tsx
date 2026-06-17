@@ -7,12 +7,15 @@ import { tokenizeArticle, type Tokenized } from "@/lib/reading/tokenize-dom";
 import { useReadingPrefs } from "@/lib/reading/use-reading-prefs";
 import type { ReadingPrefs } from "@/lib/reading/prefs";
 import { ReadingControls, type ReadingControlsLabels } from "@/components/reading-controls";
-import { Play, Pause, BookOpen } from "@/components/icons";
+import { Play, Pause, BookOpen, ChevronLeft, ChevronRight } from "@/components/icons";
 
 export type ReadingPacerLabels = ReadingControlsLabels & {
   menu: string;
   play: string;
   pause: string;
+  back: string;
+  forward: string;
+  seek: string;
   notAvailable: string;
 };
 
@@ -32,6 +35,9 @@ export function ReadingPacer({
   const lastTs = useRef(0);
   const prefsRef = useRef<ReadingPrefs | null>(null);
   const lastUnit = useRef<number>(-99);
+  const fillRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
 
   const { prefs, hydrated, update } = useReadingPrefs();
   const [playing, setPlaying] = useState(false);
@@ -40,6 +46,15 @@ export function ReadingPacer({
   const pathname = usePathname();
 
   prefsRef.current = prefs;
+
+  // Update the scrubber fill width from the current reading position.
+  const updateProgress = useCallback(() => {
+    const t = tok.current;
+    if (fillRef.current && t && t.total > 0) {
+      const pct = Math.max(0, Math.min(100, (readChars.current / t.total) * 100));
+      fillRef.current.style.width = `${pct}%`;
+    }
+  }, []);
 
   // Tokenize on mount / route change.
   useEffect(() => {
@@ -51,6 +66,7 @@ export function ReadingPacer({
     tok.current = t;
     setPacable(t.total > 0);
     renderFocus(-1);
+    updateProgress();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
@@ -71,6 +87,7 @@ export function ReadingPacer({
       readChars.current = 0;
       lastUnit.current = -99;
       renderFocus(-2); // plain
+      updateProgress();
     } else {
       lastUnit.current = -99;
       renderFocus(playing || readChars.current > 0 ? Math.floor(readChars.current) : -1);
@@ -136,14 +153,17 @@ export function ReadingPacer({
       readChars.current += dt * cps;
       const focus = Math.floor(readChars.current);
       if (focus >= t.total) {
+        readChars.current = t.total;
         renderFocus(t.total - 1);
+        updateProgress();
         setPlaying(false);
         return;
       }
       renderFocus(focus);
+      updateProgress();
       rafRef.current = requestAnimationFrame(tick);
     },
-    [renderFocus]
+    [renderFocus, updateProgress]
   );
 
   const play = useCallback(() => {
@@ -169,24 +189,78 @@ export function ReadingPacer({
     (dir: 1 | -1) => {
       const t = tok.current;
       const p = prefsRef.current;
-      if (!t || !p) return;
+      if (!t || !p || !p.enabled) return;
       const cur = Math.max(0, Math.floor(readChars.current));
-      // jump to next/prev sentence boundary for a meaningful step
+      // jump to next/prev sentence (or word) boundary for a meaningful step
       const arr = p.granularity === "sentence" ? t.charSent : t.charWord;
       const curUnit = arr[Math.min(cur, t.total - 1)] ?? 0;
       const target = curUnit + dir;
+      lastUnit.current = -99;
+      if (target < 0) {
+        readChars.current = 0;
+        renderFocus(-1);
+        updateProgress();
+        return;
+      }
       let idx = t.total - 1;
       for (let i = 0; i < t.total; i++) {
         if (arr[i] === target) { idx = i; break; }
       }
-      if (target < 0) { readChars.current = 0; renderFocus(-1); return; }
       readChars.current = idx;
       renderFocus(idx);
+      updateProgress();
     },
-    [renderFocus]
+    [renderFocus, updateProgress]
   );
 
-  // Keyboard shortcuts (only when enabled + pacable).
+  // Seek to a fraction [0,1] of the article (scrubber).
+  const seek = useCallback(
+    (fraction: number) => {
+      const t = tok.current;
+      const p = prefsRef.current;
+      if (!t || !p || !p.enabled || t.total === 0) return;
+      const clamped = Math.max(0, Math.min(1, fraction));
+      readChars.current = clamped * t.total;
+      lastUnit.current = -99;
+      articleRef.current?.focus();
+      renderFocus(Math.min(Math.floor(readChars.current), t.total - 1));
+      updateProgress();
+    },
+    [renderFocus, updateProgress]
+  );
+
+  const seekFromClientX = useCallback(
+    (clientX: number) => {
+      const el = trackRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      if (r.width > 0) seek((clientX - r.left) / r.width);
+    },
+    [seek]
+  );
+
+  // Click anywhere in the prose to move the guide to that character.
+  const onArticleClick = useCallback(
+    (e: React.MouseEvent) => {
+      const p = prefsRef.current;
+      const t = tok.current;
+      if (!p || !p.enabled || !t) return;
+      const sel = window.getSelection();
+      if (sel && !sel.isCollapsed) return; // don't hijack text selection / copy
+      const span = (e.target as HTMLElement)?.closest?.(".pc") as HTMLElement | null;
+      if (!span) return;
+      const idx = t.chars.indexOf(span);
+      if (idx < 0) return;
+      readChars.current = idx;
+      lastUnit.current = -99;
+      renderFocus(idx);
+      updateProgress();
+      articleRef.current?.focus();
+    },
+    [renderFocus, updateProgress]
+  );
+
+  // Keyboard shortcuts (only when enabled + pacable, and reader focused).
   useEffect(() => {
     if (!prefs.enabled || !pacable) return;
     const onKey = (e: KeyboardEvent) => {
@@ -206,9 +280,17 @@ export function ReadingPacer({
   // Cleanup rAF on unmount.
   useEffect(() => stop, [stop]);
 
+  const ctrlBtn =
+    "grid size-8 place-items-center rounded-full text-fg-secondary hover:text-fg-primary disabled:opacity-30 disabled:hover:text-fg-secondary";
+
   return (
     <div className="relative">
-      <div ref={articleRef} tabIndex={-1} className={prefs.enabled ? "pacer outline-none" : "outline-none"}>
+      <div
+        ref={articleRef}
+        tabIndex={-1}
+        onClick={onArticleClick}
+        className={prefs.enabled ? "pacer outline-none" : "outline-none"}
+      >
         {children}
       </div>
 
@@ -220,24 +302,72 @@ export function ReadingPacer({
               <ReadingControls prefs={prefs} onChange={update} labels={labels} />
             </div>
           )}
-          <div className="flex items-center gap-2 rounded-full border border-border bg-bg-elevated px-2 py-1.5 shadow-lg">
-            <button
-              type="button"
-              onClick={togglePlay}
-              disabled={!prefs.enabled}
-              aria-label={playing ? labels.pause : labels.play}
-              className="grid size-9 place-items-center rounded-full bg-accent-primary text-white disabled:opacity-40"
+          <div className="flex w-64 flex-col gap-2 rounded-2xl border border-border bg-bg-elevated px-3 py-2 shadow-lg">
+            {/* Scrubber */}
+            <div
+              ref={trackRef}
+              role="slider"
+              aria-label={labels.seek}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              onPointerDown={(e) => {
+                if (!prefs.enabled) return;
+                e.currentTarget.setPointerCapture(e.pointerId);
+                dragging.current = true;
+                seekFromClientX(e.clientX);
+              }}
+              onPointerMove={(e) => {
+                if (dragging.current) seekFromClientX(e.clientX);
+              }}
+              onPointerUp={(e) => {
+                dragging.current = false;
+                try { e.currentTarget.releasePointerCapture(e.pointerId); } catch { /* noop */ }
+              }}
+              className={`group h-2 w-full rounded-full bg-bg-overlay ${
+                prefs.enabled ? "cursor-pointer" : "pointer-events-none opacity-40"
+              }`}
             >
-              {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
-            </button>
-            <button
-              type="button"
-              onClick={() => setMenuOpen((o) => !o)}
-              aria-label={labels.menu}
-              className="grid size-9 place-items-center rounded-full text-fg-secondary hover:text-fg-primary"
-            >
-              <BookOpen className="size-4" />
-            </button>
+              <div ref={fillRef} className="h-full w-0 rounded-full bg-accent-primary" />
+            </div>
+
+            {/* Transport controls */}
+            <div className="flex items-center justify-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => step(-1)}
+                disabled={!prefs.enabled}
+                aria-label={labels.back}
+                className={ctrlBtn}
+              >
+                <ChevronLeft className="size-4" />
+              </button>
+              <button
+                type="button"
+                onClick={togglePlay}
+                disabled={!prefs.enabled}
+                aria-label={playing ? labels.pause : labels.play}
+                className="grid size-9 place-items-center rounded-full bg-accent-primary text-white disabled:opacity-40"
+              >
+                {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
+              </button>
+              <button
+                type="button"
+                onClick={() => step(1)}
+                disabled={!prefs.enabled}
+                aria-label={labels.forward}
+                className={ctrlBtn}
+              >
+                <ChevronRight className="size-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setMenuOpen((o) => !o)}
+                aria-label={labels.menu}
+                className={ctrlBtn}
+              >
+                <BookOpen className="size-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}
