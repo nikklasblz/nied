@@ -594,3 +594,52 @@
     animation: none;
   }
 }
+
+/* Reading pacer — highlight states applied to per-char spans by ReadingPacer.
+   Colors come from --pacer-accent / --pacer-line set inline on .pacer. */
+.pacer .pc {
+  border-radius: 3px;
+}
+.pacer .pc.unread {
+  opacity: 0.3;
+}
+.pacer .pc.read {
+  opacity: 1;
+}
+/* container style */
+.pacer .pc.glow-trail {
+  background: color-mix(in srgb, var(--pacer-accent) 16%, transparent);
+}
+.pacer .pc.box {
+  background: var(--pacer-accent);
+  color: #fff;
+  border-radius: 4px;
+}
+.pacer .pc.block {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--pacer-accent) 24%, transparent),
+    color-mix(in srgb, var(--pacer-accent) 7%, transparent)
+  );
+}
+/* advancing-line style */
+.pacer .pc.ul {
+  box-shadow: inset 0 -0.13em 0 color-mix(in srgb, var(--pacer-line) 55%, transparent);
+}
+.pacer .pc.ulhead {
+  box-shadow: inset 0 -0.16em 0 var(--pacer-line);
+}
+/* glow style */
+.pacer .pc.lit {
+  color: var(--pacer-accent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--pacer-accent) 72%, transparent);
+  font-weight: 600;
+}
+.pacer .pc.littrail {
+  color: color-mix(in srgb, var(--pacer-accent) 60%, currentColor);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pacer .pc {
+    transition: none !important;
+  }
+}
