@@ -107,7 +107,7 @@ export function ReadingPacer({
         if (p.granularity === "letter") {
           if (i === focus) cls += " box";
           else if (i < focus && focus - i < 7) cls += " glow-trail";
-        } else if (inUnit) cls += " block";
+        } else if (inUnit) cls += " hlblock";
       } else if (p.style === "line") {
         if (i <= focus) cls += " ul";
         if (i === focus) cls += " ulhead";

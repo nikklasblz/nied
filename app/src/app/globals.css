@@ -598,6 +598,9 @@
 /* Reading pacer — highlight states applied to per-char spans by ReadingPacer.
    Colors come from --pacer-accent / --pacer-line set inline on .pacer. */
 .pacer .pc {
+  /* Always inline so per-char highlight classes can never break text flow.
+     Higher specificity than Tailwind single-class utilities (e.g. .block). */
+  display: inline;
   border-radius: 3px;
 }
 .pacer .pc.unread {
@@ -615,7 +618,7 @@
   color: #fff;
   border-radius: 4px;
 }
-.pacer .pc.block {
+.pacer .pc.hlblock {
   background: linear-gradient(
     90deg,
     color-mix(in srgb, var(--pacer-accent) 24%, transparent),
