@@ -31,6 +31,7 @@ export function ReadingPacer({
   const readChars = useRef(0);
   const lastTs = useRef(0);
   const prefsRef = useRef<ReadingPrefs | null>(null);
+  const lastUnit = useRef<number>(-99);
 
   const { prefs, hydrated, update } = useReadingPrefs();
   const [playing, setPlaying] = useState(false);
@@ -45,6 +46,7 @@ export function ReadingPacer({
     if (!articleRef.current) return;
     setPlaying(false);
     readChars.current = 0;
+    lastUnit.current = -99;
     const t = tokenizeArticle(articleRef.current);
     tok.current = t;
     setPacable(t.total > 0);
@@ -67,8 +69,10 @@ export function ReadingPacer({
       stop();
       setPlaying(false);
       readChars.current = 0;
+      lastUnit.current = -99;
       renderFocus(-2); // plain
     } else {
+      lastUnit.current = -99;
       renderFocus(playing || readChars.current > 0 ? Math.floor(readChars.current) : -1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,8 +82,12 @@ export function ReadingPacer({
     const t = tok.current;
     const p = prefsRef.current;
     if (!t || !p) return;
+    const perChar = p.granularity === "letter" || p.style === "line";
+    const unit = focus < 0 ? focus : perChar ? focus : p.granularity === "word" ? t.charWord[Math.min(focus, t.total - 1)] : t.charSent[Math.min(focus, t.total - 1)];
+    if (unit === lastUnit.current) return;
+    lastUnit.current = unit;
     // focus === -2 → plain (Off); focus === -1 → idle (enabled, not started)
-    const plain = focus === -2 || (focus === -1 && true);
+    const plain = focus < 0;
     const fw = focus >= 0 ? t.charWord[Math.min(focus, t.total - 1)] : -1;
     const fs = focus >= 0 ? t.charSent[Math.min(focus, t.total - 1)] : -1;
     for (let i = 0; i < t.total; i++) {
@@ -143,6 +151,7 @@ export function ReadingPacer({
     if (readChars.current >= tok.current.total) readChars.current = 0;
     lastTs.current = 0;
     setPlaying(true);
+    articleRef.current?.focus();
     rafRef.current = requestAnimationFrame(tick);
   }, [tick]);
 
@@ -183,6 +192,7 @@ export function ReadingPacer({
     const onKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (!articleRef.current || !articleRef.current.contains(document.activeElement)) return;
       if (e.key === " ") { e.preventDefault(); togglePlay(); }
       else if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
@@ -198,7 +208,7 @@ export function ReadingPacer({
 
   return (
     <div className="relative">
-      <div ref={articleRef} className={prefs.enabled ? "pacer" : undefined}>
+      <div ref={articleRef} tabIndex={-1} className={prefs.enabled ? "pacer outline-none" : "outline-none"}>
         {children}
       </div>
 

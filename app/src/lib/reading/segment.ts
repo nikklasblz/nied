@@ -13,7 +13,7 @@ export interface Segmentation {
 // Lowercase, sin punto. Abreviaturas comunes en español.
 const ABBREV = new Set([
   "sr", "sra", "srta", "dr", "dra", "lic", "ing", "etc", "ej",
-  "p", "pp", "vol", "fig", "núm", "no", "ud", "uds", "av", " av",
+  "p", "pp", "vol", "fig", "núm", "no", "ud", "uds", "av",
 ]);
 
 const isSpace = (c: string) => /\s/.test(c);

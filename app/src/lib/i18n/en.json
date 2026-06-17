@@ -120,7 +120,6 @@
   "reading.enable": "Reading guide",
   "reading.play": "Play",
   "reading.pause": "Pause",
-  "reading.restart": "Restart",
   "reading.granularity": "Granularity",
   "reading.gran.letter": "Letter",
   "reading.gran.word": "Word",
