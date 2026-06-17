@@ -37,7 +37,7 @@ export default async function SectionPage({
   const totalSections = view.sections.length;
 
   return (
-    <div className="mx-auto flex w-full max-w-dashboard flex-col gap-6 px-4 py-8 md:px-6">
+    <div className="mx-auto flex w-full max-w-reading flex-col gap-6 px-4 py-8 md:px-6">
       <MermaidRenderer />
 
       {/* Breadcrumb */}
