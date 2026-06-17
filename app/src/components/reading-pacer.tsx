@@ -191,11 +191,25 @@ export function ReadingPacer({
       const p = prefsRef.current;
       if (!t || !p || !p.enabled) return;
       const cur = Math.max(0, Math.floor(readChars.current));
-      // jump to next/prev sentence (or word) boundary for a meaningful step
+      // step by sentence (or word) boundaries
       const arr = p.granularity === "sentence" ? t.charSent : t.charWord;
       const curUnit = arr[Math.min(cur, t.total - 1)] ?? 0;
-      const target = curUnit + dir;
+      // first char index of the current unit
+      let curStart = 0;
+      for (let i = 0; i < t.total; i++) {
+        if (arr[i] === curUnit) { curStart = i; break; }
+      }
       lastUnit.current = -99;
+      // Back from mid-unit lands on the START of the current unit first
+      // (media-player semantics); only jumps to the previous unit when
+      // already at the start. Prevents "going back too far" mid-sentence.
+      if (dir === -1 && cur > curStart) {
+        readChars.current = curStart;
+        renderFocus(curStart);
+        updateProgress();
+        return;
+      }
+      const target = curUnit + dir;
       if (target < 0) {
         readChars.current = 0;
         renderFocus(-1);
