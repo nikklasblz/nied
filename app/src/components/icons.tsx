@@ -51,4 +51,6 @@ export {
   XCircle,
   HelpCircle,
   Eye,
+  Play,
+  Pause,
 } from "lucide-react";
