@@ -64,6 +64,9 @@ export function ReadingPacer({
   useEffect(() => {
     if (!tok.current) return;
     if (!prefs.enabled) {
+      stop();
+      setPlaying(false);
+      readChars.current = 0;
       renderFocus(-2); // plain
     } else {
       renderFocus(playing || readChars.current > 0 ? Math.floor(readChars.current) : -1);
