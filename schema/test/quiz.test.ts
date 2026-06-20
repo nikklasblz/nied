@@ -107,6 +107,14 @@ describe("quizQuestionSchema v2", () => {
     expect(quizQuestionSchema.safeParse({
       type: "multiple", question: "q", explanation: "e", options: ["a", "b"], correct_indices: [5],
     }).success).toBe(false);
+    // duplicate correct_indices rejected (superRefine)
+    expect(quizQuestionSchema.safeParse({
+      type: "multiple", question: "q", explanation: "e", options: ["a", "b", "c"], correct_indices: [1, 1],
+    }).success).toBe(false);
+    // duplicate options rejected (superRefine)
+    expect(quizQuestionSchema.safeParse({
+      type: "multiple", question: "q", explanation: "e", options: ["a", "a", "c"], correct_indices: [0],
+    }).success).toBe(false);
   });
   test("numeric defaults tolerance to 0", () => {
     const r = quizQuestionSchema.safeParse({
