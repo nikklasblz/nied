@@ -174,6 +174,16 @@ export default async function UnitPage({
                 done: t("quiz.done"),
                 correctAnswer: t("quiz.correctAnswer"),
                 xpPerQuestion: t("quiz.xpPerQuestion"),
+                submit: t("quiz.submit"),
+                yourAnswer: t("quiz.yourAnswer"),
+                correctIs: t("quiz.correctIs"),
+                numericPlaceholder: t("quiz.numericPlaceholder"),
+                shortPlaceholder: t("quiz.shortPlaceholder"),
+                selectMatch: t("quiz.selectMatch"),
+                multipleHint: t("quiz.multipleHint"),
+                orderingHint: t("quiz.orderingHint"),
+                moveUp: t("quiz.moveUp"),
+                moveDown: t("quiz.moveDown"),
               }}
             />
           )}
