@@ -49,7 +49,7 @@ export const SCHEMA = `
     course_id TEXT NOT NULL,
     unit_id TEXT NOT NULL,
     question_index INTEGER NOT NULL,
-    selected_answer INTEGER NOT NULL,
+    response TEXT NOT NULL,
     correct INTEGER NOT NULL CHECK (correct IN (0, 1)),
     xp_awarded INTEGER NOT NULL DEFAULT 0,
     attempted_at TEXT NOT NULL DEFAULT (datetime('now'))

@@ -9,7 +9,7 @@ export interface QuizAttemptRow {
   course_id: string;
   unit_id: string;
   question_index: number;
-  selected_answer: number;
+  response: string;
   correct: number;
   xp_awarded: number;
   attempted_at: string;
@@ -35,19 +35,19 @@ export function insertQuizAttempt(
     courseId: string;
     unitId: string;
     questionIndex: number;
-    selectedAnswer: number;
+    response: string;
     correct: boolean;
     xpAwarded: number;
   }
 ): void {
   db.prepare(
-    `INSERT INTO quiz_attempts (course_id, unit_id, question_index, selected_answer, correct, xp_awarded)
+    `INSERT INTO quiz_attempts (course_id, unit_id, question_index, response, correct, xp_awarded)
      VALUES (?, ?, ?, ?, ?, ?)`
   ).run(
     data.courseId,
     data.unitId,
     data.questionIndex,
-    data.selectedAnswer,
+    data.response,
     data.correct ? 1 : 0,
     data.xpAwarded
   );
