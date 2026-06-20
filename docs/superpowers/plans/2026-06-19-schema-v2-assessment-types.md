@@ -1020,6 +1020,152 @@ cd /d/nied && git add app/src/components/quiz-inputs app/src/components/quiz-sec
 
 ---
 
+## Task B4: Generalize SRS review + fix loader test for the union type
+
+**Why:** The discriminated union breaks two consumers the original plan missed — the spaced-repetition review (`actions/srs.ts` builds a single-choice `DueCardView` with `options`/`correctIndex`, rendered by `review-deck.tsx`) and `quiz-loader.test.ts` (reads `.correct_index` without narrowing). The review deck is a self-graded flashcard ("show answer → I knew it / I didn't"); it only needs to reveal the correct answer as text, so we replace `options`+`correctIndex` with a single per-type `answer` string.
+
+**Files:**
+- Create: `D:\nied\app\src\lib\quiz\answer-text.ts`
+- Test: `D:\nied\app\src\lib\__test__\answer-text.test.ts`
+- Modify: `D:\nied\app\src\app\actions\srs.ts`
+- Modify: `D:\nied\app\src\components\review-deck.tsx`
+- Modify: `D:\nied\app\src\app\review\page.tsx` (review labels)
+- Modify: `D:\nied\app\src\lib\i18n\es.json`, `en.json`
+- Modify: `D:\nied\app\src\lib\__test__\quiz-loader.test.ts`
+
+- [ ] **Step 1: Write failing test** for `answer-text.ts`
+
+```ts
+import { describe, expect, test } from "bun:test";
+import { answerText } from "../quiz/answer-text";
+
+describe("answerText", () => {
+  test("single", () => expect(answerText({ type: "single", question: "q", explanation: "e", options: ["a", "b"], correct_index: 1 })).toBe("b"));
+  test("multiple", () => expect(answerText({ type: "multiple", question: "q", explanation: "e", options: ["a", "b", "c"], correct_indices: [0, 2] })).toBe("a, c"));
+  test("numeric with unit + tolerance", () => expect(answerText({ type: "numeric", question: "q", explanation: "e", answer: 5, tolerance: 0.1, unit: "kg" })).toBe("5 kg (±0.1)"));
+  test("short", () => expect(answerText({ type: "short", question: "q", explanation: "e", accepted: ["media"] })).toBe("media"));
+  test("matching", () => expect(answerText({ type: "matching", question: "q", explanation: "e", pairs: [{ left: "a", right: "1" }, { left: "b", right: "2" }] })).toBe("a → 1; b → 2"));
+  test("ordering", () => expect(answerText({ type: "ordering", question: "q", explanation: "e", items: ["x", "y"] })).toBe("x → y"));
+});
+```
+
+- [ ] **Step 2: Run to verify fail**
+
+Run: `cd /d/nied/app && bun test src/lib/__test__/answer-text.test.ts`
+Expected: FAIL (module not found).
+
+- [ ] **Step 3: Implement `src/lib/quiz/answer-text.ts`**
+
+```ts
+import type { QuizQuestion } from "@nied/schema";
+
+/** Human-readable rendering of a question's correct answer, per type. */
+export function answerText(q: QuizQuestion): string {
+  switch (q.type) {
+    case "single":
+      return q.options[q.correct_index] ?? "";
+    case "multiple":
+      return q.correct_indices.map((i) => q.options[i]).join(", ");
+    case "numeric":
+      return `${q.answer}${q.unit ? ` ${q.unit}` : ""}${q.tolerance > 0 ? ` (±${q.tolerance})` : ""}`;
+    case "short":
+      return q.accepted[0] ?? "";
+    case "matching":
+      return q.pairs.map((p) => `${p.left} → ${p.right}`).join("; ");
+    case "ordering":
+      return q.items.join(" → ");
+    default:
+      return "";
+  }
+}
+```
+
+- [ ] **Step 4: Run to verify pass**
+
+Run: `cd /d/nied/app && bun test src/lib/__test__/answer-text.test.ts`
+Expected: PASS.
+
+- [ ] **Step 5: Update `actions/srs.ts`** — add the import and change `DueCardView` + the push. Add at top with the other imports:
+
+```ts
+import { answerText } from "@/lib/quiz/answer-text";
+```
+Change the interface:
+```ts
+export interface DueCardView {
+  courseId: string;
+  unitId: string;
+  questionIndex: number;
+  box: number;
+  question: string;
+  answer: string;
+  explanation: string;
+}
+```
+Change the `out.push({...})` in `getDueCardViews`:
+```ts
+    out.push({
+      courseId: r.course_id,
+      unitId: r.unit_id,
+      questionIndex: r.question_index,
+      box: r.box,
+      question: q.question,
+      answer: answerText(q),
+      explanation: q.explanation,
+    });
+```
+
+- [ ] **Step 6: Update `review-deck.tsx`** — add `answer` to `ReviewLabels` and replace the options-map reveal with a single answer reveal. Change the type:
+```ts
+export type ReviewLabels = {
+  show: string;
+  correct: string;
+  wrong: string;
+  empty: string;
+  box: string;
+  answer: string;
+};
+```
+Replace the `<div className="flex flex-col gap-2">{card.options.map(...)}</div>` block (the options list) with:
+```tsx
+              <div className="rounded-lg border border-success/60 bg-success/10 px-4 py-3">
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" strokeWidth={2} aria-hidden />
+                  <p className="text-sm leading-snug text-fg-primary">
+                    <span className="font-medium text-success">{labels.answer}: </span>
+                    {card.answer}
+                  </p>
+                </div>
+              </div>
+```
+(Leave the explanation block and self-grade buttons unchanged. `XCircle` is still used by the "wrong" button; keep its import.)
+
+- [ ] **Step 7: Add the `answer` label in `src/app/review/page.tsx`** — find the `labels={{ ... }}` passed to `<ReviewDeck>` and add `answer: t("review.answer"),` to it.
+
+- [ ] **Step 8: Add i18n key `review.answer`** to BOTH `es.json` and `en.json` (keep parity). ES: `"review.answer": "Respuesta"`. EN: `"review.answer": "Answer"`. (Place near other `review.*` keys.)
+
+- [ ] **Step 9: Fix `quiz-loader.test.ts`** — replace the `correct_index` assertion (around line 15) with a type-narrowed version:
+```ts
+    const first = q!.questions[0]!;
+    expect(first.type).toBe("single");
+    if (first.type === "single") {
+      expect(typeof first.correct_index).toBe("number");
+    }
+```
+
+- [ ] **Step 10: Typecheck + tests + i18n parity**
+
+Run: `cd /d/nied/app && bunx tsc --noEmit && bun test src/lib/__test__`
+Expected: tsc has NO errors in `srs.ts`, `review-deck.tsx`, `quiz-loader.test.ts`, `answer-text.ts` (only possibly `actions/quiz.ts` / `quiz-section.tsx` if B2/B3 not yet done). All tests pass incl. i18n parity. (When run after B2+B3, tsc must be fully clean.)
+
+- [ ] **Step 11: Commit**
+
+```bash
+cd /d/nied && git add app/src/lib/quiz/answer-text.ts app/src/lib/__test__/answer-text.test.ts app/src/app/actions/srs.ts app/src/components/review-deck.tsx app/src/app/review/page.tsx app/src/lib/i18n app/src/lib/__test__/quiz-loader.test.ts && git commit -m "feat(srs): per-type answer reveal in review deck; fix loader test for union"
+```
+
+---
+
 # PHASE C — Remaining UI types
 
 ## Task C1: Deterministic seeded shuffle
