@@ -33,9 +33,9 @@ describe("courseSchema", () => {
     expect(courseSchema.safeParse(validCourse).success).toBe(true);
   });
 
-  test("rejects wrong schema_version", () => {
+  test("rejects unsupported schema_version (e.g. 3)", () => {
     expect(
-      courseSchema.safeParse({ ...validCourse, schema_version: 2 }).success
+      courseSchema.safeParse({ ...validCourse, schema_version: 3 }).success
     ).toBe(false);
   });
 

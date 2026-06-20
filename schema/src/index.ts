@@ -10,5 +10,6 @@ export {
 } from "./types";
 export { checkCourseGraph } from "./graph";
 export { validateUnitMarkdown } from "./unit";
-export { quizSchema, quizQuestionSchema, type Quiz, validateQuizJson } from "./quiz";
+export { quizSchema, quizQuestionSchema, type Quiz, type QuizQuestion, validateQuizJson } from "./quiz";
+export { gradeQuestion, normalizeText, type QuizResponse } from "./grade";
 export { validateCourseDir, type ValidationResult } from "./course-dir";

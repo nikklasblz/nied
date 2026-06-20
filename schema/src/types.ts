@@ -16,7 +16,7 @@ export const unitMetaSchema = z.strictObject({
 
 // v1 is strict: unknown keys are authoring errors. Relax in v2 if optional fields are added.
 export const courseSchema = z.strictObject({
-  schema_version: z.literal(1),
+  schema_version: z.union([z.literal(1), z.literal(2)]),
   slug: z.string().regex(SLUG_RE, "slug must be kebab-case"),
   title: z.string().min(1),
   language: z

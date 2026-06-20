@@ -148,3 +148,21 @@ describe("quizQuestionSchema v2", () => {
     }).success).toBe(false);
   });
 });
+
+import { courseSchema } from "../src/types";
+import { gradeQuestion as gradeFromIndex } from "../src/index";
+
+describe("schema_version 1|2 + exports", () => {
+  const baseCourse = {
+    slug: "c", title: "C", language: "es", level: "intro", description: "d",
+    units: [{ id: "u1", title: "U", objectives: ["o"], hours: 1 }],
+  };
+  test("accepts schema_version 1 and 2", () => {
+    expect(courseSchema.safeParse({ ...baseCourse, schema_version: 1 }).success).toBe(true);
+    expect(courseSchema.safeParse({ ...baseCourse, schema_version: 2 }).success).toBe(true);
+    expect(courseSchema.safeParse({ ...baseCourse, schema_version: 3 }).success).toBe(false);
+  });
+  test("gradeQuestion is exported from package index", () => {
+    expect(typeof gradeFromIndex).toBe("function");
+  });
+});
