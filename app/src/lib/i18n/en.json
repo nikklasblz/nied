@@ -106,6 +106,7 @@
   "review.correct": "I knew it",
   "review.wrong": "I didn't know it",
   "review.box": "Box",
+  "review.answer": "Answer",
   "app.title": "Learning Space",
   "app.description": "Personal learning space: AI, engineering, data, pharma management. Learn, track progress and connect with your real projects.",
   "sidebar.hide": "Hide sidebar",

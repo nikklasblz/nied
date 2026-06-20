@@ -45,6 +45,7 @@ export default async function ReviewPage() {
             wrong: t("review.wrong"),
             empty: t("review.empty"),
             box: t("review.box"),
+            answer: t("review.answer"),
           }}
         />
       )}

@@ -14,6 +14,7 @@ import { gradeCard, nextDueDate } from "@/lib/srs/leitner";
 import { getDueCards, reviewCard } from "@/lib/db/queries/srs";
 import { loadQuiz } from "@/lib/content/quiz-loader";
 import { toIsoDate } from "@/lib/gamification/streaks";
+import { answerText } from "@/lib/quiz/answer-text";
 
 export interface DueCardView {
   courseId: string;
@@ -21,8 +22,7 @@ export interface DueCardView {
   questionIndex: number;
   box: number;
   question: string;
-  options: string[];
-  correctIndex: number;
+  answer: string;
   explanation: string;
 }
 
@@ -40,8 +40,7 @@ export async function getDueCardViews(): Promise<DueCardView[]> {
       questionIndex: r.question_index,
       box: r.box,
       question: q.question,
-      options: q.options,
-      correctIndex: q.correct_index,
+      answer: answerText(q),
       explanation: q.explanation,
     });
   }

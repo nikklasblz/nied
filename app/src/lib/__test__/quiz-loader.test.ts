@@ -12,7 +12,11 @@ describe("loadQuiz", () => {
     expect(q).not.toBeNull();
     expect(q!.unit_id).toBe("u1");
     expect(q!.questions.length).toBeGreaterThan(0);
-    expect(typeof q!.questions[0]!.correct_index).toBe("number");
+    const first = q!.questions[0]!;
+    expect(first.type).toBe("single");
+    if (first.type === "single") {
+      expect(typeof first.correct_index).toBe("number");
+    }
     expect(q!.xp_per_question).toBeGreaterThan(0);
   });
 

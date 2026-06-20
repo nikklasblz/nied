@@ -24,6 +24,7 @@ export type ReviewLabels = {
   wrong: string;
   empty: string;
   box: string;
+  answer: string;
 };
 
 interface ReviewDeckProps {
@@ -131,42 +132,14 @@ export function ReviewDeck({ cards, labels }: ReviewDeckProps) {
               transition={{ duration: 0.25, ease: EASE }}
               className="overflow-hidden"
             >
-              <div className="flex flex-col gap-2">
-                {card.options.map((option, optIdx) => {
-                  const isCorrect = optIdx === card.correctIndex;
-                  return (
-                    <div
-                      key={optIdx}
-                      className={cn(
-                        "w-full rounded-lg border px-4 py-3 text-left",
-                        isCorrect
-                          ? "border-success/60 bg-success/10 text-fg-primary"
-                          : "border-border/50 bg-bg-overlay/50 text-fg-muted opacity-60"
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={cn(
-                            "flex size-5 shrink-0 items-center justify-center rounded-full border font-mono text-[10px] font-medium",
-                            isCorrect
-                              ? "border-success bg-success text-white"
-                              : "border-fg-muted/30 text-fg-muted/50"
-                          )}
-                        >
-                          {String.fromCharCode(65 + optIdx)}
-                        </span>
-                        <span className="text-sm leading-snug">{option}</span>
-                        {isCorrect && (
-                          <CheckCircle2
-                            className="ml-auto size-4 shrink-0 text-success"
-                            strokeWidth={2}
-                            aria-hidden
-                          />
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="rounded-lg border border-success/60 bg-success/10 px-4 py-3">
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" strokeWidth={2} aria-hidden />
+                  <p className="text-sm leading-snug text-fg-primary">
+                    <span className="font-medium text-success">{labels.answer}: </span>
+                    {card.answer}
+                  </p>
+                </div>
               </div>
 
               {/* Explicación */}
