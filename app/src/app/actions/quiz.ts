@@ -1,18 +1,14 @@
 "use server";
 
 /**
- * Server action: procesa la respuesta a una pregunta de quiz.
- *
- * Pipeline:
- *  1. Carga el quiz desde el servidor (no confía en datos del cliente).
- *  2. Verifica idempotencia (ya respondida correctamente → no XP).
- *  3. Si es correcta: toca racha, aplica multiplicador, inserta evento XP.
- *  4. Registra el intento en quiz_attempts.
- *  5. Crea la card SRS (Leitner caja 1, due mañana) si no existe.
- *  6. Invalida cache de la ruta.
+ * Server action: processes a quiz answer of any type.
+ * Loads the quiz server-side (never trusts the client), grades with the pure
+ * gradeQuestion, then (if correct) touches the streak, applies the multiplier,
+ * inserts the XP event, records the attempt, and creates an SRS card.
  */
 
 import { revalidatePath } from "next/cache";
+import { gradeQuestion, type QuizResponse } from "@nied/schema";
 import { getDb } from "@/lib/db/client";
 import { insertQuizAttempt, hasAttemptedQuestion } from "@/lib/db/queries/quiz";
 import { insertXpEvent } from "@/lib/db/queries/xp";
@@ -33,29 +29,19 @@ export async function submitQuizAnswer(
   courseId: string,
   unitId: string,
   questionIndex: number,
-  selectedAnswer: number
+  response: QuizResponse
 ): Promise<SubmitQuizAnswerResult> {
   const quiz = loadQuiz(courseId, unitId);
-  if (!quiz) {
-    throw new Error(`Quiz no encontrado: ${courseId}/${unitId}`);
-  }
+  if (!quiz) throw new Error(`Quiz no encontrado: ${courseId}/${unitId}`);
   const q = quiz.questions[questionIndex];
-  if (!q) {
-    throw new Error(`Pregunta fuera de rango: índice ${questionIndex}`);
-  }
+  if (!q) throw new Error(`Pregunta fuera de rango: índice ${questionIndex}`);
 
   const db = getDb();
-  const correct = selectedAnswer === q.correct_index;
+  const correct = gradeQuestion(q, response);
 
-  // Idempotencia: si ya respondió correctamente, no volver a dar XP
   const already = hasAttemptedQuestion(db, courseId, unitId, questionIndex);
   if (already) {
-    return {
-      correct,
-      explanation: q.explanation,
-      xpAwarded: 0,
-      alreadyAnswered: true,
-    };
+    return { correct, explanation: q.explanation, xpAwarded: 0, alreadyAnswered: true };
   }
 
   const xpBase = correct ? quiz.xp_per_question : 0;
@@ -69,13 +55,11 @@ export async function submitQuizAnswer(
       courseId,
       unitId,
       questionIndex,
-      selectedAnswer,
+      response: JSON.stringify(response),
       correct,
       xpAwarded: finalXp,
     });
 
-    // SRS: la pregunta entra al sistema Leitner en caja 1, due mañana.
-    // Usamos la misma fecha local que el resto del pipeline (toIsoDate).
     upsertCard(db, courseId, unitId, questionIndex, nextDueDate(1, today));
 
     if (correct && finalXp > 0) {
@@ -87,7 +71,6 @@ export async function submitQuizAnswer(
         multiplier: streak.multiplier,
       });
     }
-
     return { finalXp, multiplier: streak.multiplier };
   })();
 
@@ -95,13 +78,8 @@ export async function submitQuizAnswer(
     revalidatePath("/");
     revalidatePath(`/courses/${courseId}/${unitId}`);
   } catch {
-    // revalidatePath puede fallar fuera del contexto de render — ignorar
+    /* revalidatePath may fail outside a render context — ignore */
   }
 
-  return {
-    correct,
-    explanation: q.explanation,
-    xpAwarded: result.finalXp,
-    alreadyAnswered: false,
-  };
+  return { correct, explanation: q.explanation, xpAwarded: result.finalXp, alreadyAnswered: false };
 }
