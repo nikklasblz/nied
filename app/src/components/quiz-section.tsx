@@ -14,6 +14,7 @@ import { submitQuizAnswer } from "@/app/actions/quiz";
 import type { Quiz, QuizResponse } from "@nied/schema";
 import { SingleInput } from "@/components/quiz-inputs/single";
 import { NumericInput } from "@/components/quiz-inputs/numeric";
+import { MultipleInput } from "@/components/quiz-inputs/multiple";
 import type { QuizInputLabels, QuizInputProps } from "@/components/quiz-inputs/types";
 
 export type QuizLabels = QuizInputLabels & {
@@ -47,7 +48,8 @@ function renderInput(props: QuizInputProps) {
   switch (props.question.type) {
     case "single": return <SingleInput {...props} />;
     case "numeric": return <NumericInput {...props} />;
-    // multiple/short/matching/ordering added in Phase C
+    case "multiple": return <MultipleInput {...props} />;
+    // short/matching/ordering added in Phase C
     default: return null;
   }
 }
