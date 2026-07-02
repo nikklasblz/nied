@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { gradeQuestion, normalizeText } from "../src/grade";
+import type { QuizQuestion } from "../src/quiz";
 
 describe("normalizeText", () => {
   test("strips accents, case, trims, collapses spaces", () => {
@@ -8,12 +9,12 @@ describe("normalizeText", () => {
 });
 
 describe("gradeQuestion", () => {
-  const single = { type: "single", question: "q", explanation: "e", options: ["a", "b"], correct_index: 1 } as const;
-  const multiple = { type: "multiple", question: "q", explanation: "e", options: ["a", "b", "c"], correct_indices: [0, 2] } as const;
-  const numeric = { type: "numeric", question: "q", explanation: "e", answer: 3.14, tolerance: 0.01 } as const;
-  const short = { type: "short", question: "q", explanation: "e", accepted: ["media", "promedio"] } as const;
-  const matching = { type: "matching", question: "q", explanation: "e", pairs: [{ left: "a", right: "1" }, { left: "b", right: "2" }] } as const;
-  const ordering = { type: "ordering", question: "q", explanation: "e", items: ["x", "y", "z"] } as const;
+  const single = { type: "single", question: "q", explanation: "e", options: ["a", "b"], correct_index: 1 } satisfies QuizQuestion;
+  const multiple = { type: "multiple", question: "q", explanation: "e", options: ["a", "b", "c"], correct_indices: [0, 2] } satisfies QuizQuestion;
+  const numeric = { type: "numeric", question: "q", explanation: "e", answer: 3.14, tolerance: 0.01 } satisfies QuizQuestion;
+  const short = { type: "short", question: "q", explanation: "e", accepted: ["media", "promedio"] } satisfies QuizQuestion;
+  const matching = { type: "matching", question: "q", explanation: "e", pairs: [{ left: "a", right: "1" }, { left: "b", right: "2" }] } satisfies QuizQuestion;
+  const ordering = { type: "ordering", question: "q", explanation: "e", items: ["x", "y", "z"] } satisfies QuizQuestion;
 
   test("single", () => {
     expect(gradeQuestion(single, 1)).toBe(true);
