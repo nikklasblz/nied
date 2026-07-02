@@ -1,7 +1,7 @@
 {
   "unit_id": "u2",
   "title": "Quiz: Estadística descriptiva univariada",
-  "instructions": "13 preguntas sobre medidas de posición, dispersión, forma de la distribución y detección de atípicos. Elige la única opción correcta en cada caso. Puedes usar calculadora. Responde sin consultar la unidad: el quiz es práctica de recuperación, no examen con libro abierto.",
+  "instructions": "18 preguntas sobre medidas de posición, dispersión, forma de la distribución y detección de atípicos. Hay distintos formatos: opción única, selección múltiple, respuesta numérica, respuesta corta, emparejamiento y ordenamiento. Puedes usar calculadora. Responde sin consultar la unidad: el quiz es práctica de recuperación, no examen con libro abierto.",
   "xp_per_question": 10,
   "questions": [
     {
@@ -159,6 +159,47 @@
       "correct_index": 1,
       "explanation": "El z-score se calcula con x̄ y s, estadísticos no robustos que el mismo atípico distorsiona (el gerente aportaba el 87% de la suma de cuadrados), así que se camufla bajo el umbral 3. Las cercas de Tukey dependen de Q1 y Q3, posiciones de orden inmunes al extremo: por eso son preferibles en muestras pequeñas o sesgadas.",
       "section": "Detección de valores atípicos: regla 1.5·IQR y z-score"
+    },
+    {
+      "type": "numeric",
+      "question": "Calcula la media de los valores 2, 4 y 9.",
+      "explanation": "x̄ = (2 + 4 + 9) / 3 = 15 / 3 = 5.",
+      "answer": 5,
+      "tolerance": 0.01,
+      "section": "Medidas de posición central: media, mediana y moda"
+    },
+    {
+      "type": "multiple",
+      "question": "¿Cuáles de las siguientes son medidas de dispersión? Marca todas las que apliquen.",
+      "explanation": "La varianza y el rango miden qué tan esparcidos están los datos. La mediana es una medida de posición central y la moda es el valor más frecuente.",
+      "options": ["Varianza", "Mediana", "Rango", "Moda"],
+      "correct_indices": [0, 2],
+      "section": "Medidas de dispersión: rango, varianza, desviación estándar e IQR"
+    },
+    {
+      "type": "short",
+      "question": "¿Qué medida de tendencia central es el valor que más se repite en el dataset?",
+      "explanation": "La moda es el valor más frecuente; es la única medida de tendencia central válida para variables nominales.",
+      "accepted": ["moda", "la moda"],
+      "section": "Medidas de posición central: media, mediana y moda"
+    },
+    {
+      "type": "matching",
+      "question": "Empareja cada símbolo o expresión con el concepto que representa.",
+      "explanation": "μ es la media poblacional (letra griega = parámetro), s es la desviación estándar muestral (letra latina = estadístico) y Q3 − Q1 define el rango intercuartílico.",
+      "pairs": [
+        { "left": "μ", "right": "Media poblacional" },
+        { "left": "s", "right": "Desviación estándar muestral" },
+        { "left": "Q3 − Q1", "right": "Rango intercuartílico (IQR)" }
+      ],
+      "section": "De los datos crudos al resumen: notación y datasets de trabajo"
+    },
+    {
+      "type": "ordering",
+      "question": "Ordena estas medidas de MENOR a MAYOR robustez ante valores atípicos.",
+      "explanation": "La media usa la magnitud de todos los valores y es la más sensible; la media recortada descarta los extremos; la mediana solo depende del orden y es la más robusta.",
+      "items": ["Media", "Media recortada", "Mediana"],
+      "section": "Forma de la distribución y elección del resumen apropiado"
     }
   ]
 }
