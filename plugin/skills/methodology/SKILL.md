@@ -57,13 +57,27 @@ teaching, or source verification.
 7. Spaced-review guide: what to revisit in 1 day / 1 week / 1 month.
 8. "Para profundizar": the verified free sources list with one-line annotations.
 
-## Quiz anatomy (`quizzes/uN.json`, schema v1)
+## Quiz anatomy (`quizzes/uN.json`, schema v2)
 
 - 8–15 questions covering every major section (`section` field set).
+- Every question has `question`, `explanation`, optional `section`, and a `type`.
+  If `type` is omitted it defaults to `single` (v1 compatibility).
+- All types are **deterministic and auto-gradable** (no LLM judge). Choose the
+  type that fits the cognitive task; do not force everything into multiple choice.
 - Wrong options must be plausible misconceptions, not jokes.
 - `explanation` teaches WHY the answer is right (1–3 sentences).
 
-Canonical shape (STRICT — no extra keys anywhere; unknown keys are validation errors):
+Types and their fields:
+- `single` — `options` (≥2, unique) + `correct_index` (0-based, `< options.length`).
+- `multiple` — `options` (≥2, unique) + `correct_indices` (≥1, unique, in range). All-or-nothing.
+- `numeric` — `answer` (number) + `tolerance` (≥0) + optional `unit`. Use a non-zero
+  tolerance for any value with decimals or rounding.
+- `short` — `accepted` (≥1 strings). Grading is case/accent/space-insensitive; list
+  every acceptable surface form. Only use when the answer is a single unambiguous term.
+- `matching` — `pairs` (≥2 `{left, right}`). The app shuffles the rights.
+- `ordering` — `items` (≥2) written **in the correct order**. The app shuffles them.
+
+Canonical envelope (STRICT — no extra keys anywhere; unknown keys are validation errors):
 
 ```json
 {
@@ -73,6 +87,7 @@ Canonical shape (STRICT — no extra keys anywhere; unknown keys are validation 
   "xp_per_question": 10,
   "questions": [
     {
+      "type": "single",
       "question": "<text>",
       "options": ["<a>", "<b>", "<c>"],
       "correct_index": 1,
@@ -83,9 +98,9 @@ Canonical shape (STRICT — no extra keys anywhere; unknown keys are validation 
 }
 ```
 
-Rules: `unit_id` must equal the unit id in the filename; `correct_index` is
-0-based and must be < options length; options must be unique; `xp_per_question`
-is a positive integer.
+Rules: `unit_id` must equal the unit id in the filename; `xp_per_question` is a
+positive integer; all user-facing text is in the course language; schema keys and
+identifiers stay in English. Prefer a mix of types across the quiz.
 
 ## Language
 
