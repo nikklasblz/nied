@@ -48,6 +48,7 @@ export {
   PanelLeft,
   PanelLeftClose,
   ChevronDown,
+  ChevronUp,
   XCircle,
   HelpCircle,
   Eye,

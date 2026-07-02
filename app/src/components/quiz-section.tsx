@@ -17,6 +17,7 @@ import { NumericInput } from "@/components/quiz-inputs/numeric";
 import { MultipleInput } from "@/components/quiz-inputs/multiple";
 import { ShortInput } from "@/components/quiz-inputs/short";
 import { MatchingInput } from "@/components/quiz-inputs/matching";
+import { OrderingInput } from "@/components/quiz-inputs/ordering";
 import type { QuizInputLabels, QuizInputProps } from "@/components/quiz-inputs/types";
 
 export type QuizLabels = QuizInputLabels & {
@@ -53,7 +54,7 @@ function renderInput(props: QuizInputProps) {
     case "multiple": return <MultipleInput {...props} />;
     case "short": return <ShortInput {...props} />;
     case "matching": return <MatchingInput {...props} />;
-    // ordering added in Phase C
+    case "ordering": return <OrderingInput {...props} />;
     default: return null;
   }
 }
