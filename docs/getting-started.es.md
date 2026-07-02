@@ -82,7 +82,7 @@ los argumentos:
 
 Después investiga la estructura canónica universitaria del dominio y genera:
 
-- `course.yaml` — el sílabo legible por máquina (schema v1).
+- `course.yaml` — el sílabo legible por máquina (esquema del curso).
 - `SYLLABUS.md` — el sílabo legible por humanos: objetivos por unidad, fuentes
   verificadas, un mapa de dependencias en Mermaid, el ritmo semanal según tus
   horas, y una sección "Preferencias del curso" que registra tus respuestas de

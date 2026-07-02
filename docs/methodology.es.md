@@ -132,9 +132,9 @@ trabajo:
 
 ## El contrato del quiz
 
-Los quizzes son JSON estricto conforme al esquema v1 — sin claves extra en
-ninguna parte; las claves desconocidas son errores de validación. La forma
-canónica:
+Los quizzes son JSON estricto conforme al esquema v2 — sin claves extra en
+ninguna parte; las claves desconocidas son errores de validación. El sobre
+canónico:
 
 ```json
 {
@@ -144,6 +144,7 @@ canónica:
   "xp_per_question": 10,
   "questions": [
     {
+      "type": "single",
       "question": "<text>",
       "options": ["<a>", "<b>", "<c>"],
       "correct_index": 1,
@@ -154,13 +155,31 @@ canónica:
 }
 ```
 
+Toda pregunta tiene `question`, `explanation`, un `section` opcional y un
+`type`. Una pregunta sin `type` se trata como `single` (compatibilidad v1).
+Los seis tipos son **deterministas y auto-corregibles** — sin juez LLM:
+
+- `single` — `options` (≥2, únicas) + `correct_index` (0-based, menor que la
+  cantidad de opciones).
+- `multiple` — `options` (≥2, únicas) + `correct_indices` (≥1, únicos, en
+  rango). Se califica todo-o-nada.
+- `numeric` — `answer` (número) + `tolerance` (≥0) + `unit` opcional. Todo
+  valor con decimales o redondeo lleva tolerancia distinta de cero.
+- `short` — `accepted` (≥1 strings). La corrección ignora mayúsculas, tildes y
+  espacios; lista toda forma superficial aceptable. Solo para un término único
+  e inequívoco.
+- `matching` — `pairs` (≥2 `{left, right}`). La app baraja los lados derechos.
+- `ordering` — `items` (≥2) escritos **en el orden correcto**. La app los
+  baraja para el estudiante.
+
 Reglas:
 
 - `unit_id` debe ser igual al id de unidad del nombre de archivo
   (`quizzes/u1.json` → `"u1"`).
-- `correct_index` es 0-based y debe ser menor que la cantidad de opciones.
-- Las opciones deben ser únicas; `xp_per_question` es un entero positivo.
+- `xp_per_question` es un entero positivo.
 - 8–15 preguntas que cubren toda sección mayor (el campo `section` indica cuál).
+- Preferir una mezcla de tipos: el tipo debe ajustarse a la tarea cognitiva, no
+  forzar todo a opción múltiple.
 - Las opciones incorrectas deben ser ideas erróneas plausibles, no chistes — un
   buen distractor diagnostica una confusión específica.
 - `explanation` enseña POR QUÉ la respuesta es correcta, en 1–3 oraciones.
@@ -169,7 +188,7 @@ Reglas:
 
 Toda unidad pasa una auditoría bloqueante antes de contar como terminada.
 Primero corren dos compuertas duras: **validación de esquema** (el
-JSON/markdown debe validar contra el esquema v1) y **vitalidad de URLs** (toda
+JSON/markdown debe validar contra el esquema del curso) y **vitalidad de URLs** (toda
 URL se vuelve a descargar; una URL muerta o con contenido que no coincide
 reprueba la unidad). Luego se puntúan seis dimensiones pedagógicas de 1 a 5, y
 cualquier dimensión con 2 o menos bloquea la unidad:

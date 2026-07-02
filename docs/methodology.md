@@ -119,8 +119,8 @@ Every unit (target 600–900 lines) has eight parts, each with a job:
 
 ## The quiz contract
 
-Quizzes are strict JSON conforming to schema v1 — no extra keys anywhere;
-unknown keys are validation errors. The canonical shape:
+Quizzes are strict JSON conforming to schema v2 — no extra keys anywhere;
+unknown keys are validation errors. The canonical envelope:
 
 ```json
 {
@@ -130,6 +130,7 @@ unknown keys are validation errors. The canonical shape:
   "xp_per_question": 10,
   "questions": [
     {
+      "type": "single",
       "question": "<text>",
       "options": ["<a>", "<b>", "<c>"],
       "correct_index": 1,
@@ -140,12 +141,29 @@ unknown keys are validation errors. The canonical shape:
 }
 ```
 
+Every question has `question`, `explanation`, an optional `section`, and a
+`type`. A question without a `type` is treated as `single` (v1 compatibility).
+All six types are **deterministic and auto-gradable** — no LLM judge:
+
+- `single` — `options` (≥2, unique) + `correct_index` (0-based, less than the
+  options length).
+- `multiple` — `options` (≥2, unique) + `correct_indices` (≥1, unique, in
+  range). Graded all-or-nothing.
+- `numeric` — `answer` (number) + `tolerance` (≥0) + optional `unit`. Any value
+  with decimals or rounding gets a non-zero tolerance.
+- `short` — `accepted` (≥1 strings). Grading is case/accent/space-insensitive;
+  list every acceptable surface form. Only for a single unambiguous term.
+- `matching` — `pairs` (≥2 `{left, right}`). The app shuffles the rights.
+- `ordering` — `items` (≥2) written **in the correct order**. The app shuffles
+  them for the learner.
+
 Rules:
 
 - `unit_id` must equal the unit id in the filename (`quizzes/u1.json` → `"u1"`).
-- `correct_index` is 0-based and must be less than the options length.
-- Options must be unique; `xp_per_question` is a positive integer.
+- `xp_per_question` is a positive integer.
 - 8–15 questions covering every major section (the `section` field says which).
+- Prefer a mix of types: the type should fit the cognitive task, not force
+  everything into multiple choice.
 - Wrong options must be plausible misconceptions, not jokes — a good distractor
   diagnoses a specific misunderstanding.
 - `explanation` teaches WHY the answer is right, in 1–3 sentences.
@@ -153,8 +171,8 @@ Rules:
 ## The audit rubric
 
 Every unit passes a blocking audit before it counts as done. Two hard gates run
-first: **schema validation** (the JSON/markdown must validate against schema
-v1) and **URL liveness** (every URL is re-fetched; a dead or content-mismatched
+first: **schema validation** (the JSON/markdown must validate against the
+course schema) and **URL liveness** (every URL is re-fetched; a dead or content-mismatched
 URL fails the unit). Then six pedagogical dimensions are scored 1–5, and any
 dimension scoring 2 or below blocks the unit:
 

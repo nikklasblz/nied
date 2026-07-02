@@ -22,7 +22,7 @@ in this plugin MUST follow them; violations are audit blockers.
    AND to contain what it claims before inclusion. If unverifiable: write the
    source name + description without a URL.
 4. **Markdown is the truth.** Generated content is plain markdown + JSON conforming
-   to schema v1 (`schema/`). No content lives in databases.
+   to the course schema (`schema/`). No content lives in databases.
 5. **Non-coercive gamification.** Quizzes reward XP for correct answers; nothing
    punishes or destroys progress.
 6. **One unit at a time.** Never generate a whole course's content in one shot.

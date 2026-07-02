@@ -80,7 +80,7 @@ in the arguments:
 It then researches the canonical university-level structure of the domain and
 generates:
 
-- `course.yaml` — the machine-readable syllabus (schema v1).
+- `course.yaml` — the machine-readable syllabus (course schema).
 - `SYLLABUS.md` — the human-readable syllabus: per-unit objectives, verified
   sources, a Mermaid dependency map, weekly pacing for your hours, and a
   "Course preferences" section recording your audience, multimedia and

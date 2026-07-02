@@ -40,7 +40,7 @@ El agente escritor no tiene herramientas de red, así que no puede fabricar URLs
 solo puede citar fuentes que el investigador ya descargó y verificó. El auditor es
 una puerta bloqueante: una unidad que falla la rúbrica de 6 dimensiones vuelve al
 escritor, hasta tres ciclos, antes de publicarse. La app lectora lee cualquier
-curso que valide contra el esquema v1 — generado por nied o escrito a mano.
+curso que valide contra el esquema del curso — generado por nied o escrito a mano.
 
 ![Una lección de nied con matemática inline, diagramas y un quiz](docs/assets/lesson.png)
 

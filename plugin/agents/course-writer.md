@@ -53,7 +53,7 @@ If the methodology skill is not in your context, Read
   (mismatch is a validator warning).
 - Honor the course-preferences section of SYLLABUS.md. When a preference
   conflicts with a methodology hard rule or minimum (e.g., the user asked for
-  zero retrieval practice, or fewer quiz questions than schema v1's minimum of
+  zero retrieval practice, or fewer quiz questions than the methodology's minimum of
   8), the methodology hard rules win — and you note the conflict explicitly in
   your final report for the unit.
 

@@ -25,12 +25,13 @@ Ask only what was not provided in the arguments:
   methodology's unit anatomy; this question lets the user dial each element up
   or down within the hard rules.
 - Assessments and their types: quiz length per unit (default: 8–15 auto-graded
-  multiple-choice questions — the only auto-graded type in schema v1), the
-  quiz's emphasis (conceptual recall vs applied scenarios), and whether to
-  include open-ended elements (exercises with rubrics, capstone projects).
-  Be explicit with the user: multiple-choice quizzes are what the reader app
-  auto-grades; any other assessment type lives as exercise/capstone sections
-  inside the unit (manual / honor-system, rendered as unit sections).
+  questions mixing the schema v2 types — single, multiple, numeric, short,
+  matching, ordering), the quiz's emphasis (conceptual recall vs applied
+  scenarios), and whether to include open-ended elements (exercises with
+  rubrics, capstone projects). Be explicit with the user: quizzes are what the
+  reader app auto-grades (deterministically — no LLM judge); any subjective
+  assessment lives as exercise/capstone sections inside the unit (manual /
+  honor-system, rendered as unit sections).
 - Hours per week available (sets unit pacing).
 - Content language (`language`, default: the language the user is writing in).
 - Target directory (default: `./courses/<slug>` relative to current directory).
@@ -52,8 +53,8 @@ present the gaps to the user before generating course.yaml.
 
 Write into the target directory:
 
-1. `course.yaml` — conforming to schema v1 (strict schema — no additional
-   keys): `schema_version: 1`, kebab-case `slug`, `title`, `language`, `level`,
+1. `course.yaml` — conforming to the course schema (strict — no additional
+   keys): `schema_version: 2`, kebab-case `slug`, `title`, `language`, `level`,
    `description`, and `units[]` where each unit has `id` (u1, u2, ...), `title`,
    `objectives` (2–5 measurable, verb-first), `hours`, `depends_on`.
 2. `SYLLABUS.md` — human-readable syllabus: course overview, per-unit section

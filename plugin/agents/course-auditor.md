@@ -58,7 +58,7 @@ If the methodology skill is not in your context, Read
    unit honors the declared preferences within reason: video count per unit,
    quiz length and emphasis, multimedia density, open-ended elements.
    Unjustified deviations -> blocker. Deviations justified by methodology hard
-   rules or minimums (e.g., schema v1 requires at least 8 quiz questions) are
+   rules or minimums (e.g., the methodology requires at least 8 quiz questions) are
    acceptable: report them under `improvements`, not `blockers`.
 
 ## Output format (your final message — raw data)
