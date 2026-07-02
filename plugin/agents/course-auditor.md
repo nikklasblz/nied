@@ -35,7 +35,20 @@ If the methodology skill is not in your context, Read
    - inline-teaching: substance is in the text, links are supplementary
    - objective-coverage: every syllabus objective addressed in a section
    - retrieval-practice: checkpoints present after major sections
-   - assessment: quiz covers all major sections with teaching explanations
+   - assessment: quiz covers all major sections with teaching explanations.
+     For each quiz question, verify by type that it is well-formed AND that the
+     declared answer is actually correct:
+     - `multiple`: `correct_indices` non-empty, unique, in range; the marked
+       options are genuinely the correct set and the unmarked ones are genuinely wrong.
+     - `numeric`: `tolerance >= 0`; recompute the value and confirm `answer` is
+       right and the tolerance is neither absurdly wide nor too tight for the
+       stated precision.
+     - `short`: `accepted` non-empty; it covers the obvious correct surface forms
+       and a reasonable learner answer would match after case/accent/space
+       normalization.
+     - `matching`: ≥2 pairs; each `left↔right` is the genuinely correct association.
+     - `ordering`: ≥2 items; the authored order is the genuinely correct sequence.
+     Flag any question whose correct answer is subjective or not auto-decidable.
    - language-consistency: all content in the course's declared language
 4. **Anti-padding**: flag filler text, repeated paragraphs, or sections that
    restate without teaching.

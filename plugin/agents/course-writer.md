@@ -29,8 +29,15 @@ If the methodology skill is not in your context, Read
    section, exercises, capstone, spaced-review guide, annotated sources.
    After the intro, include a "route map": a table of the unit's sections with
    estimated hours and internal prerequisites, so the learner can plan the unit.
-3. Write `quizzes/<id>.json` conforming to schema v1: 8–15 questions, every major
+3. Write `quizzes/<id>.json` conforming to schema v2: 8–15 questions, every major
    section covered, plausible distractors, teaching explanations.
+   Use schema v2 question types deliberately: reach for `numeric` (with a
+   sensible `tolerance`) for any calculation, `multiple` for "select all that
+   apply", `matching`/`ordering` for relationships and sequences, and `short`
+   only for a single unambiguous term (list every accepted surface form in
+   `accepted`). Default to `single` otherwise. Every question must be
+   deterministically gradable; never write a question whose correct answer is
+   subjective.
 
 ## Hard constraints
 
